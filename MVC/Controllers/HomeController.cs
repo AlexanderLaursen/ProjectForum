@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using MVC.Models;
+using MVC.Services;
 using System.Diagnostics;
 
 namespace MVC.Controllers
@@ -7,15 +8,18 @@ namespace MVC.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly CategoryService _categoryService;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, CategoryService categoryService)
         {
             _logger = logger;
+            _categoryService = categoryService;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            //List<Category> categories = await _categoryService.GetCategories();
+            return View(categories);
         }
 
         public IActionResult Privacy()
