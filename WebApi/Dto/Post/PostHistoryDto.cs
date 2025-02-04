@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using WebApi.Models;
 
-namespace WebApi.Dto
+namespace WebApi.Dto.Post
 {
     public class PostHistoryDto
     {

@@ -1,4 +1,4 @@
-﻿using WebApi.Dto;
+﻿using WebApi.Dto.Post;
 using WebApi.Models;
 
 namespace WebApi.Repository

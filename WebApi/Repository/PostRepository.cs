@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Configuration.UserSecrets;
 using WebApi.Data;
-using WebApi.Dto;
+using WebApi.Dto.Post;
 using WebApi.Models;
 
 namespace WebApi.Repository

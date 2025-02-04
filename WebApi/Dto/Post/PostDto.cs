@@ -1,6 +1,6 @@
 ﻿using WebApi.Dto.Comment;
 
-namespace WebApi.Dto
+namespace WebApi.Dto.Post
 {
     public class PostDto
     {

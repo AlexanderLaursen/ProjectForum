@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
-using WebApi.Dto;
+using WebApi.Dto.Post;
 using WebApi.Models;
 using WebApi.Repository;
 
