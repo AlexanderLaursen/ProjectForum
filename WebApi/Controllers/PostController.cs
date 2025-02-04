@@ -11,21 +11,22 @@ namespace WebApi.Controllers
     [Route("api/v1/[controller]")]
     public class PostController : Controller
     {
+
         private readonly IPostRepository _repository;
         public PostController(IPostRepository repository)
         {
             _repository = repository;
         }
 
-        [HttpGet("/api/v1/Category/{categoryName}")]
-        public IActionResult GetPostsByCategoryId(string categoryname)
+        [HttpGet("/api/v1/Category/{categoryId}")]
+        public IActionResult GetPostsByCategoryId(string categoryId, int page = 0, int pageSize = 0)
         {
-            // TODO: Implement this method
+            PageInfo pageInfo = new PageInfo (pageSize, page);
             return Ok();
         }
 
         [HttpGet("/api/v1/User/{userId}/posts")]
-        public IActionResult GetPostsByUserId(int userId)
+        public IActionResult GetPostsByUserId(int userId, int page = 0, int pageSize = 0)
         {
             // TODO: Implement this method
             return Ok();
@@ -34,19 +35,19 @@ namespace WebApi.Controllers
         [HttpGet("{postId}")]
         public IActionResult GetPostById(int postId)
         {
-            if(postId <= 0)
+            if (postId <= 0)
             {
                 return BadRequest("Invalid post id");
             }
 
             OperationResult<PostDto> result = _repository.GetPostById(postId);
 
-            if (!result.Success)
+            if (result.Success)
             {
-                return BadRequest(result.ErrorMessage);
+                return Ok(result.Data);
             }
 
-            return Ok(result.Data);
+            return NotFound(result.ErrorMessage);
         }
 
         [HttpPost(), Authorize]
@@ -66,12 +67,12 @@ namespace WebApi.Controllers
 
             OperationResult<Post> result = _repository.CreatePost(createPostDto, userId);
 
-            if (!result.Success)
+            if (result.Success)
             {
-                return BadRequest(result.ErrorMessage);
+                return Ok(result.Data);
             }
 
-            return Ok(result.Data);
+            return BadRequest(result.ErrorMessage);
         }
 
         [HttpPut()]

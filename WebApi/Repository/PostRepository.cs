@@ -53,6 +53,15 @@ namespace WebApi.Repository
             }
         }
 
+        public async Task<OperationResult<List<Post>>> GetPostsByCategoryId (int categoryId)
+        {
+            return new OperationResult<List<Post>>
+            {
+                Success = true,
+                Data = await _context.Posts.Where(p => p.CategoryId == categoryId).ToListAsync()
+            };
+        }
+
         public OperationResult<Post> CreatePost(CreatePostDto createPostDto, string userId)
         {
             try
