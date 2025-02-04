@@ -11,18 +11,29 @@ namespace WebApi.Controllers
     [Route("api/v1/[controller]")]
     public class PostController : Controller
     {
-
         private readonly IPostRepository _repository;
         public PostController(IPostRepository repository)
         {
             _repository = repository;
         }
 
-        [HttpGet("/api/v1/Category/{categoryId}")]
-        public IActionResult GetPostsByCategoryId(string categoryId, int page = 0, int pageSize = 0)
+        [HttpGet("/api/v1/Category/{categoryId}/posts")]
+        public async Task<IActionResult> GetPostsByCategoryId(string categoryId, int page = 0, int pageSize = 0)
         {
+            if (!int.TryParse(categoryId, out int categoryInt))
+            {
+                return BadRequest("Invalid category id.");
+            }
+
             PageInfo pageInfo = new PageInfo (pageSize, page);
-            return Ok();
+            OperationResult result = await _repository.GetPostsByCategoryIdAsync(categoryInt, pageInfo);
+
+            if (result.Success)
+            {
+                return Ok(result.Data);
+            }
+
+            return NotFound(result.ErrorMessage);
         }
 
         [HttpGet("/api/v1/User/{userId}/posts")]
@@ -33,14 +44,14 @@ namespace WebApi.Controllers
         }
 
         [HttpGet("{postId}")]
-        public IActionResult GetPostById(int postId)
+        public async Task<IActionResult> GetPostById(int postId)
         {
             if (postId <= 0)
             {
-                return BadRequest("Invalid post id");
+                return BadRequest("Invalid post id.");
             }
 
-            OperationResult<PostDto> result = _repository.GetPostById(postId);
+            OperationResult result = await _repository.GetPostByIdAsync(postId);
 
             if (result.Success)
             {
@@ -51,7 +62,7 @@ namespace WebApi.Controllers
         }
 
         [HttpPost(), Authorize]
-        public IActionResult CreatePost([FromBody] CreatePostDto createPostDto)
+        public async Task<IActionResult> CreatePost([FromBody] CreatePostDto createPostDto)
         {
             if (!ModelState.IsValid)
             {
@@ -65,7 +76,7 @@ namespace WebApi.Controllers
                 return Unauthorized("Invalid user credentials");
             }
 
-            OperationResult<Post> result = _repository.CreatePost(createPostDto, userId);
+            OperationResult result = await _repository.CreatePostAsync(createPostDto, userId);
 
             if (result.Success)
             {

@@ -36,6 +36,8 @@
 
         public int TotalPages => (int)Math.Ceiling((decimal)TotalItems / PageSize);
 
+        public int Skip => (CurrentPage - 1) * PageSize;
+
         public PageInfo()
         {
         }

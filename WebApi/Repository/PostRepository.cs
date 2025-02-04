@@ -16,36 +16,41 @@ namespace WebApi.Repository
             _context = context;
         }
 
-        public OperationResult<PostDto> GetPostById(int postId)
+
+        // TODO Implement input validation
+        public async Task<OperationResult> GetPostByIdAsync(int postId)
         {
             try
             {
-                var post = _context.Posts
+                var post = await _context.Posts
                     .Include(p => p.User)
                     .Include(p => p.Comments)
                     .ThenInclude(c => c.User)
-                    .FirstOrDefault(p => p.Id == postId);
+                    .FirstOrDefaultAsync(p => p.Id == postId);
 
                 if (post == null)
                 {
-                    return new OperationResult<PostDto>
+                    return new OperationResult
                     {
                         Success = false,
-                        ErrorMessage = "Post not found"
+                        ErrorMessage = "Post not found."
                     };
                 }
 
                 PostDto postDto = post.Adapt<PostDto>();
 
-                return new OperationResult<PostDto>
+                return new OperationResult
                 {
                     Success = true,
-                    Data = postDto
+                    Data = new Dictionary<string, object>
+                    {
+                        ["content"] = postDto
+                    }
                 };
             }
             catch (Exception ex)
             {
-                return new OperationResult<PostDto>
+                return new OperationResult
                 {
                     Success = false,
                     ErrorMessage = $"{ex.Message} - {ex.InnerException?.ToString()}"
@@ -53,33 +58,90 @@ namespace WebApi.Repository
             }
         }
 
-        public async Task<OperationResult<List<Post>>> GetPostsByCategoryId (int categoryId)
+        // Spørgsmål omkring PaginatedOperationResult
+        public async Task<OperationResult> GetPostsByCategoryIdAsync(int categoryId, PageInfo pageInfo)
         {
-            return new OperationResult<List<Post>>
+            if (categoryId <= 0)
             {
-                Success = true,
-                Data = await _context.Posts.Where(p => p.CategoryId == categoryId).ToListAsync()
-            };
+                return new OperationResult
+                {
+                    Success = false,
+                    ErrorMessage = "Invalid category id."
+                };
+            }
+
+            try
+            {
+                IQueryable<Post> query = _context.Posts
+                    .Include(p => p.User)
+                    .Where(p => p.CategoryId == categoryId)
+                    .Skip(pageInfo.Skip)
+                    .Take(pageInfo.PageSize);
+
+                int totalItems = query.Count();
+
+                if (totalItems == 0)
+                {
+                    return new OperationResult
+                    {
+                        Success = false,
+                        ErrorMessage = "No posts found for the given category."
+                    };
+                }
+
+                List<Post> posts = await query.ToListAsync();
+                List<PostDto> postsDto = posts.Adapt<List<PostDto>>();
+
+                return new OperationResult
+                {
+                    Success = true,
+                    Data = new Dictionary<string, object>
+                    {
+                        ["content"] = postsDto,
+                        ["pagination"] = new PageInfo
+                        {
+                            CurrentPage = pageInfo.CurrentPage,
+                            PageSize = pageInfo.PageSize,
+                            TotalItems = totalItems
+                        }
+                    }
+                };
+            }
+            catch (Exception ex)
+            {
+                return new OperationResult
+                {
+                    Success = false,
+                    ErrorMessage = $"{ex.Message} - {ex.InnerException?.ToString()}"
+                };
+            }
         }
 
-        public OperationResult<Post> CreatePost(CreatePostDto createPostDto, string userId)
+
+        // TODO: Implement validation for CreatePostDto
+        public async Task<OperationResult> CreatePostAsync(CreatePostDto createPostDto, string userId)
         {
             try
             {
                 Post post = createPostDto.Adapt<Post>();
                 post.UserId = userId;
                 _context.Posts.Add(post);
-                _context.SaveChanges();
+                await _context.SaveChangesAsync();
 
-                return new OperationResult<Post>
+                PostDto postDto = post.Adapt<PostDto>();
+
+                return new OperationResult
                 {
                     Success = true,
-                    Data = post
+                    Data = new Dictionary<string, object>
+                    {
+                        ["content"] = postDto
+                    }
                 };
             }
             catch (Exception ex)
             {
-                return new OperationResult<Post>
+                return new OperationResult
                 {
                     Success = false,
                     ErrorMessage = $"{ex.Message} - {ex.InnerException?.ToString()}"
