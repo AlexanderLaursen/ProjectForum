@@ -1,4 +1,6 @@
-﻿namespace WebApi.Dto
+﻿using WebApi.Dto.Comment;
+
+namespace WebApi.Dto
 {
     public class PostDto
     {

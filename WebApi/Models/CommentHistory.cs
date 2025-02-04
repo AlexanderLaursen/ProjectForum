@@ -1,18 +1,16 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using WebApi.Models;
 
-namespace WebApi.Dto
+namespace WebApi.Models
 {
-    public class CommentDto
+    public class CommentHistory
     {
         public int Id { get; set; }
         public string Content { get; set; }
         public DateTime CreatedAt { get; set; }
-        public int Likes { get; set; }
-
         public string UserId { get; set; }
-        public UserDto User { get; set; }
+        public int CommentId { get; set; }
 
-        public int PostId { get; set; }
+        public IdentityUser User { get; set; }
+        public Comment Post { get; set; }
     }
 }

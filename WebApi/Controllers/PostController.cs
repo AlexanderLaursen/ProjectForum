@@ -17,6 +17,24 @@ namespace WebApi.Controllers
             _repository = repository;
         }
 
+        [HttpGet("{postId}")]
+        public async Task<IActionResult> GetPostById(int postId)
+        {
+            if (postId <= 0)
+            {
+                return BadRequest("Invalid post id.");
+            }
+
+            OperationResult result = await _repository.GetPostByIdAsync(postId);
+
+            if (result.Success)
+            {
+                return Ok(result.Data);
+            }
+
+            return NotFound(result.ErrorMessage);
+        }
+
         [HttpGet("/api/v1/Category/{categoryId}/posts")]
         public async Task<IActionResult> GetPostsByCategoryId(string categoryId, int page = 0, int pageSize = 0)
         {
@@ -44,7 +62,8 @@ namespace WebApi.Controllers
                 return Unauthorized("Invalid user credentials.");
             }
 
-            OperationResult result = await _repository.GetPostsByUsernameAsync(username, new PageInfo(page, pageSize));
+            PageInfo pageInfo = new PageInfo(page, pageSize);
+            OperationResult result = await _repository.GetPostsByUsernameAsync(username, pageInfo);
 
             if (result.Success)
             {
@@ -54,7 +73,7 @@ namespace WebApi.Controllers
             return BadRequest(result.ErrorMessage);
         }
 
-        [HttpGet("/api/v1/Post/{postId}/history")]
+        [HttpGet("{postId}/history")]
         public async Task<IActionResult> GetPostHistoryByPostId(int postId, int page = 0, int pageSize = 0)
         {
             if (postId <= 0)
@@ -72,28 +91,10 @@ namespace WebApi.Controllers
             return NotFound(result.ErrorMessage);
         }
 
-        [HttpGet("{postId}")]
-        public async Task<IActionResult> GetPostById(int postId)
-        {
-            if (postId <= 0)
-            {
-                return BadRequest("Invalid post id.");
-            }
-
-            OperationResult result = await _repository.GetPostByIdAsync(postId);
-
-            if (result.Success)
-            {
-                return Ok(result.Data);
-            }
-
-            return NotFound(result.ErrorMessage);
-        }
-
         // TODO: Implement input validation
         [Authorize]
         [HttpPost()]
-        public async Task<IActionResult> CreatePost([FromBody] CreatePostDto createPostDto)
+        public async Task<IActionResult> CreatePost(CreatePostDto createPostDto)
         {
             if (!ModelState.IsValid)
             {
@@ -116,7 +117,6 @@ namespace WebApi.Controllers
 
             return BadRequest(result.ErrorMessage);
         }
-
 
         // TODO: Implement input validation
         [Authorize]
@@ -142,7 +142,7 @@ namespace WebApi.Controllers
                 return Ok(result.Data);
             }
 
-            return BadRequest(result.ErrorMessage);
+            return NotFound(result.ErrorMessage);
         }
 
         [Authorize]
@@ -155,12 +155,14 @@ namespace WebApi.Controllers
             }
 
             string? userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
             if (string.IsNullOrEmpty(userId))
             {
                 return Unauthorized("Invalid user credentials.");
             }
 
             OperationResult result = await _repository.DeletePostAsync(postId, userId);
+
             if (result.Success)
             {
                 return Ok();

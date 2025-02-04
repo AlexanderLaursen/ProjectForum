@@ -1,4 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
+using WebApi.Dto.Comment;
+using WebApi.Models;
 
 namespace WebApi.Controllers
 {
@@ -6,39 +10,162 @@ namespace WebApi.Controllers
     [Route("api/v1/[controller]")]
     public class CommentController : Controller
     {
-        [HttpGet()]
-        public IActionResult GetCommentsByPostId(int postId)
+        private readonly ICommentRepository _repository;
+        public CommentController(ICommentRepository repository)
         {
-            // TODO: Implement this method
-            return Ok();
+            _repository = repository;
         }
 
-        [HttpGet("/api/v1/User/{userId}/comments")]
-        public IActionResult GetCommentsByUserId(int userId)
+        [HttpGet("{commentId}")]
+        public async Task<IActionResult> GetCommentById(int commentId)
         {
-            // TODO: Implement this method
-            return Ok();
+            if (commentId <= 0)
+            {
+                return BadRequest("Invalid comment id.");
+            }
+
+            OperationResult result = await _repository.GetCommentByIdAsync(commentId);
+
+            if (result.Success)
+            {
+                return Ok(result.Data);
+            }
+
+            return NotFound(result.ErrorMessage);
         }
 
+        [HttpGet("/api/v1/Post/{postId}/comments")]
+        public async Task<IActionResult> GetCommentsByPostId(int postId, int page = 0, int pageSize = 0)
+        {
+            if (postId <= 0)
+            {
+                return BadRequest("Invalid post id.");
+            }
+
+            PageInfo pageInfo = new PageInfo(page, pageSize);
+            OperationResult result = await _repository.GetCommentsByPostIdAsync(postId, pageInfo);
+
+            if (result.Success)
+            {
+                return Ok(result.Data);
+            }
+
+            return NotFound(result.ErrorMessage);
+        }
+
+        [HttpGet("/api/v1/User/{username}/comments")]
+        public async Task<IActionResult> GetCommentsByUsername(string username, int page = 0, int pageSize = 0)
+        {
+            if (string.IsNullOrEmpty(username))
+            {
+                return BadRequest("Invalid username.");
+            }
+
+            PageInfo pageInfo = new PageInfo(page, pageSize);
+            OperationResult result = await _repository.GetCommentsByUsernameAsync(username, pageInfo);
+
+            if (result.Success)
+            {
+                return Ok(result.Data);
+            }
+
+            return NotFound(result.ErrorMessage);
+        }
+
+        [HttpGet("{commentId}/history")]
+        public async Task<IActionResult> GetCommentHistoryById(int commentId, int page = 0, int pageSize = 0)
+        {
+            if (commentId <= 0)
+            {
+                return BadRequest("Invalid comment id.");
+            }
+
+            OperationResult result = await _repository.GetCommentHistoryById(commentId, new PageInfo(page, pageSize));
+
+            if (result.Success)
+            {
+                return Ok(result.Data);
+            }
+
+            return NotFound(result.ErrorMessage);
+        }
+
+        [Authorize]
         [HttpPost()]
-        public IActionResult CreateComment()
+        public async Task<IActionResult> CreateComment(CreateCommentDto createCommentDto)
         {
-            // TODO: Implement this method
-            return Ok();
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            string? userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized("Invalid user credentials.");
+            }
+
+            OperationResult result = await _repository.CreateCommentAsync(userId, createCommentDto);
+
+            if (result.Success)
+            {
+                return Ok(result.Data);
+            }
+
+            return NotFound(result.ErrorMessage);
         }
 
+        [Authorize]
         [HttpPut()]
-        public IActionResult UpdateComment()
+        public async Task<IActionResult> UpdateComment(UpdateCommentDto updateCommentDto)
         {
-            // TODO: Implement this method
-            return Ok();
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            string? userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized("Invalid user credentials.");
+            }
+
+            OperationResult result = await _repository.UpdateCommentAsync(userId, updateCommentDto);
+
+            if (result.Success)
+            {
+                return Ok(result.Data);
+            }
+
+            return NotFound(result.ErrorMessage);
         }
 
+        [Authorize]
         [HttpDelete()]
-        public IActionResult DeleteComment(int commentId)
+        public async Task<IActionResult> DeleteComment(int commentId)
         {
-            // TODO: Implement this method
-            return Ok();
+            if (commentId <= 0)
+            {
+                return BadRequest("Invalid comment id.");
+            }
+
+            string? userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized("Invalid user credentials.");
+            }
+
+            OperationResult result = await _repository.DeleteCommentAsync(commentId, userId);
+
+            if (result.Success)
+            {
+                return Ok(result.Data);
+            }
+
+            return NotFound(result.ErrorMessage);
         }
     }
 }

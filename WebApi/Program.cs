@@ -36,6 +36,7 @@ builder.Services.AddIdentityApiEndpoints<IdentityUser>()
 // Services
 
 builder.Services.AddScoped<IPostRepository, PostRepository>();
+builder.Services.AddScoped<ICommentRepository, CommentRepository>();
 builder.Services.AddScoped<ICommonRepository, CommonRepository>();
 
 var app = builder.Build();

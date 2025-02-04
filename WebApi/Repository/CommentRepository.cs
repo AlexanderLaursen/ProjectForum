@@ -1,61 +1,57 @@
 ﻿using Mapster;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage;
-using Microsoft.Extensions.Configuration.UserSecrets;
 using WebApi.Data;
 using WebApi.Dto;
+using WebApi.Dto.Comment;
 using WebApi.Models;
 
 namespace WebApi.Repository
 {
-    public class PostRepository : IPostRepository
+    public class CommentRepository : ICommentRepository
     {
         private readonly DataContext _context;
         private readonly ICommonRepository _commonRepository;
 
-        public PostRepository(DataContext context, ICommonRepository commonRepository)
+        public CommentRepository(DataContext context, ICommonRepository commonRepository)
         {
             _context = context;
             _commonRepository = commonRepository;
         }
 
-        public async Task<OperationResult> GetPostByIdAsync(int postId)
+        public async Task<OperationResult> GetCommentByIdAsync(int commentId)
         {
-            if (postId <= 0)
+            if (commentId <= 0)
             {
                 return new OperationResult
                 {
                     Success = false,
-                    ErrorMessage = "Invalid post id."
+                    ErrorMessage = "Invalid comment id."
                 };
             }
 
             try
             {
-                var post = await _context.Posts
+                var comment = await _context.Comments
                     .Include(p => p.User)
-                    .Include(p => p.Comments)
-                    .ThenInclude(c => c.User)
-                    .FirstOrDefaultAsync(p => p.Id == postId);
+                    .FirstOrDefaultAsync(p => p.Id == commentId);
 
-                if (post == null)
+                if (comment == null)
                 {
                     return new OperationResult
                     {
                         Success = false,
-                        ErrorMessage = "Post not found."
+                        ErrorMessage = "Comment not found."
                     };
                 }
 
-                PostDto postDto = post.Adapt<PostDto>();
+                CommentDto commentDto = comment.Adapt<CommentDto>();
 
                 return new OperationResult
                 {
                     Success = true,
                     Data = new Dictionary<string, object>
                     {
-                        ["content"] = postDto
+                        ["content"] = commentDto
                     }
                 };
             }
@@ -69,37 +65,36 @@ namespace WebApi.Repository
             }
         }
 
-        // Spørgsmål omkring PaginatedOperationResult
-        public async Task<OperationResult> GetPostsByCategoryIdAsync(int categoryId, PageInfo pageInfo)
+        public async Task<OperationResult> GetCommentsByPostIdAsync(int postId, PageInfo pageInfo)
         {
-            if (categoryId <= 0)
+            if (postId <= 0)
             {
                 return new OperationResult
                 {
                     Success = false,
-                    ErrorMessage = "Invalid category id."
+                    ErrorMessage = "Invalid comment id."
                 };
             }
 
             try
             {
-                IQueryable<Post> query = _context.Posts
-                    .Include(p => p.User)
-                    .Where(p => p.CategoryId == categoryId)
+                IQueryable<Comment> query = _context.Comments
+                    .Include(c => c.User)
+                    .Where(c => c.PostId == postId)
                     .Skip(pageInfo.Skip)
                     .Take(pageInfo.PageSize);
 
                 int totalItems = query.Count();
 
-                List<Post> posts = await query.ToListAsync();
-                List<PostDto> postsDto = posts.Adapt<List<PostDto>>();
+                List<Comment> comments = await query.ToListAsync();
+                List<CommentDto> commentsDto = comments.Adapt<List<CommentDto>>();
 
                 return new OperationResult
                 {
                     Success = true,
                     Data = new Dictionary<string, object>
                     {
-                        ["content"] = postsDto,
+                        ["content"] = commentsDto,
                         ["pagination"] = new PageInfo
                         {
                             CurrentPage = pageInfo.CurrentPage,
@@ -119,7 +114,7 @@ namespace WebApi.Repository
             }
         }
 
-        public async Task<OperationResult> GetPostsByUsernameAsync(string username, PageInfo pageInfo)
+        public async Task<OperationResult> GetCommentsByUsernameAsync(string username, PageInfo pageInfo)
         {
             if (string.IsNullOrEmpty(username))
             {
@@ -143,23 +138,23 @@ namespace WebApi.Repository
 
             try
             {
-                IQueryable<Post> query = _context.Posts
-                    .Include(p => p.User)
-                    .Where(p => p.UserId == userId)
+                IQueryable<Comment> query = _context.Comments
+                    .Include(c => c.User)
+                    .Where(c => c.UserId == userId)
                     .Skip(pageInfo.Skip)
                     .Take(pageInfo.PageSize);
 
                 int totalItems = query.Count();
 
-                List<Post> posts = await query.ToListAsync();
-                List<PostDto> postsDto = posts.Adapt<List<PostDto>>();
+                List<Comment> comments = await query.ToListAsync();
+                List<CommentWithPostIdDto> commentsDto = comments.Adapt<List<CommentWithPostIdDto>>();
 
                 return new OperationResult
                 {
                     Success = true,
                     Data = new Dictionary<string, object>
                     {
-                        ["content"] = postsDto,
+                        ["content"] = commentsDto,
                         ["pagination"] = new PageInfo
                         {
                             CurrentPage = pageInfo.CurrentPage,
@@ -179,35 +174,35 @@ namespace WebApi.Repository
             }
         }
 
-        public async Task<OperationResult> GetPostHistoryByPostId(int postId, PageInfo pageInfo)
+        public async Task<OperationResult> GetCommentHistoryById(int commentId, PageInfo pageInfo)
         {
-            if (postId <= 0)
+            if (commentId <= 0)
             {
                 return new OperationResult
                 {
                     Success = false,
-                    ErrorMessage = "Invalid post id."
+                    ErrorMessage = "Invalid comment id."
                 };
             }
 
             try
             {
-                IQueryable<PostHistory> query = _context.PostHistory
-                    .Where(ph => ph.PostId == postId)
+                IQueryable<CommentHistory> query = _context.CommentHistory
+                    .Where(ch => ch.CommentId == commentId)
                     .Skip(pageInfo.Skip)
                     .Take(pageInfo.PageSize);
 
                 int totalItems = query.Count();
 
-                List<PostHistory> postHistories = await query.ToListAsync();
-                List<PostHistoryDto> postHistoriesDto = postHistories.Adapt<List<PostHistoryDto>>();
+                List<CommentHistory> commentHistory = await query.ToListAsync();
+                List<CommentHistoryDto> commentHistoryDto = commentHistory.Adapt<List<CommentHistoryDto>>();
 
                 return new OperationResult
                 {
                     Success = true,
                     Data = new Dictionary<string, object>
                     {
-                        ["content"] = postHistoriesDto,
+                        ["content"] = commentHistoryDto,
                         ["pagination"] = new PageInfo
                         {
                             CurrentPage = pageInfo.CurrentPage,
@@ -227,25 +222,24 @@ namespace WebApi.Repository
             }
         }
 
-        // TODO: Implement input validation for createPostDto
-        public async Task<OperationResult> CreatePostAsync(string userId, CreatePostDto createPostDto)
+        public async Task<OperationResult> CreateCommentAsync(string userId, CreateCommentDto createCommentDto)
         {
             try
             {
-                Post post = createPostDto.Adapt<Post>();
-                post.UserId = userId;
-                post.CreatedAt = DateTime.Now;
-                _context.Posts.Add(post);
+                Comment comment = createCommentDto.Adapt<Comment>();
+                comment.UserId = userId;
+                comment.CreatedAt = DateTime.Now;
+                _context.Comments.Add(comment);
                 await _context.SaveChangesAsync();
 
-                PostDto postDto = post.Adapt<PostDto>();
+                CommentDto commentDto = comment.Adapt<CommentDto>();
 
                 return new OperationResult
                 {
                     Success = true,
                     Data = new Dictionary<string, object>
                     {
-                        ["content"] = postDto
+                        ["content"] = commentDto
                     }
                 };
             }
@@ -259,15 +253,14 @@ namespace WebApi.Repository
             }
         }
 
-        // TODO: Implement input validation for createPostDto
-        public async Task<OperationResult> UpdatePostAsync(string userId, UpdatePostDto updatePostDto)
+        public async Task<OperationResult> UpdateCommentAsync(string userId, UpdateCommentDto updateCommentDto)
         {
-            if (updatePostDto.PostId <= 0)
+            if (updateCommentDto.CommentId <= 0)
             {
                 return new OperationResult
                 {
                     Success = false,
-                    ErrorMessage = "Invalid post id."
+                    ErrorMessage = "Invalid comment id."
                 };
             }
 
@@ -280,18 +273,18 @@ namespace WebApi.Repository
                 };
             }
 
-            Post? post = await _context.Posts.FirstOrDefaultAsync(p => p.Id == updatePostDto.PostId);
+            Comment? comment = await _context.Comments.FirstOrDefaultAsync(p => p.Id == updateCommentDto.CommentId);
 
-            if (post == null)
+            if (comment == null)
             {
                 return new OperationResult
                 {
                     Success = false,
-                    ErrorMessage = "Post not found."
+                    ErrorMessage = "Comment not found."
                 };
             }
 
-            if (post.UserId != userId)
+            if (comment.UserId != userId)
             {
                 return new OperationResult
                 {
@@ -299,35 +292,35 @@ namespace WebApi.Repository
                     ErrorMessage = "Unauthorized user."
                 };
             }
+
             using (var transaction = await _context.Database.BeginTransactionAsync())
                 try
                 {
-                    PostHistory postHistory = post.Adapt<PostHistory>();
-                    postHistory.Id = new int();
-                    postHistory.PostId = post.Id;
-                    postHistory.CreatedAt = post.EditedAt == DateTime.MinValue ? post.CreatedAt : post.EditedAt;
-                    _context.PostHistory.Add(postHistory);
+                    CommentHistory commentHistory = comment.Adapt<CommentHistory>();
+                    commentHistory.Id = new int();
+                    commentHistory.CommentId = comment.Id;
+                    commentHistory.CreatedAt = comment.EditedAt == DateTime.MinValue ? comment.CreatedAt : comment.EditedAt;
+                    _context.CommentHistory.Add(commentHistory);
                     await _context.SaveChangesAsync();
 
-                    int postHistoryId = postHistory.Id;
+                    int commentHistoryId = commentHistory.Id;
 
-                    post.PostHistory.Add(postHistory);
-                    post.Edited = true;
-                    post.EditedAt = DateTime.Now;
-                    post.Content = updatePostDto.Content;
-                    _context.Posts.Update(post);
-
+                    comment.CommentHistory.Add(commentHistory);
+                    comment.Edited = true;
+                    comment.EditedAt = DateTime.Now;
+                    comment.Content = updateCommentDto.Content;
+                    _context.Comments.Update(comment);
                     await _context.SaveChangesAsync();
 
                     await transaction.CommitAsync();
 
-                    PostDto postDto = post.Adapt<PostDto>();
+                    CommentDto commentDto = comment.Adapt<CommentDto>();
                     return new OperationResult
                     {
                         Success = true,
                         Data = new Dictionary<string, object>
                         {
-                            ["content"] = postDto
+                            ["content"] = commentDto
                         }
                     };
                 }
@@ -343,14 +336,14 @@ namespace WebApi.Repository
                 }
         }
 
-        public async Task<OperationResult> DeletePostAsync(int postId, string userId)
+        public async Task<OperationResult> DeleteCommentAsync(int commentId, string userId)
         {
-            if (postId <= 0)
+            if (commentId <= 0)
             {
                 return new OperationResult
                 {
                     Success = false,
-                    ErrorMessage = "Invalid post id."
+                    ErrorMessage = "Invalid comment id."
                 };
             }
 
@@ -363,18 +356,18 @@ namespace WebApi.Repository
                 };
             }
 
-            Post? post = await _context.Posts.FirstOrDefaultAsync(p => p.Id == postId);
+            Comment? comment = await _context.Comments.FirstOrDefaultAsync(c => c.Id == commentId);
 
-            if (post == null)
+            if (comment == null)
             {
                 return new OperationResult
                 {
                     Success = false,
-                    ErrorMessage = "Post not found."
+                    ErrorMessage = "Comment not found."
                 };
             }
 
-            if (post.UserId != userId)
+            if (comment.UserId != userId)
             {
                 return new OperationResult
                 {
@@ -385,7 +378,7 @@ namespace WebApi.Repository
 
             try
             {
-                _context.Posts.Remove(post);
+                _context.Comments.Remove(comment);
                 await _context.SaveChangesAsync();
 
                 return new OperationResult
