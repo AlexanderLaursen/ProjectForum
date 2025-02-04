@@ -36,6 +36,7 @@ builder.Services.AddIdentityApiEndpoints<IdentityUser>()
 // Services
 
 builder.Services.AddScoped<IPostRepository, PostRepository>();
+builder.Services.AddScoped<ICommonRepository, CommonRepository>();
 
 var app = builder.Build();
 
@@ -49,6 +50,8 @@ if (app.Environment.IsDevelopment())
         options.RoutePrefix = string.Empty;
     });
 }
+
+MapsterConfig.RegisterMappings();
 
 // Add Identity API
 app.MapIdentityApi<IdentityUser>();

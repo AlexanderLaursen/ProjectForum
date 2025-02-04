@@ -36,11 +36,40 @@ namespace WebApi.Controllers
             return NotFound(result.ErrorMessage);
         }
 
-        [HttpGet("/api/v1/User/{userId}/posts")]
-        public IActionResult GetPostsByUserId(int userId, int page = 0, int pageSize = 0)
+        [HttpGet("/api/v1/User/{username}/posts")]
+        public async Task<IActionResult> GetPostsByUsername(string username, int page = 0, int pageSize = 0)
         {
-            // TODO: Implement this method
-            return Ok();
+            if (string.IsNullOrEmpty(username))
+            {
+                return Unauthorized("Invalid user credentials.");
+            }
+
+            OperationResult result = await _repository.GetPostsByUsernameAsync(username, new PageInfo(page, pageSize));
+
+            if (result.Success)
+            {
+                return Ok(result.Data);
+            }
+
+            return BadRequest(result.ErrorMessage);
+        }
+
+        [HttpGet("/api/v1/Post/{postId}/history")]
+        public async Task<IActionResult> GetPostHistoryByPostId(int postId, int page = 0, int pageSize = 0)
+        {
+            if (postId <= 0)
+            {
+                return BadRequest("Invalid post id.");
+            }
+
+            OperationResult result = await _repository.GetPostHistoryByPostId(postId, new PageInfo(page, pageSize));
+
+            if (result.Success)
+            {
+                return Ok(result.Data);
+            }
+
+            return NotFound(result.ErrorMessage);
         }
 
         [HttpGet("{postId}")]
@@ -61,7 +90,9 @@ namespace WebApi.Controllers
             return NotFound(result.ErrorMessage);
         }
 
-        [HttpPost(), Authorize]
+        // TODO: Implement input validation
+        [Authorize]
+        [HttpPost()]
         public async Task<IActionResult> CreatePost([FromBody] CreatePostDto createPostDto)
         {
             if (!ModelState.IsValid)
@@ -73,10 +104,10 @@ namespace WebApi.Controllers
 
             if (string.IsNullOrEmpty(userId))
             {
-                return Unauthorized("Invalid user credentials");
+                return Unauthorized("Invalid user credentials.");
             }
 
-            OperationResult result = await _repository.CreatePostAsync(createPostDto, userId);
+            OperationResult result = await _repository.CreatePostAsync(userId, createPostDto);
 
             if (result.Success)
             {
@@ -86,18 +117,56 @@ namespace WebApi.Controllers
             return BadRequest(result.ErrorMessage);
         }
 
+
+        // TODO: Implement input validation
+        [Authorize]
         [HttpPut()]
-        public IActionResult UpdatePost(Post post)
+        public async Task<IActionResult> UpdatePost(UpdatePostDto updatePostDto)
         {
-            // TODO: Implement this method
-            return Ok();
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            string? userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized("Invalid user credentials.");
+            }
+
+            OperationResult result = await _repository.UpdatePostAsync(userId, updatePostDto);
+
+            if (result.Success)
+            {
+                return Ok(result.Data);
+            }
+
+            return BadRequest(result.ErrorMessage);
         }
 
+        [Authorize]
         [HttpDelete()]
-        public IActionResult DeletePost(int postId)
+        public async Task<IActionResult> DeletePost(int postId)
         {
-            // TODO: Implement this method
-            return Ok();
+            if (postId <= 0)
+            {
+                return BadRequest("Invalid post id.");
+            }
+
+            string? userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized("Invalid user credentials.");
+            }
+
+            OperationResult result = await _repository.DeletePostAsync(postId, userId);
+            if (result.Success)
+            {
+                return Ok();
+            }
+
+            return BadRequest(result.ErrorMessage);
         }
     }
 }

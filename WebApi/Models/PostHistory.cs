@@ -2,23 +2,17 @@
 
 namespace WebApi.Models
 {
-    public class Post
+    public class PostHistory
     {
         public int Id { get; set; }
-        public string Title { get; set; }
         public string Content { get; set; }
         public DateTime CreatedAt { get; set; }
-        public int Likes { get; set; }
-        public bool Active { get; set; }
-        public bool Edited { get; set; }
-        public DateTime EditedAt { get; set; }
         public string UserId { get; set; }
         public int CategoryId { get; set; }
-
+        public int PostId { get; set; }
 
         public IdentityUser User { get; set; }
         public Category Category { get; set; }
-        public List<Comment> Comments { get; set; }
-        public List<PostHistory> PostHistory { get; set; }
+        public Post Post { get; set; }
     }
 }
