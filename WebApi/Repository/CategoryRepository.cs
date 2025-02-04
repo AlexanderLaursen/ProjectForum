@@ -19,7 +19,8 @@ namespace WebApi.Repository
         {
             try
             {
-                List<Category> categories = await _context.Categories.ToListAsync();
+
+                List<Category> categories = _context.Categories.ToList();
                 List<CategoryDto> categoriesDtos = categories.Adapt<List<CategoryDto>>();
 
                 return new OperationResult
@@ -43,15 +44,6 @@ namespace WebApi.Repository
 
         public async Task<OperationResult> GetCategoryByIdAsync(int id)
         {
-            if (id <= 0)
-            {
-                return new OperationResult
-                {
-                    Success = false,
-                    ErrorMessage = "Invalid Id"
-                };
-            }
-
             try
             {
                 Category? category = await _context.Categories.FirstOrDefaultAsync(c => c.Id == id);
@@ -60,7 +52,7 @@ namespace WebApi.Repository
                     return new OperationResult
                     {
                         Success = false,
-                        ErrorMessage = "Category not found"
+                        ErrorMessage = "Category not found."
                     };
                 }
 
@@ -83,6 +75,7 @@ namespace WebApi.Repository
                     ErrorMessage = $"{ex.Message} - {ex.InnerException?.ToString()}"
                 };
             }
+
         }
     }
 }

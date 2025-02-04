@@ -3,11 +3,11 @@ using WebApi.Models;
 
 public interface ICommentRepository
 {
-    Task<OperationResult> GetCommentByIdAsync(int commentId);
-    Task<OperationResult> GetCommentsByPostIdAsync(int postId, PageInfo pageInfo);
-    Task<OperationResult> GetCommentsByUsernameAsync(string username, PageInfo pageInfo);
-    Task<OperationResult> GetCommentHistoryById(int commentId, PageInfo pageInfo);
-    Task<OperationResult> CreateCommentAsync(string userId, CreateCommentDto createCommentDto);
-    Task<OperationResult> UpdateCommentAsync(string userId, UpdateCommentDto updateCommentDto);
-    Task<OperationResult> DeleteCommentAsync(int commentId, string userId);
+    public Task<OperationResult> GetCommentByIdAsync(int commentId);
+    public Task<OperationResult> GetCommentsByPostIdAsync(int postId, PageInfo pageInfo);
+    public Task<OperationResult> GetCommentsByUsernameAsync(string username, PageInfo pageInfo);
+    public Task<OperationResult> GetCommentHistoryById(int commentId, PageInfo pageInfo);
+    public Task<OperationResult> CreateCommentAsync(string userId, CreateCommentDto createCommentDto);
+    public Task<OperationResult> UpdateCommentAsync(string userId, UpdateCommentDto updateCommentDto);
+    public Task<OperationResult> DeleteCommentAsync(int commentId, string userId);
 }
