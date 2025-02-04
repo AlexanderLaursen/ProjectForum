@@ -1,4 +1,5 @@
 ﻿using MVC.Models;
+using System.Text.Json;
 
 namespace MVC.Services
 {
@@ -12,10 +13,17 @@ namespace MVC.Services
 
         public async Task<List<Category>> GetCategories()
         {
-            var test = _httpClient.GetAsync("https://localhost:7052/api/v1/Category");
-            Console.WriteLine(test);
-            var categories = await _httpClient.GetFromJsonAsync<List<Category>>("https://localhost:7052/api/v1/Category");
-            return categories ?? new List<Category>();
+            var response = await _httpClient.GetAsync("https://localhost:7052/api/v1/Category");
+            response.EnsureSuccessStatusCode();
+            var responseBody = await response.Content.ReadAsStringAsync();
+            var apiResponse = JsonSerializer.Deserialize<ApiResponse>(responseBody, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            return apiResponse.Content ?? new List<Category>();
         }
+
+        public class ApiResponse
+        {
+            public List<Category> Content { get; set; }
+        }
+
     }
 }

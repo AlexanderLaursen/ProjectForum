@@ -20,7 +20,7 @@ namespace WebApi.Repository
             try
             {
 
-                List<Category> categories = _context.Categories.ToList();
+                List<Category> categories = await _context.Categories.ToListAsync();
                 List<CategoryDto> categoriesDtos = categories.Adapt<List<CategoryDto>>();
 
                 return new OperationResult

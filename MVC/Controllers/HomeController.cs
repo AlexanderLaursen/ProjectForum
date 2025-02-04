@@ -18,8 +18,8 @@ namespace MVC.Controllers
 
         public async Task<IActionResult> Index()
         {
-            //List<Category> categories = await _categoryService.GetCategories();
-            return View(categories);
+            List<Category> categories = await _categoryService.GetCategories();
+            return Ok(categories);
         }
 
         public IActionResult Privacy()
