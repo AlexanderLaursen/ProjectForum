@@ -244,7 +244,7 @@ namespace WebApi.Repository
                     Success = true,
                     Data = new Dictionary<string, object>
                     {
-                        { "content", commentDto }
+                        { "content", commentList }
                     }
                 };
             }

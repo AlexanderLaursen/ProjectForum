@@ -67,11 +67,8 @@ namespace MVC.Controllers
             return View("Post", viewModel);
         }
 
-        // TODO
-        //[HttpGet("Post/{postId}/comments")]
-
         [HttpGet("Post/CreatePost")]
-        public async Task<IActionResult> CreatePost(int categoryId = 0)
+        public IActionResult CreatePost(int categoryId = 0)
         {
             CreatePostViewModel createPostViewModel = new CreatePostViewModel
             {
