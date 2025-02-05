@@ -19,6 +19,8 @@ namespace MVC.Controllers
 
         public async Task<IActionResult> Index()
         {
+            ViewBag.IsLoggedIn = HttpContext.Session.GetString("Bearer") != null;
+
             ApiResponse<Category> apiResponse = await _categoryService.GetCategoriesAsync();
 
             HomeViewModel viewModel = new HomeViewModel

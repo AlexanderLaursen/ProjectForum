@@ -1,4 +1,6 @@
 ﻿using MVC.Models;
+using MVC.Models.Dto;
+using MVC.Models.ViewModels;
 
 namespace MVC.Services
 {
@@ -21,7 +23,7 @@ namespace MVC.Services
                 return new ApiResponse<Post>();
             }
 
-            return await _commonApiService.GetApiResponse<Post>($"{CATEGORY_PREFIX}/{categoryId}/posts");
+            return await _commonApiService.GetApiResponseAsync<Post>($"{CATEGORY_PREFIX}/{categoryId}/posts");
         }
 
         public async Task<ApiResponse<Post>> GetPostByIdAsync(int id)
@@ -31,7 +33,24 @@ namespace MVC.Services
                 return new ApiResponse<Post>();
             }
 
-            return await _commonApiService.GetApiResponse<Post>($"{POST_PREFIX}/{id}");
+            return await _commonApiService.GetApiResponseAsync<Post>($"{POST_PREFIX}/{id}");
+        }
+
+        public async Task<ApiResponse<Post>> CreatePostAsync(CreatePostViewModel viewModel, string bearerToken)
+        {
+            if (viewModel == null)
+            {
+                return new ApiResponse<Post>();
+            }
+
+            CreatePostDto createPostDto = new CreatePostDto
+            {
+                Title = viewModel.Title,
+                Content = viewModel.Content,
+                CategoryId = viewModel.CategoryId
+            };
+
+            return await _commonApiService.PostApiReponseAsync<Post>($"{POST_PREFIX}", createPostDto, bearerToken);
         }
     }
 }

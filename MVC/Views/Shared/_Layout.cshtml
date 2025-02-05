@@ -1,4 +1,8 @@
-﻿<!DOCTYPE html>
+﻿@{
+    bool isLoggedIn = Context.Session.GetString("Bearer") != null;
+}
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -27,6 +31,17 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
                     </ul>
+                </div>
+                <div class="d-flex justify-content-center w-100">
+                    @if (isLoggedIn)
+                    {
+                        <a class="btn btn-danger ms-auto me-2" asp-controller="Login" asp-action="Logout">Logout</a>
+                    }
+                    else
+                    {
+                        <a class="btn btn-primary ms-auto me-2" asp-controller="Login" asp-action="Index">Login</a>
+                        <a class="btn btn-secondary me-2" asp-controller="Register" asp-action="Index">Register</a>
+                    }
                 </div>
             </div>
         </nav>

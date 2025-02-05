@@ -10,7 +10,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<HttpClient>();
 builder.Services.AddScoped<CategoryService>();
 builder.Services.AddScoped<PostService>();
-builder.Services.AddScoped<LoginService>();
+builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<CommonApiService>();
 
 var app = builder.Build();

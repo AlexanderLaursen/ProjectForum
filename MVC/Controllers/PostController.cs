@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using MVC.Helpers;
 using MVC.Models;
 using MVC.Models.ViewModels;
 using MVC.Services;
@@ -8,9 +9,11 @@ namespace MVC.Controllers
     public class PostController : Controller
     {
         private readonly PostService _postService;
-        public PostController(PostService postService)
+        private readonly CategoryService _categoryService;
+        public PostController(PostService postService, CategoryService categoryService)
         {
             _postService = postService;
+            _categoryService = categoryService;
         }
 
         [HttpGet("Category/{categoryId}/posts")]
@@ -22,13 +25,16 @@ namespace MVC.Controllers
             }
 
             ApiResponse<Post> response = await _postService.GetPostsByCategoryId(categoryId);
+            ApiResponse<Category> categoryResponse = await _categoryService.GetCategoryByIdAsync(categoryId);
+
             if (!response.IsSuccess)
             {
                 return NotFound();
             }
 
-            CategoryViewModel viewModel = new CategoryViewModel
+            PostsViewModel viewModel = new PostsViewModel
             {
+                Category = categoryResponse.Content[0],
                 Posts = response.Content,
                 PageInfo = response.PageInfo
             };
@@ -39,7 +45,7 @@ namespace MVC.Controllers
         [HttpGet("Post/{postId}")]
         public async Task<IActionResult> GetPostById(int postId)
         {
-            if (postId  <= 0)
+            if (postId <= 0)
             {
                 return BadRequest();
             }
@@ -59,6 +65,44 @@ namespace MVC.Controllers
             };
 
             return View("Post", viewModel);
+        }
+
+        // TODO
+        //[HttpGet("Post/{postId}/comments")]
+
+        [HttpGet("Post/CreatePost")]
+        public async Task<IActionResult> CreatePost(int categoryId = 0)
+        {
+            CreatePostViewModel createPostViewModel = new CreatePostViewModel
+            {
+                CategoryId = categoryId
+            };
+            return View(createPostViewModel);
+        }
+
+        [HttpPost("Post/CreatePost")]
+        public async Task<IActionResult> CreatePost(CreatePostViewModel viewModel)
+        {
+            if (!ModelState.IsValid)
+            {
+                return RedirectToAction("CreatePost", new { categoryId = viewModel.CategoryId });
+            }
+
+            string? bearerToken = HttpContext.Session.GetJson<string>("Bearer");
+
+            if (string.IsNullOrEmpty(bearerToken))
+            {
+                return RedirectToAction("Index", "Login");
+            }
+
+            ApiResponse<Post> response = await _postService.CreatePostAsync(viewModel, bearerToken);
+
+            if (!response.IsSuccess)
+            {
+                return RedirectToAction("CreatePost", new { categoryId = viewModel.CategoryId });
+            }
+
+            return RedirectToAction("GetPostById", new { postId = response.Content[0].Id });
         }
     }
 }

@@ -16,7 +16,7 @@ namespace MVC.Services
 
         public async Task<ApiResponse<Category>> GetCategoriesAsync()
         {
-            return await _commonApiService.GetApiResponse<Category>(PREFIX);
+            return await _commonApiService.GetApiResponseAsync<Category>(PREFIX);
         }
 
         public async Task<ApiResponse<Category>> GetCategoryByIdAsync(int id)
@@ -26,7 +26,7 @@ namespace MVC.Services
                 return new ApiResponse<Category>();
             }
 
-            return await _commonApiService.GetApiResponse<Category>($"{PREFIX}/{id}");
+            return await _commonApiService.GetApiResponseAsync<Category>($"{PREFIX}/{id}");
         }
     }
 }

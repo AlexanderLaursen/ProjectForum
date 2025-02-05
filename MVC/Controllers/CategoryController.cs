@@ -23,7 +23,7 @@ namespace MVC.Controllers
 
             ApiResponse<Category> apiResponse = await _categoryService.GetCategoryByIdAsync(id);
 
-            CategoryViewModel viewModel = new CategoryViewModel
+            PostsViewModel viewModel = new PostsViewModel
             {
                 Category = apiResponse.Content[0]
             };

@@ -1,4 +1,5 @@
-﻿using System.Net.Http;
+﻿using System.Net;
+using System.Net.Http;
 using System.Text;
 using System.Text.Json;
 using MVC.Models;
@@ -6,13 +7,16 @@ using MVC.Models.ViewModels;
 
 namespace MVC.Services
 {
-    public class LoginService
+    public class AuthService
     {
         private const string BASE_URL = "https://localhost:7052/";
+        private const string LOGIN_ENDPOINT = "login";
+        private const string REGISTER_ENDPOINT = "register";
+        public bool IsLoggedIn;
 
         private readonly HttpClient _httpClient;
 
-        public LoginService(HttpClient httpClient)
+        public AuthService(HttpClient httpClient)
         {
             _httpClient = httpClient;
         }
@@ -24,12 +28,11 @@ namespace MVC.Services
                 string contentString = JsonSerializer.Serialize(loginData);
                 HttpContent contentHttp = new StringContent(contentString, Encoding.UTF8, "application/json");
 
-                var response = await _httpClient.PostAsync("https://localhost:7052/login", contentHttp);
-
+                var response = await _httpClient.PostAsync(BASE_URL + LOGIN_ENDPOINT, contentHttp);
 
                 if (response.IsSuccessStatusCode)
                 {
-                    var responseContent = await response.Content.ReadAsStringAsync();
+                    string responseContent = await response.Content.ReadAsStringAsync();
                     var token = JsonSerializer.Deserialize<BearerToken>(responseContent, new JsonSerializerOptions
                     {
                         PropertyNameCaseInsensitive = true
@@ -47,6 +50,8 @@ namespace MVC.Services
                     loginResponse.IsSuccess = true;
                     loginResponse.Token = token;
 
+                    IsLoggedIn = true;
+
                     return loginResponse;
                 }
             }
@@ -61,6 +66,37 @@ namespace MVC.Services
             return new LoginResponse
             {
                 IsSuccess = false,
+            };
+        }
+
+        public async Task<ApiResponse<object>> RegisterAsync(LoginData loginData)
+        {
+            try
+            {
+                string contentString = JsonSerializer.Serialize(loginData);
+                HttpContent contentHttp = new StringContent(contentString, Encoding.UTF8, "application/json");
+
+                var response = await _httpClient.PostAsync(BASE_URL + REGISTER_ENDPOINT, contentHttp);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    return new ApiResponse<object>
+                    {
+                        IsSuccess = true
+                    };
+                }
+            }
+            catch
+            {
+                return new ApiResponse<object>
+                {
+                    IsSuccess = false
+                };
+            }
+
+            return new ApiResponse<object>
+            {
+                IsSuccess = false
             };
         }
     }
