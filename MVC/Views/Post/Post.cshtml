@@ -1,0 +1,15 @@
+﻿@model PostViewModel
+@{
+}
+
+<div class="">
+    <div>
+        @Model.Post.Title
+    </div>
+    @foreach(Comment comment in Model.Comments)
+    {
+        <div>
+            @comment.Content
+        </div>
+    }
+</div>

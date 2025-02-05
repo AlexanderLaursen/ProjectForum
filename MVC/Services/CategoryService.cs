@@ -5,25 +5,28 @@ namespace MVC.Services
 {
     public class CategoryService
     {
+        private const string PREFIX = "Category";
         private readonly HttpClient _httpClient;
-        public CategoryService(HttpClient httpClient)
+        private readonly CommonApiService _commonApiService;
+        public CategoryService(HttpClient httpClient, CommonApiService commonApiService)
         {
             _httpClient = httpClient;
+            _commonApiService = commonApiService;
         }
 
-        public async Task<List<Category>> GetCategories()
+        public async Task<ApiResponse<Category>> GetCategoriesAsync()
         {
-            var response = await _httpClient.GetAsync("https://localhost:7052/api/v1/Category");
-            response.EnsureSuccessStatusCode();
-            var responseBody = await response.Content.ReadAsStringAsync();
-            var apiResponse = JsonSerializer.Deserialize<ApiResponse>(responseBody, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-            return apiResponse.Content ?? new List<Category>();
+            return await _commonApiService.GetApiResponse<Category>(PREFIX);
         }
 
-        public class ApiResponse
+        public async Task<ApiResponse<Category>> GetCategoryByIdAsync(int id)
         {
-            public List<Category> Content { get; set; }
-        }
+            if(id <= 0)
+            {
+                return new ApiResponse<Category>();
+            }
 
+            return await _commonApiService.GetApiResponse<Category>($"{PREFIX}/{id}");
+        }
     }
 }

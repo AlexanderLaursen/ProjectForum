@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using MVC.Models;
+using MVC.Models.ViewModels;
 using MVC.Services;
 using System.Diagnostics;
 
@@ -18,8 +19,14 @@ namespace MVC.Controllers
 
         public async Task<IActionResult> Index()
         {
-            List<Category> categories = await _categoryService.GetCategories();
-            return Ok(categories);
+            ApiResponse<Category> apiResponse = await _categoryService.GetCategoriesAsync();
+
+            HomeViewModel viewModel = new HomeViewModel
+            {
+                Categories = apiResponse.Content
+            };
+
+            return View(viewModel);
         }
 
         public IActionResult Privacy()

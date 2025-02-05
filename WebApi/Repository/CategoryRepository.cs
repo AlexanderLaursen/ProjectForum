@@ -58,12 +58,14 @@ namespace WebApi.Repository
 
                 CategoryDto categoryDto = category.Adapt<CategoryDto>();
 
+                List<CategoryDto> categoryDtoList = [categoryDto];
+
                 return new OperationResult
                 {
                     Success = true,
                     Data = new Dictionary<string, object>
                     {
-                        { "content", categoryDto }
+                        { "content", categoryDtoList }
                     }
                 };
             }

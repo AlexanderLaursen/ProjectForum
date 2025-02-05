@@ -45,13 +45,14 @@ namespace WebApi.Repository
                 }
 
                 CommentDto commentDto = comment.Adapt<CommentDto>();
+                List<CommentDto> commentList = [commentDto];
 
                 return new OperationResult
                 {
                     Success = true,
                     Data = new Dictionary<string, object>
                     {
-                        ["content"] = commentDto
+                        { "content", commentList }
                     }
                 };
             }
@@ -94,12 +95,13 @@ namespace WebApi.Repository
                     Success = true,
                     Data = new Dictionary<string, object>
                     {
-                        ["content"] = commentsDto,
-                        ["pagination"] = new PageInfo
-                        {
-                            CurrentPage = pageInfo.CurrentPage,
-                            PageSize = pageInfo.PageSize,
-                            TotalItems = totalItems
+                        { "content", commentsDto },
+                        { "pagination", new PageInfo
+                            {
+                                CurrentPage = pageInfo.CurrentPage,
+                                PageSize = pageInfo.PageSize,
+                                TotalItems = totalItems
+                            }
                         }
                     }
                 };
@@ -154,12 +156,13 @@ namespace WebApi.Repository
                     Success = true,
                     Data = new Dictionary<string, object>
                     {
-                        ["content"] = commentsDto,
-                        ["pagination"] = new PageInfo
-                        {
-                            CurrentPage = pageInfo.CurrentPage,
-                            PageSize = pageInfo.PageSize,
-                            TotalItems = totalItems
+                        { "content", commentsDto },
+                        { "pagination", new PageInfo
+                            {
+                                CurrentPage = pageInfo.CurrentPage,
+                                PageSize = pageInfo.PageSize,
+                                TotalItems = totalItems
+                            }
                         }
                     }
                 };
@@ -202,12 +205,13 @@ namespace WebApi.Repository
                     Success = true,
                     Data = new Dictionary<string, object>
                     {
-                        ["content"] = commentHistoryDto,
-                        ["pagination"] = new PageInfo
-                        {
-                            CurrentPage = pageInfo.CurrentPage,
-                            PageSize = pageInfo.PageSize,
-                            TotalItems = totalItems
+                        { "content", commentHistoryDto },
+                        { "pagination", new PageInfo
+                            {
+                                CurrentPage = pageInfo.CurrentPage,
+                                PageSize = pageInfo.PageSize,
+                                TotalItems = totalItems
+                            }
                         }
                     }
                 };
@@ -233,13 +237,14 @@ namespace WebApi.Repository
                 await _context.SaveChangesAsync();
 
                 CommentDto commentDto = comment.Adapt<CommentDto>();
+                List<CommentDto> commentList = [commentDto];
 
                 return new OperationResult
                 {
                     Success = true,
                     Data = new Dictionary<string, object>
                     {
-                        ["content"] = commentDto
+                        { "content", commentDto }
                     }
                 };
             }
@@ -320,7 +325,7 @@ namespace WebApi.Repository
                         Success = true,
                         Data = new Dictionary<string, object>
                         {
-                            ["content"] = commentDto
+                            { "content", commentDto }
                         }
                     };
                 }

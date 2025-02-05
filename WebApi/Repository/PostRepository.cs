@@ -49,13 +49,14 @@ namespace WebApi.Repository
                 }
 
                 PostDto postDto = post.Adapt<PostDto>();
+                List<PostDto> postList = [postDto];
 
                 return new OperationResult
                 {
                     Success = true,
                     Data = new Dictionary<string, object>
                     {
-                        ["content"] = postDto
+                        { "content", postList }
                     }
                 };
             }
@@ -99,12 +100,13 @@ namespace WebApi.Repository
                     Success = true,
                     Data = new Dictionary<string, object>
                     {
-                        ["content"] = postsDto,
-                        ["pagination"] = new PageInfo
-                        {
-                            CurrentPage = pageInfo.CurrentPage,
-                            PageSize = pageInfo.PageSize,
-                            TotalItems = totalItems
+                        { "content", postsDto },
+                        { "pagination", new PageInfo
+                            {
+                                CurrentPage = pageInfo.CurrentPage,
+                                PageSize = pageInfo.PageSize,
+                                TotalItems = totalItems
+                            }
                         }
                     }
                 };
@@ -159,12 +161,13 @@ namespace WebApi.Repository
                     Success = true,
                     Data = new Dictionary<string, object>
                     {
-                        ["content"] = postsDto,
-                        ["pagination"] = new PageInfo
-                        {
-                            CurrentPage = pageInfo.CurrentPage,
-                            PageSize = pageInfo.PageSize,
-                            TotalItems = totalItems
+                        { "content", postsDto },
+                        { "pagination", new PageInfo
+                            {
+                                CurrentPage = pageInfo.CurrentPage,
+                                PageSize = pageInfo.PageSize,
+                                TotalItems = totalItems
+                            }
                         }
                     }
                 };
@@ -207,12 +210,13 @@ namespace WebApi.Repository
                     Success = true,
                     Data = new Dictionary<string, object>
                     {
-                        ["content"] = postHistoriesDto,
-                        ["pagination"] = new PageInfo
-                        {
-                            CurrentPage = pageInfo.CurrentPage,
-                            PageSize = pageInfo.PageSize,
-                            TotalItems = totalItems
+                        { "content", postHistoriesDto },
+                        { "pagination", new PageInfo
+                            {
+                                CurrentPage = pageInfo.CurrentPage,
+                                PageSize = pageInfo.PageSize,
+                                TotalItems = totalItems
+                            }
                         }
                     }
                 };
@@ -239,13 +243,14 @@ namespace WebApi.Repository
                 await _context.SaveChangesAsync();
 
                 PostDto postDto = post.Adapt<PostDto>();
+                List<PostDto> postList = [postDto];
 
                 return new OperationResult
                 {
                     Success = true,
                     Data = new Dictionary<string, object>
                     {
-                        ["content"] = postDto
+                        { "content", postList }
                     }
                 };
             }
@@ -322,12 +327,14 @@ namespace WebApi.Repository
                     await transaction.CommitAsync();
 
                     PostDto postDto = post.Adapt<PostDto>();
+                    List<PostDto> postList = [postDto];
+
                     return new OperationResult
                     {
                         Success = true,
                         Data = new Dictionary<string, object>
                         {
-                            ["content"] = postDto
+                            { "content", postList }
                         }
                     };
                 }
