@@ -82,7 +82,7 @@ namespace Webserver.TagHelpers
             }
 
             // Hvis sidste side ikke vises indsættes der "..." med href til første side
-            if (PageInfo.CurrentPage + 3 < PageInfo.TotalPages)
+            if (PageInfo.CurrentPage + 2 < PageInfo.TotalPages)
             {
                 TagBuilder lastTag = TagBuilderHelper(PageInfo.TotalPages, "...");
                 ulTag.InnerHtml.AppendHtml(lastTag);
@@ -113,9 +113,6 @@ namespace Webserver.TagHelpers
         {
             string currentUrl = ViewContext?.HttpContext.Request.Path.ToString()!;
 
-            //if (currentUrl == "/")
-            //    return $"/?page={targetPage}";
-
             if (currentUrl.StartsWith("/Category"))
             {
                 string url = $"/Category/{Id}/posts?page={targetPage}";
@@ -126,9 +123,6 @@ namespace Webserver.TagHelpers
 
                 return url;
             }
-
-            //if (currentUrl.StartsWith("/topscorer"))
-            //    return $"/topscorer?page={targetPage}";
 
             return string.Empty;
         }
