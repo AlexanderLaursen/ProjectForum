@@ -43,7 +43,7 @@ namespace WebApi.Controllers
                 return BadRequest("Invalid category id.");
             }
 
-            PageInfo pageInfo = new PageInfo (pageSize, page);
+            PageInfo pageInfo = new PageInfo (page, pageSize);
             OperationResult result = await _repository.GetPostsByCategoryIdAsync(categoryInt, pageInfo);
 
             if (result.Success)

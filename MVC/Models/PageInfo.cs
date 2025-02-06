@@ -20,7 +20,7 @@
             get => _pageSize;
             set
             {
-                _pageSize = ValidatePageSize(DEFAULT_PAGE_SIZE);
+                _pageSize = ValidatePageSize(value);
             }
         }
 
@@ -47,16 +47,16 @@
             CurrentPage = currentPage;
         }
 
-        public PageInfo(int currentPage, int itemsPerPage)
+        public PageInfo(int currentPage, int pageSize)
         {
             CurrentPage = currentPage;
-            PageSize = itemsPerPage;
+            PageSize = pageSize;
         }
 
-        public PageInfo(int currentPage, int itemsPerPage, int totalItems)
+        public PageInfo(int currentPage, int pageSize, int totalItems)
         {
             CurrentPage = currentPage;
-            PageSize = itemsPerPage;
+            PageSize = pageSize;
             TotalItems = totalItems;
         }
 

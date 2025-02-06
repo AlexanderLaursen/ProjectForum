@@ -17,14 +17,14 @@ namespace MVC.Controllers
         }
 
         [HttpGet("Category/{categoryId}/posts")]
-        public async Task<IActionResult> GetPostsByCategoryId(int categoryId)
+        public async Task<IActionResult> GetPostsByCategoryId(int categoryId, int page, int pageSize)
         {
             if (categoryId <= 0)
             {
                 return BadRequest("Invalid category id.");
             }
-
-            ApiResponse<Post> response = await _postService.GetPostsByCategoryId(categoryId);
+            PageInfo pageInfo = new PageInfo(page, pageSize);
+            ApiResponse<Post> response = await _postService.GetPostsByCategoryIdAsync(categoryId, pageInfo);
             ApiResponse<Category> categoryResponse = await _categoryService.GetCategoryByIdAsync(categoryId);
 
             if (!response.IsSuccess)

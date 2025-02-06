@@ -20,7 +20,7 @@
             get => _pageSize;
             set
             {
-                _pageSize = ValidatePageSize(DEFAULT_PAGE_SIZE);
+                _pageSize = ValidatePageSize(value);
             }
         }
 

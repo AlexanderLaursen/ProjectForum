@@ -96,7 +96,7 @@ namespace WebApi.Repository
                     Data = new Dictionary<string, object>
                     {
                         { "content", commentsDto },
-                        { "pagination", new PageInfo
+                        { "pageInfo", new PageInfo
                             {
                                 CurrentPage = pageInfo.CurrentPage,
                                 PageSize = pageInfo.PageSize,
@@ -157,7 +157,7 @@ namespace WebApi.Repository
                     Data = new Dictionary<string, object>
                     {
                         { "content", commentsDto },
-                        { "pagination", new PageInfo
+                        { "pageInfo", new PageInfo
                             {
                                 CurrentPage = pageInfo.CurrentPage,
                                 PageSize = pageInfo.PageSize,
@@ -206,7 +206,7 @@ namespace WebApi.Repository
                     Data = new Dictionary<string, object>
                     {
                         { "content", commentHistoryDto },
-                        { "pagination", new PageInfo
+                        { "pageInfo", new PageInfo
                             {
                                 CurrentPage = pageInfo.CurrentPage,
                                 PageSize = pageInfo.PageSize,

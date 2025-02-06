@@ -1,4 +1,5 @@
-﻿using MVC.Models;
+﻿using Microsoft.AspNetCore.Mvc.ApplicationModels;
+using MVC.Models;
 using System.Buffers.Text;
 using System.Net.Http.Headers;
 using System.Text;
@@ -14,6 +15,11 @@ namespace MVC.Services
         public CommonApiService(HttpClient httpClient)
         {
             _httpClient = httpClient;
+        }
+
+        public string StringFactory (string baseString, int page = 0, int pageSize = 0)
+        {
+            return $"{baseString}?page={page}&pageSize={pageSize}";
         }
 
         public async Task<ApiResponse<T>> GetApiResponseAsync<T>(string url)

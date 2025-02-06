@@ -19,8 +19,9 @@ namespace Webserver.TagHelpers
         [HtmlAttributeNotBound]
         public ViewContext? ViewContext { get; set; }
         public PageInfo PageInfo { get; set; }
+        public int Id { get; set; }
         private bool PreviousPageExists => PageInfo.CurrentPage != 1;
-        private bool NextPageExists => !(PageInfo.TotalPages - 1 <= PageInfo.CurrentPage);
+        private bool NextPageExists => !(PageInfo.TotalPages <= PageInfo.CurrentPage);
         public string SearchString { get; set; }
         public int Iterator { get; set; } = 1;
 
@@ -64,7 +65,7 @@ namespace Webserver.TagHelpers
             }
 
             // Producerer (max) 5 knapper med href og CSS startende fra Iterator
-            for (int i = Iterator; i < PageInfo.TotalPages && i < Iterator + 5; i++)
+            for (int i = Iterator; i <= PageInfo.TotalPages && i < Iterator + 5; i++)
             {
                 TagBuilder tag;
                 if (i == PageInfo.CurrentPage)
@@ -115,8 +116,21 @@ namespace Webserver.TagHelpers
             //if (currentUrl == "/")
             //    return $"/?page={targetPage}";
 
-            //if (currentUrl.StartsWith("/search"))
-            //    return $"/search?searchString={SearchString}&page={targetPage}";
+            if (currentUrl.StartsWith("/Category"))
+            {
+                string url = $"/Category/{Id}/posts?page={targetPage}";
+                if (PageInfo.PageSize != 10)
+                {
+                    url += $"&pageSize={PageInfo.PageSize}";
+                }
+
+                return url;
+            }
+
+            if (currentUrl.StartsWith("/Post"))
+            {
+                string url = $"/Post/{Id}?"
+            }
 
             //if (currentUrl.StartsWith("/topscorer"))
             //    return $"/topscorer?page={targetPage}";

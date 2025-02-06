@@ -70,7 +70,6 @@ namespace WebApi.Repository
             }
         }
 
-        // Spørgsmål omkring PaginatedOperationResult
         public async Task<OperationResult> GetPostsByCategoryIdAsync(int categoryId, PageInfo pageInfo)
         {
             if (categoryId <= 0)
@@ -86,13 +85,14 @@ namespace WebApi.Repository
             {
                 IQueryable<Post> query = _context.Posts
                     .Include(p => p.User)
-                    .Where(p => p.CategoryId == categoryId)
-                    .Skip(pageInfo.Skip)
-                    .Take(pageInfo.PageSize);
+                    .Where(p => p.CategoryId == categoryId);
 
                 int totalItems = query.Count();
 
-                List<Post> posts = await query.ToListAsync();
+                var queryWithPagination = query.Skip(pageInfo.Skip)
+                    .Take(pageInfo.PageSize);
+
+                List<Post> posts = await queryWithPagination.ToListAsync();
                 List<PostDto> postsDto = posts.Adapt<List<PostDto>>();
 
                 return new OperationResult
@@ -101,7 +101,7 @@ namespace WebApi.Repository
                     Data = new Dictionary<string, object>
                     {
                         { "content", postsDto },
-                        { "pagination", new PageInfo
+                        { "pageInfo", new PageInfo
                             {
                                 CurrentPage = pageInfo.CurrentPage,
                                 PageSize = pageInfo.PageSize,
@@ -162,7 +162,7 @@ namespace WebApi.Repository
                     Data = new Dictionary<string, object>
                     {
                         { "content", postsDto },
-                        { "pagination", new PageInfo
+                        { "pageInfo", new PageInfo
                             {
                                 CurrentPage = pageInfo.CurrentPage,
                                 PageSize = pageInfo.PageSize,
@@ -211,7 +211,7 @@ namespace WebApi.Repository
                     Data = new Dictionary<string, object>
                     {
                         { "content", postHistoriesDto },
-                        { "pagination", new PageInfo
+                        { "pageInfo", new PageInfo
                             {
                                 CurrentPage = pageInfo.CurrentPage,
                                 PageSize = pageInfo.PageSize,
