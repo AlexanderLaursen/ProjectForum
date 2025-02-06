@@ -50,13 +50,6 @@ namespace Webserver.TagHelpers
             }
             ulTag.InnerHtml.AppendHtml(prevTag);
 
-            // Hvis der kun er 1 side tilføjes der CSS for at gøre det synligt at man ikke kan klikke
-            if (PageInfo.TotalPages == 1)
-            {
-                TagBuilder onePageTag = TagBuilderHelper(1, "1", "disabled");
-                ulTag.InnerHtml.AppendHtml(onePageTag);
-            }
-
             // Hvis første side ikke vises indsættes der "..." med href til første side
             if (Iterator > 1)
             {
