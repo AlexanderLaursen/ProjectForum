@@ -84,7 +84,7 @@ namespace Webserver.TagHelpers
             // Hvis sidste side ikke vises indsættes der "..." med href til første side
             if (PageInfo.CurrentPage + 3 < PageInfo.TotalPages)
             {
-                TagBuilder lastTag = TagBuilderHelper(PageInfo.TotalPages - 1, "...");
+                TagBuilder lastTag = TagBuilderHelper(PageInfo.TotalPages, "...");
                 ulTag.InnerHtml.AppendHtml(lastTag);
             }
 
@@ -125,11 +125,6 @@ namespace Webserver.TagHelpers
                 }
 
                 return url;
-            }
-
-            if (currentUrl.StartsWith("/Post"))
-            {
-                string url = $"/Post/{Id}?"
             }
 
             //if (currentUrl.StartsWith("/topscorer"))
