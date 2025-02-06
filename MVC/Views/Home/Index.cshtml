@@ -1,0 +1,27 @@
+﻿@model HomeViewModel
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Categories</h1>
+</div>
+
+<div class="">
+    <table class="table table-striped table-hover">
+        <thead>
+        </thead>
+        <tbody>
+            @foreach (Category category in Model.Categories)
+            {
+                <tr>
+                    <td class="list-group-item">
+                        <form asp-controller="Post" asp-action="GetPostsByCategoryId" asp-route-categoryId="@category.Id" method="get">
+                            <button type="submit" class="btn btn-link">@category.Name</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

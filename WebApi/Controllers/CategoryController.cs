@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using WebApi.Models;
+using WebApi.Repository;
 
 namespace WebApi.Controllers
 {
@@ -6,34 +8,41 @@ namespace WebApi.Controllers
     [Route("api/v1/[controller]")]
     public class CategoryController : Controller
     {
+        private readonly ICategoryRepository _repository;
+        public CategoryController(ICategoryRepository repository)
+        {
+            _repository = repository;
+        }
+
+        [HttpGet("{categoryId}")]
+        public async Task<IActionResult> GetCategoryById(int categoryId)
+        {
+            if (categoryId <= 0)
+            {
+                return BadRequest("Invalid category id.");
+            }
+
+            OperationResult result = await _repository.GetCategoryByIdAsync(categoryId);
+
+            if (result.Success)
+            {
+                return Ok(result.Data);
+            }
+
+            return BadRequest(result.ErrorMessage);
+        }
+
         [HttpGet()]
-        public IActionResult GetCategories()
+        public async Task<IActionResult> GetCategories()
         {
-            return Ok();
-        }
+            OperationResult result = await _repository.GetAllCategoriesAsync();
 
-        [HttpGet("id")]
-        public IActionResult GetCategoryById(int categoryId)
-        {
-            return Ok();
-        }
+            if (result.Success)
+            {
+                return Ok(result.Data);
+            }
 
-        [HttpPost()]
-        public IActionResult CreateCategory()
-        {
-            return Ok();
-        }
-
-        [HttpPut()]
-        public IActionResult UpdateCategory()
-        {
-            return Ok();
-        }
-
-        [HttpDelete()]
-        public IActionResult DeleteCategory(int categoryId)
-        {
-            return Ok();
+            return BadRequest(result.ErrorMessage);
         }
     }
 }

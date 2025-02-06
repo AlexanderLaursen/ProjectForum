@@ -1,0 +1,85 @@
+﻿@model PostViewModel
+@{
+}
+<div class="d-flex justify-content-end w-100 mb-2">
+    <form asp-controller="Comment" asp-action="CreateComment" method="get">
+        <input type="hidden" name="postId" value="@Model.Post.Id" />
+        <button type="submit" class="btn btn-primary">Create comment</button>
+    </form>
+</div>
+
+<div class="">
+    <table class="table table-striped table-bordered table-hover">
+        <thead>
+        </thead>
+        <tbody>
+            <tr>
+                <td>
+                    <div class="text-nowrap">
+                        <div>
+                            User:
+                        </div>
+                        <div>
+                            @Model.Post.User
+                        </div>
+                    </div>
+                </td>
+                <td class="w-100">
+                    <h3>
+                        @Model.Post.Title
+
+                    </h3>
+                    <p>
+                        @Model.Post.Content
+                    </p>
+                </td>
+                <td>
+                    <div class="text-nowrap">
+                        <div>
+                            Created at: @Model.Post.CreatedAt
+                        </div>
+                        <div>
+                            Likes: @Model.Post.Likes
+                        </div>
+                        <div>
+                            Edited: @Model.Post.Edited
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            @foreach (Comment comment in Model.Comments)
+            {
+                <tr>
+                    <td>
+                        <div class="text-nowrap">
+                            <div>
+                                User:
+                            </div>
+                            <div>
+                                @comment.User
+                            </div>
+                        </div>
+                    </td>
+                    <td class="w-100">
+                        <p>
+                            @comment.Content
+                        </p>
+                    </td>
+                    <td>
+                        <div class="text-nowrap">
+                            <div>
+                                Created at: @comment.CreatedAt
+                            </div>
+                            <div>
+                                Likes: @comment.Likes
+                            </div>
+                            <div>
+                                Edited: @comment.Edited
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
