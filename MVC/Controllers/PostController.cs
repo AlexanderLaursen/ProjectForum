@@ -43,14 +43,15 @@ namespace MVC.Controllers
         }
 
         [HttpGet("Post/{postId}")]
-        public async Task<IActionResult> GetPostById(int postId)
+        public async Task<IActionResult> GetPostById(int postId, int page, int pageSize)
         {
             if (postId <= 0)
             {
                 return BadRequest();
             }
 
-            ApiResponse<Post> response = await _postService.GetPostByIdAsync(postId);
+            PageInfo pageInfo = new PageInfo(page, pageSize);
+            ApiResponse<Post> response = await _postService.GetPostByIdAsync(postId, pageInfo);
 
             if (!response.IsSuccess)
             {

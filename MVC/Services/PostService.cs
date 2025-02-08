@@ -29,14 +29,16 @@ namespace MVC.Services
             return await _commonApiService.GetApiResponseAsync<Post>(url);
         }
 
-        public async Task<ApiResponse<Post>> GetPostByIdAsync(int id)
+        public async Task<ApiResponse<Post>> GetPostByIdAsync(int id, PageInfo pageInfo)
         {
             if (id <= 0)
             {
                 return new ApiResponse<Post>();
             }
 
-            return await _commonApiService.GetApiResponseAsync<Post>($"{POST_PREFIX}/{id}");
+            string url = _commonApiService.StringFactory($"{POST_PREFIX}/{id}", pageInfo.CurrentPage, pageInfo.PageSize);
+
+            return await _commonApiService.GetApiResponseAsync<Post>(url);
         }
 
         public async Task<ApiResponse<Post>> CreatePostAsync(CreatePostViewModel viewModel, string bearerToken)

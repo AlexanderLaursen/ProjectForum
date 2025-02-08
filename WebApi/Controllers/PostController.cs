@@ -18,14 +18,15 @@ namespace WebApi.Controllers
         }
 
         [HttpGet("{postId}")]
-        public async Task<IActionResult> GetPostById(int postId)
+        public async Task<IActionResult> GetPostById(int postId, int page = 0, int pageSize = 0)
         {
             if (postId <= 0)
             {
                 return BadRequest("Invalid post id.");
             }
 
-            OperationResult result = await _repository.GetPostByIdAsync(postId);
+            PageInfo pageInfo = new PageInfo(page, pageSize);
+            OperationResult result = await _repository.GetPostByIdAsync(postId, pageInfo);
 
             if (result.Success)
             {

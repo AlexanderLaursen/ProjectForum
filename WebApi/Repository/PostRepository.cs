@@ -4,6 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Configuration.UserSecrets;
 using WebApi.Data;
+using WebApi.Dto;
+using WebApi.Dto.Comment;
 using WebApi.Dto.Post;
 using WebApi.Models;
 
@@ -20,7 +22,7 @@ namespace WebApi.Repository
             _commonRepository = commonRepository;
         }
 
-        public async Task<OperationResult> GetPostByIdAsync(int postId)
+        public async Task<OperationResult> GetPostByIdAsync(int postId, PageInfo pageInfo)
         {
             if (postId <= 0)
             {
@@ -33,22 +35,61 @@ namespace WebApi.Repository
 
             try
             {
-                var post = await _context.Posts
-                    .Include(p => p.User)
-                    .Include(p => p.Comments)
-                    .ThenInclude(c => c.User)
-                    .FirstOrDefaultAsync(p => p.Id == postId);
+                // SQL Server specific query
 
-                if (post == null)
-                {
-                    return new OperationResult
-                    {
-                        Success = false,
-                        ErrorMessage = "Post not found."
-                    };
-                }
+                //var result = _context.Posts
+                //    .Where(p => p.Id == postId)
+                //    .Select(p => new
+                //    {
+                //        Post = new
+                //        {
+                //            p.Id,
+                //            p.Title,
+                //            p.Content,
+                //            User = new UserDto
+                //            {
+                //                Id = p.User.Id,
+                //                UserName = p.User.UserName
+                //            }
+                //        },
+                //        TotalComments = p.Comments.Count(),
+                //        Comments = p.Comments
+                //            .OrderBy(c => c.Id)
+                //            .Skip(pageInfo.Skip)
+                //            .Take(pageInfo.PageSize)
+                //            .Select(c => new
+                //            {
+                //                c.Id,
+                //                c.Likes,
+                //                c.UserId,
+                //                User = new UserDto
+                //                {
+                //                    Id = c.User.Id,
+                //                    UserName = c.User.UserName
+                //                }
+                //            })
+                //            .ToList()
+                //    }).FirstOrDefaultAsync();
+
+                var post = await _context.Posts
+                    .Where(p => p.Id == postId)
+                    .Include(p => p.User)
+                    .FirstOrDefaultAsync();
+
+                int totalComments = await _context.Comments
+                    .Where(c => c.PostId == postId)
+                    .CountAsync();
+
+                var comments = await _context.Comments
+                    .Where(c => c.PostId == postId)
+                    .Include(c => c.User)
+                    .OrderBy(c => c.Id)
+                    .Skip(pageInfo.Skip)
+                    .Take(pageInfo.PageSize)
+                    .ToListAsync();
 
                 PostDto postDto = post.Adapt<PostDto>();
+                postDto.Comments = comments.Adapt<List<CommentDto>>();
                 List<PostDto> postList = [postDto];
 
                 return new OperationResult
@@ -56,7 +97,14 @@ namespace WebApi.Repository
                     Success = true,
                     Data = new Dictionary<string, object>
                     {
-                        { "content", postList }
+                        { "content", postList },
+                        { "pageInfo", new PageInfo
+                            {
+                                CurrentPage = pageInfo.CurrentPage,
+                                PageSize = pageInfo.PageSize,
+                                TotalItems = totalComments,
+                            }
+                        }
                     }
                 };
             }
