@@ -106,8 +106,6 @@ namespace Webserver.TagHelpers
         {
             string currentUrl = ViewContext?.HttpContext.Request.Path.ToString()!;
 
-            //if (currentUrl == "/")
-            //    return $"/?page={targetPage}";
 
             if (currentUrl.StartsWith("/Category"))
             {
@@ -120,8 +118,16 @@ namespace Webserver.TagHelpers
                 return url;
             }
 
-            //if (currentUrl.StartsWith("/topscorer"))
-            //    return $"/topscorer?page={targetPage}";
+            if (currentUrl.StartsWith("/Post"))
+            {
+                string url = $"/Post/{Id}?page={targetPage}";
+                if (PageInfo.PageSize != 10)
+                {
+                    url += $"&pageSize={PageInfo.PageSize}";
+                }
+
+                return url;
+            }
 
             return string.Empty;
         }
