@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using System.Net.Http;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.Json;
 using MVC.Models;
@@ -12,13 +13,16 @@ namespace MVC.Services
         private const string BASE_URL = "https://localhost:7052/";
         private const string LOGIN_ENDPOINT = "login";
         private const string REGISTER_ENDPOINT = "register";
+        private const string USER_ENDPOINT = "User";
         public bool IsLoggedIn;
 
         private readonly HttpClient _httpClient;
+        private readonly CommonApiService _commonApiService;
 
-        public AuthService(HttpClient httpClient)
+        public AuthService(HttpClient httpClient, CommonApiService commonApiService)
         {
             _httpClient = httpClient;
+            _commonApiService = commonApiService;
         }
 
         public async Task<LoginResponse> LoginAsync(LoginData loginData)
@@ -98,6 +102,37 @@ namespace MVC.Services
             {
                 IsSuccess = false
             };
+        }
+
+        public async Task<ApiResponse<string>> GetUserIdByUsernameAsync(string username)
+        {
+            try
+            {
+                string contentString = JsonSerializer.Serialize(new { Username = username });
+                HttpContent contentHttp = new StringContent(contentString, Encoding.UTF8, "application/json");
+
+                string url = $"{USER_ENDPOINT}/{username}";
+
+                var response = await _commonApiService.GetApiResponseAsync<string>(url);
+
+                if (response.IsSuccess)
+                {
+                    return response;
+                }
+
+                return new ApiResponse<string>
+                {
+                    Content = response.Content,
+                    IsSuccess = false
+                };
+            }
+            catch
+            {
+                return new ApiResponse<string>
+                {
+                    IsSuccess = false
+                };
+            }
         }
     }
 }

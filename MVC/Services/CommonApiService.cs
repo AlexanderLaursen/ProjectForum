@@ -79,5 +79,28 @@ namespace MVC.Services
                 return new ApiResponse<T>();
             }
         }
+
+        public async Task<ApiResponse<T>> DeleteAsync<T>(string url, string bearerToken)
+        {
+            try
+            {
+                _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", bearerToken);
+
+                HttpResponseMessage response = await _httpClient.DeleteAsync(BASE_URL + url);
+
+                response.EnsureSuccessStatusCode();
+
+                ApiResponse<T> apiResponse = new ApiResponse<T>
+                {
+                    IsSuccess = true
+                };
+
+                return apiResponse;
+            }
+            catch (Exception)
+            {
+                return new ApiResponse<T>();
+            }
+        }
     }
 }

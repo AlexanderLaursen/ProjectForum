@@ -30,7 +30,7 @@ namespace WebApi.Repository
             }
             catch (Exception)
             {
-                // Implement logging
+                // TODO: Implement logging
             }
             
             return userId;

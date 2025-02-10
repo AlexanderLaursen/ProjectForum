@@ -25,6 +25,18 @@
                     </div>
                 </td>
                 <td class="w-100">
+                    @if (Model.UserId == Model.Post.User.Id)
+                    {
+@*                         <form asp-controller="Post" asp-action="EditPost" method="get">
+                            <input type="hidden" name="postId" value="@Model.Post.Id" />
+                            <button type="submit" class="btn btn-primary">Edit post</button>
+                        </form> *@
+                        <form asp-controller="Post" asp-action="DeletePost" method="post">
+                            <input type="hidden" name="postId" value="@Model.Post.Id" />
+                            <button type="submit" class="btn btn-danger">Delete post</button>
+                        </form>
+                    }
+
                     <h3>
                         @Model.Post.Title
 
@@ -61,6 +73,18 @@
                         </div>
                     </td>
                     <td class="w-100">
+                        @if (Model.UserId == comment.UserId)
+                        {
+                            @*                         <form asp-controller="Comment" asp-action="EditComment" method="post">
+                            <input type="hidden" name="commentId" value="@comment.Id" />
+                            <button type="submit" class="btn btn-primary">Edit post</button>
+                        </form> *@
+                            <form asp-controller="Comment" asp-action="DeleteComment" method="post">
+                                <input type="hidden" name="commentId" value="@comment.Id" />
+                                <input type="hidden" name="postId" value="@Model.Post.Id" />
+                                <button type="submit" class="btn btn-danger">Delete comment</button>
+                            </form>
+                        }
                         <p>
                             @comment.Content
                         </p>

@@ -30,10 +30,18 @@ namespace MVC.Controllers
 
             LoginResponse response = await _loginService.LoginAsync(loginData);
 
-            if (response.IsSuccess)
+            if (!response.IsSuccess)
             {
-                HttpContext.Session.SetJson("Bearer", response.Token.AccessToken);
-                //HttpContext.Session.SetString("Bearer", response.Token.AccessToken);
+                return View();
+            }
+
+            HttpContext.Session.SetJson("Bearer", response.Token.AccessToken);
+
+            ApiResponse<string> userIdResponse = await _loginService.GetUserIdByUsernameAsync(loginData.Email);
+
+            if (userIdResponse.IsSuccess)
+            {
+                HttpContext.Session.SetJson("UserId", userIdResponse.Content[0]);
                 return RedirectToAction("Index", "Home");
             }
 

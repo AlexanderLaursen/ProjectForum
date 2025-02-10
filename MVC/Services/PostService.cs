@@ -57,5 +57,15 @@ namespace MVC.Services
 
             return await _commonApiService.PostApiReponseAsync<Post>($"{POST_PREFIX}", createPostDto, bearerToken);
         }
+
+        public async Task<ApiResponse<bool>> DeletePostAsync(int id, string bearerToken)
+        {
+            if (id <= 0)
+            {
+                return new ApiResponse<bool>();
+            }
+
+            return await _commonApiService.DeleteAsync<bool>($"{POST_PREFIX}?postId={id}", bearerToken);
+        }
     }
 }
