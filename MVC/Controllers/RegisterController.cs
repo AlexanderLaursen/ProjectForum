@@ -30,7 +30,13 @@ namespace MVC.Controllers
                 return View("Index");
             }
 
-            ApiResponse<object> response = await _authService.RegisterAsync(registerData);
+            LoginData loginData = new LoginData
+            {
+                Email = registerData.Email,
+                Password = registerData.Password
+            };
+
+            ApiResponse<object> response = await _authService.RegisterAsync(loginData);
 
             if (response.IsSuccess)
             {

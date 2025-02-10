@@ -58,8 +58,11 @@ namespace MVC.Controllers
                 return NotFound();
             }
 
+            string userId = HttpContext.Session.GetJson<string>("UserId")!;
+
             PostViewModel viewModel = new PostViewModel
             {
+                UserId = userId!,
                 Post = response.Content[0],
                 Comments = response.Content[0].Comments,
                 PageInfo = response.PageInfo
@@ -101,6 +104,29 @@ namespace MVC.Controllers
             }
 
             return RedirectToAction("GetPostById", new { postId = response.Content[0].Id });
+        }
+
+        [HttpPost("Post/Delete")]
+        public async Task<IActionResult> DeletePost(int postId)
+        {
+            if (postId <= 0)
+            {
+                return BadRequest();
+            }
+
+            string? bearerToken = HttpContext.Session.GetJson<string>("Bearer");
+            if (string.IsNullOrEmpty(bearerToken))
+            {
+                return RedirectToAction("Index", "Login");
+            }
+
+            ApiResponse<bool> response = await _postService.DeletePostAsync(postId, bearerToken);
+            if (!response.IsSuccess)
+            {
+                return BadRequest();
+            }
+
+            return RedirectToAction("Index", "Home");
         }
     }
 }

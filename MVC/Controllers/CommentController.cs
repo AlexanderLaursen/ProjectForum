@@ -49,5 +49,27 @@ namespace MVC.Controllers
             return RedirectToAction("GetPostById", "Post", new {postId = viewModel.PostId });
         }
 
+        [HttpPost("Comment/Delete")]
+        public async Task<IActionResult> DeleteComment(int commentId, int postId)
+        {
+            if (commentId <= 0)
+            {
+                return BadRequest();
+            }
+
+            string? bearerToken = HttpContext.Session.GetJson<string>("Bearer");
+            if (string.IsNullOrEmpty(bearerToken))
+            {
+                return RedirectToAction("Index", "Login");
+            }
+
+            ApiResponse<bool> response = await _commentService.DeleteCommentAsync(commentId, bearerToken);
+            if (!response.IsSuccess)
+            {
+                return BadRequest();
+            }
+
+            return RedirectToAction("GetPostById", "Post", new { postId = postId });
+        }
     }
 }

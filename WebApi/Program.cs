@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Filters;
 using WebApi.Data;
-using WebApi.Models;
 using WebApi.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -29,13 +28,10 @@ builder.Services.AddSwaggerGen(options =>
 builder.Services.AddDbContext<DataContext>(options =>
     options.UseSqlite($"Data Source=.\\Data/SqliteTestDb.db"));
 
-// Add Identity services
-builder.Services.AddIdentity<AppUser, IdentityRole>()
-    .AddEntityFrameworkStores<DataContext>()
-    .AddDefaultTokenProviders();
-
 // Authorization
 builder.Services.AddAuthorization();
+builder.Services.AddIdentityApiEndpoints<IdentityUser>()
+    .AddEntityFrameworkStores<DataContext>();
 
 // Services
 builder.Services.AddScoped<IPostRepository, PostRepository>();
@@ -48,7 +44,6 @@ var app = builder.Build();
 // Configure the HTTP request pipeline
 if (app.Environment.IsDevelopment())
 {
-    app.UseDeveloperExceptionPage();
     app.UseSwagger();
     app.UseSwaggerUI(options =>
     {
@@ -60,10 +55,11 @@ if (app.Environment.IsDevelopment())
 MapsterConfig.RegisterMappings();
 
 // Add Identity API
-app.UseAuthentication();
+app.MapIdentityApi<IdentityUser>();
 app.UseAuthorization();
 
 app.UseHttpsRedirection();
+
 app.MapControllers();
 
 app.Run();
