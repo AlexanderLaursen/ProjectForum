@@ -1,8 +1,8 @@
 ﻿using Mapster;
 using Microsoft.EntityFrameworkCore;
 using WebApi.Data;
-using WebApi.Dto;
 using WebApi.Dto.Comment;
+using WebApi.Dto.CommentHistory;
 using WebApi.Models;
 
 namespace WebApi.Repository

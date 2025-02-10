@@ -1,0 +1,12 @@
+﻿@model CommentHistoryViewModel
+
+<p>
+    <strong>Comment History</strong>
+</p>
+
+@foreach (CommentHistory commentHistory in Model.CommentHistory)
+{
+    <div>
+        <p>@commentHistory.Content</p>
+    </div>
+})

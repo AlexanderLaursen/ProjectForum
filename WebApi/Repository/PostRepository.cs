@@ -7,6 +7,7 @@ using WebApi.Data;
 using WebApi.Dto;
 using WebApi.Dto.Comment;
 using WebApi.Dto.Post;
+using WebApi.Dto.PostHistory;
 using WebApi.Models;
 
 namespace WebApi.Repository
@@ -333,7 +334,9 @@ namespace WebApi.Repository
                 };
             }
 
-            Post? post = await _context.Posts.FirstOrDefaultAsync(p => p.Id == updatePostDto.PostId);
+            Post? post = await _context.Posts
+                .Include(p => p.User)
+                .FirstOrDefaultAsync(p => p.Id == updatePostDto.PostId);
 
             if (post == null)
             {
@@ -357,9 +360,10 @@ namespace WebApi.Repository
                 {
                     PostHistory postHistory = new()
                     {
-                        Title = updatePostDto.Title,
-                        Content = updatePostDto.Content,
-                        PostId = updatePostDto.PostId,
+                        Title = post.Title,
+                        Content = post.Content,
+                        PostId = post.Id,
+                        CategoryId = post.CategoryId,
                         UserId = post.UserId,
                         CreatedAt = post.EditedAt == DateTime.MinValue ? post.CreatedAt : post.EditedAt,
                         User = post.User,
@@ -374,6 +378,8 @@ namespace WebApi.Repository
                     post.Edited = true;
                     post.EditedAt = DateTime.Now;
                     post.Content = updatePostDto.Content;
+                    post.Title = updatePostDto.Title;
+                    post.CategoryId = updatePostDto.CategoryId;
                     _context.Posts.Update(post);
                     await _context.SaveChangesAsync();
 

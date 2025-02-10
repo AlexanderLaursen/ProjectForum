@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MVC.Helpers;
 using MVC.Models;
+using MVC.Models.Dto;
 using MVC.Models.ViewModels;
 using MVC.Services;
 
@@ -104,6 +105,49 @@ namespace MVC.Controllers
             }
 
             return RedirectToAction("GetPostById", new { postId = response.Content[0].Id });
+        }
+
+        [HttpGet("Post/Update")]
+        public async Task<IActionResult> Update(int postId, UpdatePostViewModel updatePostViewModel)
+        {
+            if (postId <= 0)
+            {
+                return BadRequest();
+            }
+
+            ApiResponse<Post> response = await _postService.GetPostByIdAsync(postId, new PageInfo());
+
+            UpdatePostViewModel viewModel = new()
+            {
+                Post = response.Content[0],
+                CategoryId = response.Content[0].CategoryId,
+                PostId = postId,
+            };
+
+            return View(viewModel);
+        }
+
+        [HttpPost("Post/Update")]
+        public async Task<IActionResult> Update(UpdatePostViewModel viewModel)
+        {
+            if (!ModelState.IsValid)
+            {
+                return RedirectToAction("Update", new { postId = viewModel.PostId });
+            }
+
+            string? bearerToken = HttpContext.Session.GetJson<string>("Bearer");
+            if (string.IsNullOrEmpty(bearerToken))
+            {
+                return RedirectToAction("Index", "Login");
+            }
+
+            ApiResponse<Post> response = await _postService.UpdatePostAsync(viewModel, bearerToken);
+            if (!response.IsSuccess)
+            {
+                return RedirectToAction("Update", new { postId = viewModel.PostId });
+            }
+
+            return RedirectToAction("GetPostById", new { postId = viewModel.PostId });
         }
 
         [HttpPost("Post/Delete")]

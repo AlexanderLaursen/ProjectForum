@@ -13,6 +13,7 @@ builder.Services.AddScoped<PostService>();
 builder.Services.AddScoped<CommentService>();
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<CommonApiService>();
+builder.Services.AddScoped<CommentHistoryService>();
 
 var app = builder.Build();
 

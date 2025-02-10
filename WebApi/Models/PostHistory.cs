@@ -10,8 +10,10 @@ namespace WebApi.Models
         public DateTime CreatedAt { get; set; }
         public string UserId { get; set; }
         public int PostId { get; set; }
+        public int CategoryId { get; set; }
 
         public IdentityUser User { get; set; }
         public Post Post { get; set; }
+        public Category Category { get; set; }
     }
 }
