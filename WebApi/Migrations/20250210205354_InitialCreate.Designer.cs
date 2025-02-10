@@ -11,8 +11,8 @@ using WebApi.Data;
 namespace WebApi.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20250204134025_PostHistory")]
-    partial class PostHistory
+    [Migration("20250210205354_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -240,11 +240,20 @@ namespace WebApi.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<bool>("Active")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("Content")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("Edited")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("EditedAt")
                         .HasColumnType("TEXT");
 
                     b.Property<int>("Likes")
@@ -264,6 +273,35 @@ namespace WebApi.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Comments");
+                });
+
+            modelBuilder.Entity("WebApi.Models.CommentHistory", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("CommentId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CommentId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("CommentHistory");
                 });
 
             modelBuilder.Entity("WebApi.Models.Post", b =>
@@ -294,9 +332,6 @@ namespace WebApi.Migrations
                     b.Property<int>("Likes")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("PostHistoryId")
-                        .HasColumnType("INTEGER");
-
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -320,27 +355,12 @@ namespace WebApi.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<bool>("Active")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("CategoryId")
-                        .HasColumnType("INTEGER");
-
                     b.Property<string>("Content")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("TEXT");
-
-                    b.Property<bool>("Edited")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<DateTime>("EditedAt")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("Likes")
-                        .HasColumnType("INTEGER");
 
                     b.Property<int>("PostId")
                         .HasColumnType("INTEGER");
@@ -354,8 +374,6 @@ namespace WebApi.Migrations
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CategoryId");
 
                     b.HasIndex("PostId");
 
@@ -434,6 +452,25 @@ namespace WebApi.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("WebApi.Models.CommentHistory", b =>
+                {
+                    b.HasOne("WebApi.Models.Comment", "Comment")
+                        .WithMany("CommentHistory")
+                        .HasForeignKey("CommentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Comment");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("WebApi.Models.Post", b =>
                 {
                     b.HasOne("WebApi.Models.Category", "Category")
@@ -455,12 +492,6 @@ namespace WebApi.Migrations
 
             modelBuilder.Entity("WebApi.Models.PostHistory", b =>
                 {
-                    b.HasOne("WebApi.Models.Category", "Category")
-                        .WithMany()
-                        .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("WebApi.Models.Post", "Post")
                         .WithMany("PostHistory")
                         .HasForeignKey("PostId")
@@ -473,11 +504,14 @@ namespace WebApi.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Category");
-
                     b.Navigation("Post");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("WebApi.Models.Comment", b =>
+                {
+                    b.Navigation("CommentHistory");
                 });
 
             modelBuilder.Entity("WebApi.Models.Post", b =>
