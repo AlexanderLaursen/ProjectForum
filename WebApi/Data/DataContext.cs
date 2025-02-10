@@ -15,6 +15,6 @@ namespace WebApi.Data
         public DbSet<Comment> Comments { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<PostHistory> PostHistory { get; set; }
-        public DbSet<CommentHistory> CommentHistory { get; set; }
+        //public DbSet<CommentHistory> CommentHistory { get; set; }
     }
 }

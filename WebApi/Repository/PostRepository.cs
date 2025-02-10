@@ -355,10 +355,16 @@ namespace WebApi.Repository
             using (var transaction = await _context.Database.BeginTransactionAsync())
                 try
                 {
-                    PostHistory postHistory = post.Adapt<PostHistory>();
-                    postHistory.Id = new int();
-                    postHistory.PostId = post.Id;
-                    postHistory.CreatedAt = post.EditedAt == DateTime.MinValue ? post.CreatedAt : post.EditedAt;
+                    PostHistory postHistory = new()
+                    {
+                        Title = updatePostDto.Title,
+                        Content = updatePostDto.Content,
+                        PostId = updatePostDto.PostId,
+                        UserId = post.UserId,
+                        CreatedAt = post.EditedAt == DateTime.MinValue ? post.CreatedAt : post.EditedAt,
+                        User = post.User,
+                        Post = post,
+                    };
                     _context.PostHistory.Add(postHistory);
                     await _context.SaveChangesAsync();
 
@@ -369,7 +375,6 @@ namespace WebApi.Repository
                     post.EditedAt = DateTime.Now;
                     post.Content = updatePostDto.Content;
                     _context.Posts.Update(post);
-
                     await _context.SaveChangesAsync();
 
                     await transaction.CommitAsync();

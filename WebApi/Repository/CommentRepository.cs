@@ -305,8 +305,8 @@ namespace WebApi.Repository
                 {
                     CommentHistory commentHistory = new()
                     {
-                        Content = comment.Content,
-                        CommentId = comment.Id,
+                        Content = updateCommentDto.Content,
+                        CommentId = updateCommentDto.CommentId,
                         UserId = comment.UserId,
                         CreatedAt = comment.EditedAt == DateTime.MinValue ? comment.CreatedAt : comment.EditedAt,
                         User = comment.User,
