@@ -19,8 +19,9 @@ namespace Webserver.TagHelpers
         [HtmlAttributeNotBound]
         public ViewContext? ViewContext { get; set; }
         public PageInfo PageInfo { get; set; }
+        public int Id { get; set; }
         private bool PreviousPageExists => PageInfo.CurrentPage != 1;
-        private bool NextPageExists => !(PageInfo.TotalPages - 1 <= PageInfo.CurrentPage);
+        private bool NextPageExists => !(PageInfo.TotalPages <= PageInfo.CurrentPage);
         public string SearchString { get; set; }
         public int Iterator { get; set; } = 1;
 
@@ -49,13 +50,6 @@ namespace Webserver.TagHelpers
             }
             ulTag.InnerHtml.AppendHtml(prevTag);
 
-            // Hvis der kun er 1 side tilføjes der CSS for at gøre det synligt at man ikke kan klikke
-            if (PageInfo.TotalPages == 1)
-            {
-                TagBuilder onePageTag = TagBuilderHelper(1, "1", "disabled");
-                ulTag.InnerHtml.AppendHtml(onePageTag);
-            }
-
             // Hvis første side ikke vises indsættes der "..." med href til første side
             if (Iterator > 1)
             {
@@ -64,7 +58,7 @@ namespace Webserver.TagHelpers
             }
 
             // Producerer (max) 5 knapper med href og CSS startende fra Iterator
-            for (int i = Iterator; i < PageInfo.TotalPages && i < Iterator + 5; i++)
+            for (int i = Iterator; i <= PageInfo.TotalPages && i < Iterator + 5; i++)
             {
                 TagBuilder tag;
                 if (i == PageInfo.CurrentPage)
@@ -83,7 +77,7 @@ namespace Webserver.TagHelpers
             // Hvis sidste side ikke vises indsættes der "..." med href til første side
             if (PageInfo.CurrentPage + 3 < PageInfo.TotalPages)
             {
-                TagBuilder lastTag = TagBuilderHelper(PageInfo.TotalPages - 1, "...");
+                TagBuilder lastTag = TagBuilderHelper(PageInfo.TotalPages, "...");
                 ulTag.InnerHtml.AppendHtml(lastTag);
             }
 
@@ -112,14 +106,28 @@ namespace Webserver.TagHelpers
         {
             string currentUrl = ViewContext?.HttpContext.Request.Path.ToString()!;
 
-            //if (currentUrl == "/")
-            //    return $"/?page={targetPage}";
 
-            //if (currentUrl.StartsWith("/search"))
-            //    return $"/search?searchString={SearchString}&page={targetPage}";
+            if (currentUrl.StartsWith("/Category"))
+            {
+                string url = $"/Category/{Id}/posts?page={targetPage}";
+                if (PageInfo.PageSize != 10)
+                {
+                    url += $"&pageSize={PageInfo.PageSize}";
+                }
 
-            //if (currentUrl.StartsWith("/topscorer"))
-            //    return $"/topscorer?page={targetPage}";
+                return url;
+            }
+
+            if (currentUrl.StartsWith("/Post"))
+            {
+                string url = $"/Post/{Id}?page={targetPage}";
+                if (PageInfo.PageSize != 10)
+                {
+                    url += $"&pageSize={PageInfo.PageSize}";
+                }
+
+                return url;
+            }
 
             return string.Empty;
         }

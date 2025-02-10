@@ -1,6 +1,7 @@
 ﻿using MVC.Models;
 using MVC.Models.Dto;
 using MVC.Models.ViewModels;
+using System.Text;
 
 namespace MVC.Services
 {
@@ -16,24 +17,28 @@ namespace MVC.Services
             _commonApiService = commonApiService;
         }
 
-        public async Task<ApiResponse<Post>> GetPostsByCategoryId(int categoryId)
+        public async Task<ApiResponse<Post>> GetPostsByCategoryIdAsync(int categoryId, PageInfo pageInfo)
         {
             if (categoryId <= 0)
             {
                 return new ApiResponse<Post>();
             }
 
-            return await _commonApiService.GetApiResponseAsync<Post>($"{CATEGORY_PREFIX}/{categoryId}/posts");
+            string url = _commonApiService.StringFactory($"{CATEGORY_PREFIX}/{categoryId}/posts", pageInfo.CurrentPage, pageInfo.PageSize);
+
+            return await _commonApiService.GetApiResponseAsync<Post>(url);
         }
 
-        public async Task<ApiResponse<Post>> GetPostByIdAsync(int id)
+        public async Task<ApiResponse<Post>> GetPostByIdAsync(int id, PageInfo pageInfo)
         {
             if (id <= 0)
             {
                 return new ApiResponse<Post>();
             }
 
-            return await _commonApiService.GetApiResponseAsync<Post>($"{POST_PREFIX}/{id}");
+            string url = _commonApiService.StringFactory($"{POST_PREFIX}/{id}", pageInfo.CurrentPage, pageInfo.PageSize);
+
+            return await _commonApiService.GetApiResponseAsync<Post>(url);
         }
 
         public async Task<ApiResponse<Post>> CreatePostAsync(CreatePostViewModel viewModel, string bearerToken)

@@ -5,7 +5,7 @@ namespace WebApi.Repository
 {
     public interface IPostRepository
     {
-        public Task<OperationResult> GetPostByIdAsync(int postId);
+        public Task<OperationResult> GetPostByIdAsync(int postId, PageInfo pageInfo);
         public Task<OperationResult> GetPostsByUsernameAsync (string userId, PageInfo pageInfo);
         public Task<OperationResult> GetPostsByCategoryIdAsync(int categoryId, PageInfo pageInfo);
         public Task<OperationResult> GetPostHistoryByPostId(int postId, PageInfo pageInfo);
