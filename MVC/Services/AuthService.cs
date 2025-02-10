@@ -69,11 +69,11 @@ namespace MVC.Services
             };
         }
 
-        public async Task<ApiResponse<object>> RegisterAsync(RegisterData registerData)
+        public async Task<ApiResponse<object>> RegisterAsync(LoginData loginData)
         {
             try
             {
-                string contentString = JsonSerializer.Serialize(registerData);
+                string contentString = JsonSerializer.Serialize(loginData);
                 HttpContent contentHttp = new StringContent(contentString, Encoding.UTF8, "application/json");
 
                 var response = await _httpClient.PostAsync(BASE_URL + REGISTER_ENDPOINT, contentHttp);

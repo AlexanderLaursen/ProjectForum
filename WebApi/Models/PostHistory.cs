@@ -11,7 +11,7 @@ namespace WebApi.Models
         public int CategoryId { get; set; }
         public int PostId { get; set; }
 
-        public AppUser User { get; set; }
+        public IdentityUser User { get; set; }
         public Category Category { get; set; }
         public Post Post { get; set; }
     }

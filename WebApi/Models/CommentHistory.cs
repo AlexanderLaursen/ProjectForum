@@ -10,7 +10,7 @@ namespace WebApi.Models
         public string UserId { get; set; }
         public int CommentId { get; set; }
 
-        public AppUser User { get; set; }
+        public IdentityUser User { get; set; }
         public Comment Post { get; set; }
     }
 }
