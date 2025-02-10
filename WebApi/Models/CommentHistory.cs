@@ -11,6 +11,6 @@ namespace WebApi.Models
         public int CommentId { get; set; }
 
         public IdentityUser User { get; set; }
-        public Comment Post { get; set; }
+        public Comment Comment { get; set; }
     }
 }

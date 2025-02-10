@@ -27,7 +27,7 @@
                 <td class="w-100">
                     @if (Model.UserId == Model.Post.User.Id)
                     {
-@*                         <form asp-controller="Post" asp-action="EditPost" method="get">
+                        @*                         <form asp-controller="Post" asp-action="EditPost" method="get">
                             <input type="hidden" name="postId" value="@Model.Post.Id" />
                             <button type="submit" class="btn btn-primary">Edit post</button>
                         </form> *@
@@ -75,10 +75,10 @@
                     <td class="w-100">
                         @if (Model.UserId == comment.UserId)
                         {
-                            @*                         <form asp-controller="Comment" asp-action="EditComment" method="post">
-                            <input type="hidden" name="commentId" value="@comment.Id" />
-                            <button type="submit" class="btn btn-primary">Edit post</button>
-                        </form> *@
+                            <form asp-controller="Comment" asp-action="Update" method="get">
+                                <input type="hidden" name="commentId" value="@comment.Id" />
+                                <button type="submit" class="btn btn-primary">Edit comment</button>
+                            </form>
                             <form asp-controller="Comment" asp-action="DeleteComment" method="post">
                                 <input type="hidden" name="commentId" value="@comment.Id" />
                                 <input type="hidden" name="postId" value="@Model.Post.Id" />

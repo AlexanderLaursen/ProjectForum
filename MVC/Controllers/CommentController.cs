@@ -3,6 +3,7 @@ using MVC.Helpers;
 using MVC.Models.ViewModels;
 using MVC.Models;
 using MVC.Services;
+using MVC.Models.Dto;
 
 namespace MVC.Controllers
 {
@@ -47,6 +48,49 @@ namespace MVC.Controllers
             }
 
             return RedirectToAction("GetPostById", "Post", new {postId = viewModel.PostId });
+        }
+
+        [HttpGet("Comment/Update")]
+        public async Task<IActionResult> Update(int commentId = 0)
+        {
+            if (commentId <= 0)
+            {
+                return BadRequest();
+            }
+
+            ApiResponse<Comment> response = await _commentService.GetCommentByIdAsync(commentId);
+
+            UpdateCommentViewModel updateCommentViewModel = new UpdateCommentViewModel
+            {
+                Comment = response.Content[0],
+                CommentId = commentId
+            };
+
+            return View(updateCommentViewModel);
+        }
+
+
+        [HttpPost("Comment/Update")]
+        public async Task<IActionResult> Update(int commentId, UpdateCommentDto updateCommentDto)
+        {
+            if (commentId <= 0 || updateCommentDto == null)
+            {
+                return BadRequest();
+            }
+
+            string? bearerToken = HttpContext.Session.GetJson<string>("Bearer");
+            if (string.IsNullOrEmpty(bearerToken))
+            {
+                return RedirectToAction("Index", "Login");
+            }
+
+            ApiResponse<Comment> response = await _commentService.UpdateCommentByIdAsync(commentId, updateCommentDto, bearerToken);
+            if (!response.IsSuccess)
+            {
+                return BadRequest();
+            }
+
+            return RedirectToAction("GetPostById", "Post", new { postId = response.Content[0].PostId } );
         }
 
         [HttpPost("Comment/Delete")]

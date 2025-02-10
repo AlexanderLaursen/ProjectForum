@@ -275,7 +275,7 @@ namespace WebApi.Migrations
                     b.ToTable("Comments");
                 });
 
-            modelBuilder.Entity("WebApi.Models.CommentHistory", b =>
+            modelBuilder.Entity("WebApi.Models.CommentHistoryDto", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -301,7 +301,7 @@ namespace WebApi.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("CommentHistory");
+                    b.ToTable("CommentHistoryDto");
                 });
 
             modelBuilder.Entity("WebApi.Models.Post", b =>
@@ -453,10 +453,10 @@ namespace WebApi.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("WebApi.Models.CommentHistory", b =>
+            modelBuilder.Entity("WebApi.Models.CommentHistoryDto", b =>
                 {
                     b.HasOne("WebApi.Models.Comment", "Post")
-                        .WithMany("CommentHistory")
+                        .WithMany("CommentHistoryDto")
                         .HasForeignKey("CommentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -520,7 +520,7 @@ namespace WebApi.Migrations
 
             modelBuilder.Entity("WebApi.Models.Comment", b =>
                 {
-                    b.Navigation("CommentHistory");
+                    b.Navigation("CommentHistoryDto");
                 });
 
             modelBuilder.Entity("WebApi.Models.Post", b =>
