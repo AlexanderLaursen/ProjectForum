@@ -30,12 +30,8 @@ builder.Services.AddDbContext<DataContext>(options =>
 
 // Authorization
 builder.Services.AddAuthorization();
-builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
-{
-    options.User.RequireUniqueEmail = true; // Ensure unique email
-})
-.AddEntityFrameworkStores<DataContext>()
-.AddDefaultTokenProviders();
+builder.Services.AddIdentityApiEndpoints<IdentityUser>()
+    .AddEntityFrameworkStores<DataContext>();
 
 // Services
 builder.Services.AddScoped<IPostRepository, PostRepository>();
@@ -60,7 +56,6 @@ MapsterConfig.RegisterMappings();
 
 // Add Identity API
 app.MapIdentityApi<IdentityUser>();
-
 app.UseAuthorization();
 
 app.UseHttpsRedirection();
