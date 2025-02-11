@@ -27,6 +27,12 @@ namespace Webserver.TagHelpers
 
         public override void Process(TagHelperContext context, TagHelperOutput output)
         {
+            // Handle edgecase in comments with no items
+            if (PageInfo.TotalItems == 0)
+            {
+                PageInfo.TotalItems = 1;
+            }
+
             // Sætter første link til at være 2 mindre end denne side
             Iterator = PageInfo.CurrentPage - 2;
             if (Iterator < 1)

@@ -48,7 +48,7 @@ namespace MVC.Controllers
             return View();
         }
 
-        [HttpGet("/login")]
+        [HttpGet("/logut")]
         public async Task<IActionResult> Logout()
         {
             HttpContext.Session.Remove("Bearer");

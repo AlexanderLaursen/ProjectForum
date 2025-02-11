@@ -56,6 +56,12 @@
                         <div>
                             Edited: @Model.Post.Edited
                         </div>
+                        @if (Model.Post.Edited)
+                        {
+                            <form asp-controller="PostHistory" asp-action="GetPostHistory" asp-route-postId="@Model.Post.Id" method="get">
+                                <button type="submit" class="btn btn-primary">View edit history</button>
+                            </form>
+                        }
                     </div>
                 </td>
             </tr>

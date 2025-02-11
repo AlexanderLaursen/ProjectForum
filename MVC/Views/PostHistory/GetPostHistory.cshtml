@@ -1,0 +1,71 @@
+﻿@model PostHistoryViewModel
+
+<p>
+    <strong>Comment History</strong>
+</p>
+
+<div class="">
+    <table class="table table-striped table-bordered table-hover">
+        <thead>
+        </thead>
+        <tbody>
+            <tr>
+                <td>
+                    <div class="text-nowrap">
+                        <div>
+                            User:
+                        </div>
+                        <div>
+                            @Model.Post.User
+                        </div>
+                    </div>
+                </td>
+                <td class="w-100">
+                    <h3>
+                        @Model.Post.Title
+                    </h3>
+                    <p>
+                        @Model.Post.Content
+                    </p>
+                </td>
+                <td>
+                    <div class="text-nowrap">
+                        <div>
+                            Created at: @Model.Post.CreatedAt
+                        </div>
+                        <div>
+                            Likes: @Model.Post.Likes
+                        </div>
+                        <div>
+                            Edited: @Model.Post.Edited
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            @foreach (PostHistory postHistory in Model.PostHistory)
+            {
+                <tr>
+                    <td>
+                        <div class="text-nowrap">
+                        </div>
+                    </td>
+                    <td class="w-100">
+                        <h3>
+                            @postHistory.Title
+                        </h3>
+                        <p>
+                            @postHistory.Content
+                        </p>
+                    </td>
+                    <td>
+                        <div class="text-nowrap">
+                            Edited at: @postHistory.CreatedAt
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<pagination page-info="@Model.PageInfo" id="@Model.Post.Id"></pagination>

@@ -4,6 +4,8 @@ using WebApi.Repository;
 
 namespace WebApi.Controllers
 {
+    [ApiController]
+    [Route("api/v1/[controller]")]
     public class PostHistoryController : Controller
     {
         private readonly IPostHistoryRepository _postHistoryRepository;
@@ -13,6 +15,7 @@ namespace WebApi.Controllers
             _postHistoryRepository = postHistoryRepository;
         }
 
+        [HttpGet("{postId}")]
         public async Task<IActionResult> GetPostHistory(int postId, int page = 0, int pageSize = 0)
         {
             if (postId <= 0)
