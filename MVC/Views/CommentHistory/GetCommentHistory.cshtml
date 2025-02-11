@@ -1,0 +1,65 @@
+﻿@model CommentHistoryViewModel
+
+<p>
+    <strong>Comment History</strong>
+</p>
+
+<div class="">
+    <table class="table table-striped table-bordered table-hover">
+        <thead>
+        </thead>
+        <tbody>
+            <tr>
+                <td>
+                    <div class="text-nowrap">
+                        <div>
+                            User:
+                        </div>
+                        <div>
+                            @Model.Comment.User
+                        </div>
+                    </div>
+                </td>
+                <td class="w-100">
+                    <p>
+                        @Model.Comment.Content
+                    </p>
+                </td>
+                <td>
+                    <div class="text-nowrap">
+                        <div>
+                            Created at: @Model.Comment.CreatedAt
+                        </div>
+                        <div>
+                            Likes: @Model.Comment.Likes
+                        </div>
+                        <div>
+                            Edited: @Model.Comment.Edited
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            @foreach (CommentHistory commentHistory in Model.CommentHistory)
+            {
+                <tr>
+                    <td>
+                        <div class="text-nowrap">
+                        </div>
+                    </td>
+                    <td class="w-100">
+                        <p>
+                            @commentHistory.Content
+                        </p>
+                    </td>
+                    <td>
+                        <div class="text-nowrap">
+                            Edited at: @commentHistory.CreatedAt
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<pagination page-info="@Model.PageInfo" id="@Model.Comment.Id"></pagination>

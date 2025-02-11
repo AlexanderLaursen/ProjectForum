@@ -1,0 +1,19 @@
+﻿@model UpdateCommentViewModel
+
+@if(Model.Comment == null)
+{
+    <p>There was an error getting the original comment</p>
+}
+else
+{
+    <p>@Model.Comment.Content</p>
+}
+
+<form asp-controller="Comment" asp-action="Update" method="post">
+    <div class="form-group">
+        <label asp-for="Content"></label>
+        <input asp-for="Content" class="form-control" />
+    </div>
+    <input type="hidden" name="commentId" value="@Model.CommentId" />
+    <button type="submit" class="btn btn-primary">Edit comment</button>
+</form>

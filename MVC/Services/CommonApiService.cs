@@ -79,6 +79,37 @@ namespace MVC.Services
                 return new ApiResponse<T>();
             }
         }
+        public async Task<ApiResponse<T>> PutAsync<T>(string url, object data, string bearerToken)
+        {
+            try
+            {
+                string json = JsonSerializer.Serialize(data);
+                StringContent content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", bearerToken);
+
+                HttpResponseMessage response = await _httpClient.PutAsync(BASE_URL + url, content);
+
+                response.EnsureSuccessStatusCode();
+
+                string responseBody = await response.Content.ReadAsStringAsync();
+                var apiResponse = JsonSerializer.Deserialize<ApiResponse<T>>(responseBody, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+                if (apiResponse == null)
+                {
+                    return new ApiResponse<T>();
+                }
+
+                apiResponse.Content ??= new List<T>();
+                apiResponse.IsSuccess = true;
+
+                return apiResponse;
+            }
+            catch (Exception)
+            {
+                return new ApiResponse<T>();
+            }
+        }
 
         public async Task<ApiResponse<T>> DeleteAsync<T>(string url, string bearerToken)
         {

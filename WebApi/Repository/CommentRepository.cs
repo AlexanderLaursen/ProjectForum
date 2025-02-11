@@ -1,8 +1,8 @@
 ﻿using Mapster;
 using Microsoft.EntityFrameworkCore;
 using WebApi.Data;
-using WebApi.Dto;
 using WebApi.Dto.Comment;
+using WebApi.Dto.CommentHistory;
 using WebApi.Models;
 
 namespace WebApi.Repository
@@ -278,7 +278,9 @@ namespace WebApi.Repository
                 };
             }
 
-            Comment? comment = await _context.Comments.FirstOrDefaultAsync(p => p.Id == updateCommentDto.CommentId);
+            Comment? comment = await _context.Comments
+                .Include(c => c.User)
+                .FirstOrDefaultAsync(p => p.Id == updateCommentDto.CommentId);
 
             if (comment == null)
             {
@@ -301,10 +303,16 @@ namespace WebApi.Repository
             using (var transaction = await _context.Database.BeginTransactionAsync())
                 try
                 {
-                    CommentHistory commentHistory = comment.Adapt<CommentHistory>();
-                    commentHistory.Id = new int();
-                    commentHistory.CommentId = comment.Id;
-                    commentHistory.CreatedAt = comment.EditedAt == DateTime.MinValue ? comment.CreatedAt : comment.EditedAt;
+                    CommentHistory commentHistory = new()
+                    {
+                        Content = updateCommentDto.Content,
+                        CommentId = updateCommentDto.CommentId,
+                        UserId = comment.UserId,
+                        CreatedAt = comment.EditedAt == DateTime.MinValue ? comment.CreatedAt : comment.EditedAt,
+                        User = comment.User,
+                        Comment = comment
+                    };
+
                     _context.CommentHistory.Add(commentHistory);
                     await _context.SaveChangesAsync();
 
@@ -320,12 +328,13 @@ namespace WebApi.Repository
                     await transaction.CommitAsync();
 
                     CommentDto commentDto = comment.Adapt<CommentDto>();
+                    List<CommentDto> commentDtoList = [commentDto];
                     return new OperationResult
                     {
                         Success = true,
                         Data = new Dictionary<string, object>
                         {
-                            { "content", commentDto }
+                            { "content", commentDtoList }
                         }
                     };
                 }

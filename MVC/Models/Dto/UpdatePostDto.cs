@@ -1,7 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
-using WebApi.Models;
-
-namespace WebApi.Dto.Post
+﻿namespace MVC.Models.Dto
 {
     public class UpdatePostDto
     {

@@ -12,12 +12,13 @@ namespace MVC.Controllers
             _authService = authService;
         }
 
+        [HttpGet("/register")]
         public IActionResult Index()
         {
             return View();
         }
 
-        [HttpPost]
+        [HttpPost("/register")]
         public async Task<IActionResult> Register(RegisterData registerData)
         {
             if (!ModelState.IsValid)

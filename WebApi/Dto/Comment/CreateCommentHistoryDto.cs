@@ -1,11 +1,9 @@
-﻿namespace MVC.Models
+﻿namespace WebApi.Dto.Comment
 {
-    public class CommentHistory
+    public class CreateCommentHistoryDto
     {
         public int Id { get; set; }
         public string Content { get; set; }
         public DateTime CreatedAt { get; set; }
-        public string UserId { get; set; }
-        public int CommentId { get; set; }
     }
 }
