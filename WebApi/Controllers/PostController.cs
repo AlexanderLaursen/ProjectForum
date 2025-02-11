@@ -57,6 +57,7 @@ namespace WebApi.Controllers
 
         [HttpGet("/api/v1/User/{username}/posts")]
         public async Task<IActionResult> GetPostsByUsername(string username, int page = 0, int pageSize = 0)
+        
         {
             if (string.IsNullOrEmpty(username))
             {

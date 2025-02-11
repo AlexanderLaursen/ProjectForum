@@ -1,0 +1,31 @@
+﻿@model MVC.Models.ViewModels.ProfileViewModel
+
+@{
+    ViewData["Title"] = "Profile";
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card">
+                <img src="@Model.User.ProfileImageUrl" class="card-img-top" alt="Profile Image">
+                <div class="card-body">
+                    <h5 class="card-title">@Model.User.Firstname @Model.User.Lastname</h5>
+                    <p class="card-text">@Model.User.Bio</p>
+                    <p class="card-text"><small class="text-muted">Joined on @Model.User.CreatedAt.ToString("MMMM dd, yyyy")</small></p>
+                    <a href="@Model.User.Website" class="btn btn-primary">Visit Website</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-8">
+            <div class="row">
+                <div class="col">
+                    <partial name="ProfilePosts" model="Model" />
+                </div>
+                <div class="col">
+                    <partial name="ProfileComments" model="Model" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

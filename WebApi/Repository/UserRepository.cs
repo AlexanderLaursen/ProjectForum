@@ -39,13 +39,14 @@ namespace WebApi.Repository
             }
 
             UserDto userDto = user.Adapt<UserDto>();
+            List<UserDto> userList = [userDto];
 
             return new OperationResult
             {
                 Success = true,
                 Data = new Dictionary<string, object>
                     {
-                        { "user", userDto }
+                        { "content", userList }
                     }
             };
 

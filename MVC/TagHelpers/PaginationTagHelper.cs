@@ -7,6 +7,8 @@ using System.Formats.Asn1;
 using MVC.Models;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using System;
+using Microsoft.AspNetCore.WebUtilities;
 
 namespace Webserver.TagHelpers
 {
@@ -19,11 +21,15 @@ namespace Webserver.TagHelpers
         [HtmlAttributeNotBound]
         public ViewContext? ViewContext { get; set; }
         public PageInfo PageInfo { get; set; }
+        public PageInfo PostsPageInfo { get; set; }
+        public PageInfo CommentsPageInfo { get; set; }
         public int Id { get; set; }
         private bool PreviousPageExists => PageInfo.CurrentPage != 1;
         private bool NextPageExists => !(PageInfo.TotalPages <= PageInfo.CurrentPage);
         public string SearchString { get; set; }
         public int Iterator { get; set; } = 1;
+        public string Type { get; set; }
+        public string Username { get; set; }
 
         public override void Process(TagHelperContext context, TagHelperOutput output)
         {
@@ -155,6 +161,19 @@ namespace Webserver.TagHelpers
                 return url;
             }
 
+            if (Type == "ProfilePosts")
+            {
+                string url = $"/Profile/{Username}?postPage={targetPage}&postSize={PostsPageInfo.PageSize}&commentPage={CommentsPageInfo.CurrentPage}&commentSize={CommentsPageInfo.PageSize}";
+
+                return url;
+            }
+
+            if (Type == "ProfileComments")
+            {
+                string url = $"/Profile/{Username}?postPage={PostsPageInfo.CurrentPage}&postSize={PostsPageInfo.PageSize}&commentPage={targetPage}&commentSize={CommentsPageInfo.PageSize}";
+
+                return url;
+            }
 
             return string.Empty;
         }

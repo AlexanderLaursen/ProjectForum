@@ -20,7 +20,7 @@
                             User:
                         </div>
                         <div>
-                            @Model.Post.User
+                            <a asp-controller="Profile" asp-action="Index" asp-route-username="@Model.Post.User">@Model.Post.User</a>
                         </div>
                     </div>
                 </td>
@@ -74,7 +74,7 @@
                                 User:
                             </div>
                             <div>
-                                @comment.User
+                                <a asp-controller="Profile" asp-action="Index" asp-route-username="@comment.User">@comment.User</a>
                             </div>
                         </div>
                     </td>

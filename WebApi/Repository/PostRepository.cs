@@ -194,15 +194,22 @@ namespace WebApi.Repository
 
             try
             {
-                IQueryable<Post> query = _context.Posts
+                var posts = await _context.Posts
                     .Include(p => p.User)
                     .Where(p => p.UserId == userId)
                     .Skip(pageInfo.Skip)
-                    .Take(pageInfo.PageSize);
+                    .Take(pageInfo.PageSize)
+                    .ToListAsync();
 
-                int totalItems = query.Count();
+                if (posts == null)
+                {
+                    return new OperationResult();
+                }
 
-                List<Post> posts = await query.ToListAsync();
+                int totalItems = _context.Posts
+                    .Where(p => p.UserId == userId)
+                    .Count();
+
                 List<PostDto> postsDto = posts.Adapt<List<PostDto>>();
 
                 return new OperationResult
