@@ -102,9 +102,8 @@
                             </div>
                             @if (comment.Edited)
                             {
-                                <form asp-controller="Comment" asp-action="GetCommentHistory" method="get">
-                                    <input type="hidden" name="commentId" value="@comment.Id" />
-                                    <button type="submit" class="btn btn-primary">Edit history</button>
+                                <form asp-controller="CommentHistory" asp-action="GetCommentHistory" asp-route-commentId="@comment.Id" method="get">
+                                    <button type="submit" class="btn btn-primary">View edit history</button>
                                 </form>
                             }
                         </div>

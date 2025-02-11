@@ -19,7 +19,7 @@ namespace MVC.Services
                 return new ApiResponse<CommentHistory>();
             }
 
-            string url = _commonApiService.StringFactory(COMMENT_HISTORY_PREFIX, pageInfo.CurrentPage, pageInfo.PageSize);
+            string url = _commonApiService.StringFactory($"{COMMENT_HISTORY_PREFIX}/{commentId}", pageInfo.CurrentPage, pageInfo.PageSize);
 
             return await _commonApiService.GetApiResponseAsync<CommentHistory>(url);
         }

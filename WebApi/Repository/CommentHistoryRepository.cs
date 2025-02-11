@@ -45,7 +45,14 @@ namespace WebApi.Repository
                     Success = true,
                     Data = new Dictionary<string, object>
                     {
-                        { "content", commentHistoryDtoList }
+                        { "content", commentHistoryDtoList },
+                        { "pageInfo", new PageInfo
+                            {
+                                CurrentPage = pageInfo.CurrentPage,
+                                PageSize = pageInfo.PageSize,
+                                TotalItems = totalItems,
+                            }
+                        }
                     }
                 };
             }

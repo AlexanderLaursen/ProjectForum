@@ -20,7 +20,7 @@ namespace MVC.Controllers
             return View();
         }
 
-        [HttpPost]
+        [HttpPost("/login")]
         public async Task<IActionResult> Index(LoginData loginData)
         {
             if (!ModelState.IsValid)
@@ -48,7 +48,7 @@ namespace MVC.Controllers
             return View();
         }
 
-        [HttpGet]
+        [HttpGet("/login")]
         public async Task<IActionResult> Logout()
         {
             HttpContext.Session.Remove("Bearer");
