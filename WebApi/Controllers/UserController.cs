@@ -88,57 +88,61 @@ namespace WebApi.Controllers
 
             using var stream = file.OpenReadStream();
 
-            string fileName = $"{user.Id}/profile";
+            string fileName = $"original/{user.Id}";
             string filePath = await _blobStorageService.UploadFileAsync(stream, fileName);
 
-            
-            user.ProfilePictureUrl = filePath;
+            string newUrl = filePath.Replace("original", "resized");
+
+            user.SmProfilePicture = newUrl + "_50.jpg";
+            user.MdProfilePicture = newUrl + "_100.jpg";
+            user.LgProfilePicture = newUrl + "_300.jpg";
+
             await _userRepository.UpdateUserAsync(user);
 
-            return Ok(new { filePath });
+            return Ok();
         }
 
-        [HttpGet("profile-picture/{username}")]
-        public async Task<IActionResult> GetProfilePicture(string username)
-        {
-            OperationResult userOperation = await _userRepository.GetUserByUsernameAsync(username);
+        //[HttpGet("profile-picture/{username}")]
+        //public async Task<IActionResult> GetProfilePicture(string username)
+        //{
+        //    OperationResult userOperation = await _userRepository.GetUserByUsernameAsync(username);
 
-            if (userOperation == null)
-            {
-                return NotFound("User not found.");
-            }
+        //    if (userOperation == null)
+        //    {
+        //        return NotFound("User not found.");
+        //    }
 
-            var user = userOperation.InternalData as AppUser;
+        //    var user = userOperation.InternalData as AppUser;
 
-            if (user == null)
-            {
-                return Unauthorized("Invalid user credentials.");
-            }
+        //    if (user == null)
+        //    {
+        //        return Unauthorized("Invalid user credentials.");
+        //    }
 
-            string profileImageUrl = user.ProfilePictureUrl;
+        //    string profileImageUrl = user.SmProfilePicture;
 
-            if (string.IsNullOrEmpty(profileImageUrl))
-            {
-                return NotFound("Profile picture not found.");
-            }
+        //    if (string.IsNullOrEmpty(profileImageUrl))
+        //    {
+        //        return NotFound("Profile picture not found.");
+        //    }
 
-            List<string> data = [profileImageUrl];
+        //    List<string> data = [profileImageUrl];
 
-            OperationResult result = new OperationResult
-            {
-                Success = true,
-                Data = new Dictionary<string, object>
-                {
-                    { "content", data }
-                }
-            };
+        //    OperationResult result = new OperationResult
+        //    {
+        //        Success = true,
+        //        Data = new Dictionary<string, object>
+        //        {
+        //            { "content", data }
+        //        }
+        //    };
 
-            if (data.Count == 0)
-            {
-                return NotFound();
-            }
+        //    if (data.Count == 0)
+        //    {
+        //        return NotFound();
+        //    }
 
-            return Ok(data);
-        }
+        //    return Ok(data);
+        //}
     }
 }

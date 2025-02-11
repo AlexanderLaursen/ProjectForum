@@ -1,4 +1,4 @@
-﻿@model MVC.Models.ViewModels.ProfileViewModel
+﻿@model ProfileViewModel
 
 @{
     ViewData["Title"] = "Profile";
@@ -17,7 +17,7 @@
     <div class="row">
         <div class="col-md-4">
             <div class="card">
-                <img src="@Model.User.ProfilePictureUrl" class="card-img-top" alt="Profile Image">
+                <img src="@Model.User.LgProfilePicture" class="card-img-top" alt="Profile Image">
                 <div class="card-body">
                     <h5 class="card-title">@Model.User.Firstname @Model.User.Lastname</h5>
                     <p class="card-text">@Model.User.Bio</p>

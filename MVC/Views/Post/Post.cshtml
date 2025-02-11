@@ -18,10 +18,13 @@
                 <td>
                     <div class="text-nowrap">
                         <div>
+                            <img src="@Model.Post.User.MdProfilePicture" alt="profile picture"/>
+                        </div>
+                        <div>
                             User:
                         </div>
                         <div>
-                            <a asp-controller="Profile" asp-action="Index" asp-route-username="@Model.Post.User">@Model.Post.User</a>
+                            <a asp-controller="Profile" asp-action="Index" asp-route-username="@Model.Post.User.UserName">@Model.Post.User.UserName</a>
                         </div>
                     </div>
                 </td>
@@ -72,10 +75,13 @@
                     <td>
                         <div class="text-nowrap">
                             <div>
+                                <img src="@comment.User.MdProfilePicture" alt="profile picture"/>
+                            </div>
+                            <div>
                                 User:
                             </div>
                             <div>
-                                <a asp-controller="Profile" asp-action="Index" asp-route-username="@comment.User">@comment.User</a>
+                                <a asp-controller="Profile" asp-action="Index" asp-route-username="@comment.User.UserName">@comment.User.UserName</a>
                             </div>
                         </div>
                     </td>

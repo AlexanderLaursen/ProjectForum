@@ -9,6 +9,6 @@
         public int PostId { get; set; }
 
         public string UserId { get; set; }
-        public UsernameIdDto User { get; set; }
+        public ShortUserDto User { get; set; }
     }
 }

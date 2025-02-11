@@ -69,7 +69,7 @@ namespace MVC.Controllers
             if (file == null || file.Length == 0)
             {
                 ModelState.AddModelError("", "No file uploaded.");
-                return View("Profile");
+                return RedirectToAction("OwnProfile");
             }
 
             string? username = HttpContext.Session.GetJson<string>("Username");
@@ -85,11 +85,11 @@ namespace MVC.Controllers
 
             if (response.IsSuccessStatusCode)
             {
-                return RedirectToAction("Profile");
+                return RedirectToAction("OwnProfile");
             }
 
             ModelState.AddModelError("", "Failed to upload profile picture.");
-            return View("Index", new {username});
+            return RedirectToAction("OwnProfile");
         }
     }
 }

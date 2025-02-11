@@ -16,7 +16,7 @@ namespace MVC.Models
         public int CategoryId { get; set; }
 
 
-        public IdentityUser User { get; set; }
+        public AppUser User { get; set; }
         public Category Category { get; set; }
         public List<Comment> Comments { get; set; }
         //public List<PostHistory> PostHistory { get; set; }

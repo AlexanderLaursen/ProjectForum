@@ -15,7 +15,7 @@ namespace MVC.Models
         public int PostId { get; set; }
 
 
-        public IdentityUser User { get; set; }
+        public AppUser User { get; set; }
         public Post Post { get; set; }
         public List<CommentHistory> CommentHistory { get; set; }
     }

@@ -47,7 +47,7 @@ namespace WebApi.Repository
                 //            p.Id,
                 //            p.Title,
                 //            p.Content,
-                //            User = new UsernameIdDto
+                //            User = new ShortUserDto
                 //            {
                 //                Id = p.User.Id,
                 //                UserName = p.User.UserName
@@ -63,7 +63,7 @@ namespace WebApi.Repository
                 //                c.Id,
                 //                c.Likes,
                 //                c.UserId,
-                //                User = new UsernameIdDto
+                //                User = new ShortUserDto
                 //                {
                 //                    Id = c.User.Id,
                 //                    UserName = c.User.UserName
@@ -138,7 +138,8 @@ namespace WebApi.Repository
 
                 int totalItems = query.Count();
 
-                var queryWithPagination = query.Skip(pageInfo.Skip)
+                var queryWithPagination = query
+                    .Skip(pageInfo.Skip)
                     .Take(pageInfo.PageSize);
 
                 List<Post> posts = await queryWithPagination.ToListAsync();

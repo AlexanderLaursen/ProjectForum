@@ -13,6 +13,6 @@ namespace WebApi.Dto.Comment
         public bool Edited { get; set; }
 
         public string UserId { get; set; }
-        public UsernameIdDto User { get; set; }
+        public ShortUserDto User { get; set; }
     }
 }
