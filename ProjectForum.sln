@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApi", "WebApi\WebApi.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MVC", "MVC\MVC.csproj", "{BABF4D99-1309-4F59-A566-5DD4286EC0A1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlobResizer", "BlobResizer\BlobResizer.csproj", "{1C485B64-410B-474F-AAD6-E4547894D552}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{BABF4D99-1309-4F59-A566-5DD4286EC0A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BABF4D99-1309-4F59-A566-5DD4286EC0A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BABF4D99-1309-4F59-A566-5DD4286EC0A1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1C485B64-410B-474F-AAD6-E4547894D552}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1C485B64-410B-474F-AAD6-E4547894D552}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1C485B64-410B-474F-AAD6-E4547894D552}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1C485B64-410B-474F-AAD6-E4547894D552}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
