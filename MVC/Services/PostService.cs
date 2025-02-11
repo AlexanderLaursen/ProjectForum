@@ -67,5 +67,24 @@ namespace MVC.Services
 
             return await _commonApiService.DeleteAsync<bool>($"{POST_PREFIX}?postId={id}", bearerToken);
         }
+
+        public async Task<ApiResponse<Post>> UpdatePostAsync(UpdatePostViewModel viewModel, string bearerToken)
+        {
+            if (viewModel == null)
+            {
+                return new ApiResponse<Post>();
+            }
+
+            UpdatePostDto updatePostDto = new UpdatePostDto
+            {
+                Title = viewModel.Title,
+                Content = viewModel.Content,
+                PostId = viewModel.PostId,
+                CategoryId = viewModel.CategoryId
+            };
+
+
+            return await _commonApiService.PutAsync<Post>($"{POST_PREFIX}", updatePostDto, bearerToken);
+        }
     }
 }

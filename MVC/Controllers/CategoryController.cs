@@ -13,7 +13,7 @@ namespace MVC.Controllers
             _categoryService = categoryService;
         }
 
-        [HttpGet("Category/{id}")]
+        [HttpGet("/Category/{id}")]
         public async Task<IActionResult> GetCategory(int id)
         {
             if (id <= 0)

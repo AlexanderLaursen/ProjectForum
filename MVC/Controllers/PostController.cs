@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MVC.Helpers;
 using MVC.Models;
+using MVC.Models.Dto;
 using MVC.Models.ViewModels;
 using MVC.Services;
 
@@ -16,7 +17,7 @@ namespace MVC.Controllers
             _categoryService = categoryService;
         }
 
-        [HttpGet("Category/{categoryId}/posts")]
+        [HttpGet("/Category/{categoryId}/posts")]
         public async Task<IActionResult> GetPostsByCategoryId(int categoryId, int page, int pageSize)
         {
             if (categoryId <= 0)
@@ -42,7 +43,7 @@ namespace MVC.Controllers
             return View("Posts", viewModel);
         }
 
-        [HttpGet("Post/{postId}")]
+        [HttpGet("/Post/{postId}")]
         public async Task<IActionResult> GetPostById(int postId, int page, int pageSize)
         {
             if (postId <= 0)
@@ -71,7 +72,7 @@ namespace MVC.Controllers
             return View("Post", viewModel);
         }
 
-        [HttpGet("Post/CreatePost")]
+        [HttpGet("/Post/CreatePost")]
         public IActionResult CreatePost(int categoryId = 0)
         {
             CreatePostViewModel createPostViewModel = new CreatePostViewModel
@@ -81,7 +82,7 @@ namespace MVC.Controllers
             return View(createPostViewModel);
         }
 
-        [HttpPost("Post/CreatePost")]
+        [HttpPost("/Post/CreatePost")]
         public async Task<IActionResult> CreatePost(CreatePostViewModel viewModel)
         {
             if (!ModelState.IsValid)
@@ -106,7 +107,50 @@ namespace MVC.Controllers
             return RedirectToAction("GetPostById", new { postId = response.Content[0].Id });
         }
 
-        [HttpPost("Post/Delete")]
+        [HttpGet("/Post/Update")]
+        public async Task<IActionResult> Update(int postId, UpdatePostViewModel updatePostViewModel)
+        {
+            if (postId <= 0)
+            {
+                return BadRequest();
+            }
+
+            ApiResponse<Post> response = await _postService.GetPostByIdAsync(postId, new PageInfo());
+
+            UpdatePostViewModel viewModel = new()
+            {
+                Post = response.Content[0],
+                CategoryId = response.Content[0].CategoryId,
+                PostId = postId,
+            };
+
+            return View(viewModel);
+        }
+
+        [HttpPost("/Post/Update")]
+        public async Task<IActionResult> Update(UpdatePostViewModel viewModel)
+        {
+            if (!ModelState.IsValid)
+            {
+                return RedirectToAction("Update", new { postId = viewModel.PostId });
+            }
+
+            string? bearerToken = HttpContext.Session.GetJson<string>("Bearer");
+            if (string.IsNullOrEmpty(bearerToken))
+            {
+                return RedirectToAction("Index", "Login");
+            }
+
+            ApiResponse<Post> response = await _postService.UpdatePostAsync(viewModel, bearerToken);
+            if (!response.IsSuccess)
+            {
+                return RedirectToAction("Update", new { postId = viewModel.PostId });
+            }
+
+            return RedirectToAction("GetPostById", new { postId = viewModel.PostId });
+        }
+
+        [HttpPost("/Post/Delete")]
         public async Task<IActionResult> DeletePost(int postId)
         {
             if (postId <= 0)

@@ -15,6 +15,18 @@ namespace MVC.Services
             _commonApiService = commonApiService;
         }
 
+        public async Task<ApiResponse<Comment>> GetCommentByIdAsync(int commentId)
+        {
+            if (commentId <= 0)
+            {
+                return new ApiResponse<Comment>();
+            }
+
+            string url = $"{COMMENT_PREFIX}/{commentId}";
+
+            return await _commonApiService.GetApiResponseAsync<Comment>(url);
+        }
+
         public async Task<ApiResponse<Comment>> CreateCommentAsync(CreateCommentViewModel viewModel, string bearerToken)
         {
             if (viewModel == null)
@@ -29,6 +41,16 @@ namespace MVC.Services
             };
 
             return await _commonApiService.PostApiReponseAsync<Comment>($"{COMMENT_PREFIX}", createcommentDto, bearerToken);
+        }
+
+        public async Task<ApiResponse<Comment>> UpdateCommentByIdAsync(int commentId, UpdateCommentDto updateCommentDto, string bearerToken)
+        {
+            if (commentId <= 0)
+            {
+                return new ApiResponse<Comment>();
+            }
+
+            return await _commonApiService.PutAsync<Comment>($"{COMMENT_PREFIX}", updateCommentDto, bearerToken);
         }
 
         public async Task<ApiResponse<bool>> DeleteCommentAsync(int commentId, string bearerToken)

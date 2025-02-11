@@ -27,6 +27,12 @@ namespace Webserver.TagHelpers
 
         public override void Process(TagHelperContext context, TagHelperOutput output)
         {
+            // Handle edgecase in comments with no items
+            if (PageInfo.TotalItems == 0)
+            {
+                PageInfo.TotalItems = 1;
+            }
+
             // Sætter første link til at være 2 mindre end denne side
             Iterator = PageInfo.CurrentPage - 2;
             if (Iterator < 1)
@@ -118,7 +124,7 @@ namespace Webserver.TagHelpers
                 return url;
             }
 
-            if (currentUrl.StartsWith("/Post"))
+            if (currentUrl.StartsWith("/Post/"))
             {
                 string url = $"/Post/{Id}?page={targetPage}";
                 if (PageInfo.PageSize != 10)
@@ -128,6 +134,27 @@ namespace Webserver.TagHelpers
 
                 return url;
             }
+
+            if (currentUrl.StartsWith("/CommentHistory"))
+            {
+                string url = $"/CommentHistory/{Id}?page={targetPage}";
+                if (PageInfo.PageSize != 10)
+                {
+                    url += $"&pageSize={PageInfo.PageSize}";
+                }
+                return url;
+            }
+
+            if (currentUrl.StartsWith("/PostHistory"))
+            {
+                string url = $"/PostHistory/{Id}?page={targetPage}";
+                if (PageInfo.PageSize != 10)
+                {
+                    url += $"&pageSize={PageInfo.PageSize}";
+                }
+                return url;
+            }
+
 
             return string.Empty;
         }

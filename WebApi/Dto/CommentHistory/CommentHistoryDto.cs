@@ -1,16 +1,11 @@
-﻿using Microsoft.AspNetCore.Identity;
-
-namespace WebApi.Models
+﻿namespace WebApi.Dto.CommentHistory
 {
-    public class CommentHistory
+    public class CommentHistoryDto
     {
         public int Id { get; set; }
         public string Content { get; set; }
         public DateTime CreatedAt { get; set; }
         public string UserId { get; set; }
         public int CommentId { get; set; }
-
-        public IdentityUser User { get; set; }
-        public Comment Comment { get; set; }
     }
 }

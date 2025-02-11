@@ -7,6 +7,7 @@ using WebApi.Data;
 using WebApi.Dto;
 using WebApi.Dto.Comment;
 using WebApi.Dto.Post;
+using WebApi.Dto.PostHistory;
 using WebApi.Models;
 
 namespace WebApi.Repository
@@ -333,7 +334,9 @@ namespace WebApi.Repository
                 };
             }
 
-            Post? post = await _context.Posts.FirstOrDefaultAsync(p => p.Id == updatePostDto.PostId);
+            Post? post = await _context.Posts
+                .Include(p => p.User)
+                .FirstOrDefaultAsync(p => p.Id == updatePostDto.PostId);
 
             if (post == null)
             {
@@ -355,10 +358,17 @@ namespace WebApi.Repository
             using (var transaction = await _context.Database.BeginTransactionAsync())
                 try
                 {
-                    PostHistory postHistory = post.Adapt<PostHistory>();
-                    postHistory.Id = new int();
-                    postHistory.PostId = post.Id;
-                    postHistory.CreatedAt = post.EditedAt == DateTime.MinValue ? post.CreatedAt : post.EditedAt;
+                    PostHistory postHistory = new()
+                    {
+                        Title = post.Title,
+                        Content = post.Content,
+                        PostId = post.Id,
+                        CategoryId = post.CategoryId,
+                        UserId = post.UserId,
+                        CreatedAt = post.EditedAt == DateTime.MinValue ? post.CreatedAt : post.EditedAt,
+                        User = post.User,
+                        Post = post,
+                    };
                     _context.PostHistory.Add(postHistory);
                     await _context.SaveChangesAsync();
 
@@ -368,8 +378,9 @@ namespace WebApi.Repository
                     post.Edited = true;
                     post.EditedAt = DateTime.Now;
                     post.Content = updatePostDto.Content;
+                    post.Title = updatePostDto.Title;
+                    post.CategoryId = updatePostDto.CategoryId;
                     _context.Posts.Update(post);
-
                     await _context.SaveChangesAsync();
 
                     await transaction.CommitAsync();

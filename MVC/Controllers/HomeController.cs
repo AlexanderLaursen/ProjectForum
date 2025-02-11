@@ -17,6 +17,7 @@ namespace MVC.Controllers
             _categoryService = categoryService;
         }
 
+        [HttpGet("/")]
         public async Task<IActionResult> Index()
         {
             ViewBag.IsLoggedIn = HttpContext.Session.GetString("Bearer") != null;
@@ -29,11 +30,6 @@ namespace MVC.Controllers
             };
 
             return View(viewModel);
-        }
-
-        public IActionResult Privacy()
-        {
-            return View();
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
