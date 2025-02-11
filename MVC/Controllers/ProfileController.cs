@@ -13,7 +13,7 @@ namespace MVC.Controllers
 
 
         [HttpGet("/profile")]
-        public async IActionResult Index(int postPage = 0, int postSize = 0, int commentPage = 0, int commentSize = 0)
+        public async Task<IActionResult> Index(int postPage = 0, int postSize = 0, int commentPage = 0, int commentSize = 0)
         {
             string username = HttpContext.Session.GetJson<string>("Username");
 

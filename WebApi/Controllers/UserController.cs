@@ -15,8 +15,8 @@ namespace WebApi.Controllers
             _commonRepository = commonRepository;
         }
 
-        [HttpGet("{username}")]
-        public IActionResult GetUserByUsername(string username)
+        [HttpGet("{username}/id")]
+        public IActionResult GetUserIdByUsername(string username)
         {
             if (string.IsNullOrWhiteSpace(username))
             {
@@ -37,5 +37,6 @@ namespace WebApi.Controllers
 
             return Ok(data);
         }
+
     }
 }

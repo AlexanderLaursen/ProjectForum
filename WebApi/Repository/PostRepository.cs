@@ -47,7 +47,7 @@ namespace WebApi.Repository
                 //            p.Id,
                 //            p.Title,
                 //            p.Content,
-                //            User = new UserDto
+                //            User = new UsernameIdDto
                 //            {
                 //                Id = p.User.Id,
                 //                UserName = p.User.UserName
@@ -63,7 +63,7 @@ namespace WebApi.Repository
                 //                c.Id,
                 //                c.Likes,
                 //                c.UserId,
-                //                User = new UserDto
+                //                User = new UsernameIdDto
                 //                {
                 //                    Id = c.User.Id,
                 //                    UserName = c.User.UserName
