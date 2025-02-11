@@ -4,11 +4,20 @@
     ViewData["Title"] = "Profile";
 }
 
+<form asp-controller="Profile" asp-action="UploadProfilePicture" method="post" enctype="multipart/form-data">
+    <div class="form-group">
+        <label for="profilePicture">Upload Profile Picture</label>
+        <input type="file" name="file" class="form-control" id="profilePicture" />
+    </div>
+    <button type="submit" class="btn btn-primary">Upload</button>
+</form>
+
+
 <div class="container">
     <div class="row">
         <div class="col-md-4">
             <div class="card">
-                <img src="@Model.User.ProfileImageUrl" class="card-img-top" alt="Profile Image">
+                <img src="@Model.User.ProfilePictureUrl" class="card-img-top" alt="Profile Image">
                 <div class="card-body">
                     <h5 class="card-title">@Model.User.Firstname @Model.User.Lastname</h5>
                     <p class="card-text">@Model.User.Bio</p>

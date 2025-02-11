@@ -47,9 +47,42 @@ namespace WebApi.Repository
                 Data = new Dictionary<string, object>
                     {
                         { "content", userList }
-                    }
+                    },
+                InternalData = user
             };
 
+        }
+
+        public Task<OperationResult> UpdateUserAsync(AppUser user)
+        {
+            if (user == null)
+            {
+                return Task.FromResult(new OperationResult
+                {
+                    Success = false,
+                    ErrorMessage = "Invalid user."
+                });
+            }
+
+            try
+            {
+                _context.Update(user);
+                _context.SaveChangesAsync();
+
+                return Task.FromResult(new OperationResult
+                {
+                    Success = true,
+                    InternalData = user
+                });
+            }
+            catch (Exception)
+            {
+                return Task.FromResult(new OperationResult
+                {
+                    Success = false,
+                    ErrorMessage = "An error occurred while updating the user."
+                });
+            }
         }
     }
 }

@@ -3,6 +3,8 @@ using MVC.Helpers;
 using MVC.Models;
 using MVC.Models.ViewModels;
 using MVC.Services;
+using System.Net.Http;
+using System.Net.Http.Headers;
 
 namespace MVC.Controllers
 {
@@ -37,6 +39,7 @@ namespace MVC.Controllers
         {
             ApiResponse<AppUser> user = await _userService.GetUserByUsernameAsync(username);
 
+
             if (user == null)
             {
                 return RedirectToAction("Index", "Home");
@@ -58,6 +61,35 @@ namespace MVC.Controllers
             };
 
             return View(viewModel);
+        }
+
+        [HttpPost("/profile/upload")]
+        public async Task<IActionResult> UploadProfilePicture(IFormFile file)
+        {
+            if (file == null || file.Length == 0)
+            {
+                ModelState.AddModelError("", "No file uploaded.");
+                return View("Profile");
+            }
+
+            string? username = HttpContext.Session.GetJson<string>("Username");
+            string? bearerToken = HttpContext.Session.GetJson<string>("Bearer");
+
+            if (string.IsNullOrWhiteSpace(username) || string.IsNullOrEmpty(bearerToken))
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+
+            var response = await _userService.UploadPictureAsync(file, username, bearerToken);
+
+            if (response.IsSuccessStatusCode)
+            {
+                return RedirectToAction("Profile");
+            }
+
+            ModelState.AddModelError("", "Failed to upload profile picture.");
+            return View("Index", new {username});
         }
     }
 }

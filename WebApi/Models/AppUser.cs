@@ -10,6 +10,7 @@ namespace WebApi.Models
         public string Password { get; set; }
         public string Bio { get; set; }
         public string Website { get; set; }
+        public string ProfilePictureUrl { get; set; }
 
         public DateTime CreatedAt { get; set; }
 
