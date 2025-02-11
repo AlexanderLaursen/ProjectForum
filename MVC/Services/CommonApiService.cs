@@ -79,6 +79,7 @@ namespace MVC.Services
                 return new ApiResponse<T>();
             }
         }
+
         public async Task<ApiResponse<T>> PutAsync<T>(string url, object data, string bearerToken)
         {
             try

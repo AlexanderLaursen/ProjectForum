@@ -41,6 +41,7 @@ namespace MVC.Controllers
 
             if (userIdResponse.IsSuccess)
             {
+                HttpContext.Session.SetJson("Username", loginData.Email);
                 HttpContext.Session.SetJson("UserId", userIdResponse.Content[0]);
                 return RedirectToAction("Index", "Home");
             }
