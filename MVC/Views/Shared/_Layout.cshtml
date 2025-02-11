@@ -35,7 +35,8 @@
                 <div class="d-flex justify-content-center w-100">
                     @if (isLoggedIn)
                     {
-                        <a class="btn btn-danger ms-auto me-2" asp-controller="Login" asp-action="Logout">Logout</a>
+                        <a class="btn btn-primary ms-auto me-2" asp-controller="Profile" asp-action="Index">Profile</a>
+                        <a class="btn btn-danger me-2" asp-controller="Login" asp-action="Logout">Logout</a>
                     }
                     else
                     {

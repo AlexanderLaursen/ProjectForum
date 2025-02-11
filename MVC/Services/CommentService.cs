@@ -7,6 +7,7 @@ namespace MVC.Services
     public class CommentService
     {
         private const string COMMENT_PREFIX = "Comment";
+        private const string USER_PREFIX = "User";
         private readonly HttpClient _httpClient;
         private readonly CommonApiService _commonApiService;
         public CommentService(HttpClient httpClient, CommonApiService commonApiService)
@@ -61,6 +62,18 @@ namespace MVC.Services
             }
 
             return await _commonApiService.DeleteAsync<bool>($"{COMMENT_PREFIX}?commentId={commentId}", bearerToken);
+        }
+
+        public async Task<ApiResponse<Comment>> GetCommentsByUserIdAsync(string username, PageInfo pageInfo)
+        {
+            if (string.IsNullOrEmpty(username))
+            {
+                return new ApiResponse<Comment>();
+            }
+
+            string url = _commonApiService.StringFactory($"{USER_PREFIX}/{username}/comments", pageInfo.CurrentPage, pageInfo.PageSize);
+
+            return await _commonApiService.GetApiResponseAsync<Comment>(url);
         }
     }
 }

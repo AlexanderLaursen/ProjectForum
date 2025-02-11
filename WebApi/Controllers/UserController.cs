@@ -10,13 +10,15 @@ namespace WebApi.Controllers
     public class UserController : Controller
     {
         private readonly ICommonRepository _commonRepository;
-        public UserController(ICommonRepository commonRepository)
+        private readonly IUserRepository _userRepository;
+        public UserController(ICommonRepository commonRepository, IUserRepository userRepository)
         {
             _commonRepository = commonRepository;
+            _userRepository = userRepository;
         }
 
-        [HttpGet("{username}")]
-        public IActionResult GetUserByUsername(string username)
+        [HttpGet("{username}/id")]
+        public IActionResult GetUserIdByUsername(string username)
         {
             if (string.IsNullOrWhiteSpace(username))
             {
@@ -36,6 +38,24 @@ namespace WebApi.Controllers
             };
 
             return Ok(data);
+        }
+
+        [HttpGet("{username}")]
+        public async Task<IActionResult> GetUserAsync(string username)
+        
+        {
+            if (string.IsNullOrWhiteSpace(username))
+            {
+                return BadRequest();
+            }
+
+            OperationResult result = await _userRepository.GetUserByUsernameAsync(username);
+            if (!result.Success)
+            {
+                return NotFound();
+            }
+
+            return Ok(result.Data);
         }
     }
 }

@@ -5,7 +5,7 @@ using WebApi.Models;
 
 namespace WebApi.Data
 {
-    public class DataContext : IdentityDbContext
+    public class DataContext : IdentityDbContext<AppUser>
     {
         public DataContext(DbContextOptions<DataContext> options) : base(options)
         {

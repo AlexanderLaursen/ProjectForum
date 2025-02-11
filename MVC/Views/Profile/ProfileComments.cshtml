@@ -1,0 +1,23 @@
+﻿@model ProfileViewModel
+
+<h2>Comments</h2>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Content</th>
+            <th>Created At</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var comment in Model.Comments)
+        {
+            <tr>
+                <td>@comment.Content</td>
+                <td>@comment.CreatedAt.ToString("MMMM dd, yyyy")</td>
+            </tr>
+        }
+    </tbody>
+</table>
+<pagination posts-page-info="@Model.PostPageInfo" comments-page-info="@Model.CommentPageInfo"
+            page-info="@Model.CommentPageInfo" type="ProfileComments" username="@Model.User.UserName"></pagination>

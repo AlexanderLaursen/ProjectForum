@@ -15,6 +15,7 @@ builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<CommonApiService>();
 builder.Services.AddScoped<CommentHistoryService>();
 builder.Services.AddScoped<PostHistoryService>();
+builder.Services.AddTransient<UserService>();
 
 var app = builder.Build();
 

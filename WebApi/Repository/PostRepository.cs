@@ -47,7 +47,7 @@ namespace WebApi.Repository
                 //            p.Id,
                 //            p.Title,
                 //            p.Content,
-                //            User = new UserDto
+                //            User = new UsernameIdDto
                 //            {
                 //                Id = p.User.Id,
                 //                UserName = p.User.UserName
@@ -63,7 +63,7 @@ namespace WebApi.Repository
                 //                c.Id,
                 //                c.Likes,
                 //                c.UserId,
-                //                User = new UserDto
+                //                User = new UsernameIdDto
                 //                {
                 //                    Id = c.User.Id,
                 //                    UserName = c.User.UserName
@@ -194,15 +194,22 @@ namespace WebApi.Repository
 
             try
             {
-                IQueryable<Post> query = _context.Posts
+                var posts = await _context.Posts
                     .Include(p => p.User)
                     .Where(p => p.UserId == userId)
                     .Skip(pageInfo.Skip)
-                    .Take(pageInfo.PageSize);
+                    .Take(pageInfo.PageSize)
+                    .ToListAsync();
 
-                int totalItems = query.Count();
+                if (posts == null)
+                {
+                    return new OperationResult();
+                }
 
-                List<Post> posts = await query.ToListAsync();
+                int totalItems = _context.Posts
+                    .Where(p => p.UserId == userId)
+                    .Count();
+
                 List<PostDto> postsDto = posts.Adapt<List<PostDto>>();
 
                 return new OperationResult

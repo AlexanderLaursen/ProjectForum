@@ -111,7 +111,7 @@ namespace MVC.Services
                 string contentString = JsonSerializer.Serialize(new { Username = username });
                 HttpContent contentHttp = new StringContent(contentString, Encoding.UTF8, "application/json");
 
-                string url = $"{USER_ENDPOINT}/{username}";
+                string url = $"{USER_ENDPOINT}/{username}/id";
 
                 var response = await _commonApiService.GetApiResponseAsync<string>(url);
 

@@ -140,15 +140,22 @@ namespace WebApi.Repository
 
             try
             {
-                IQueryable<Comment> query = _context.Comments
+                var comments = await _context.Comments
                     .Include(c => c.User)
                     .Where(c => c.UserId == userId)
                     .Skip(pageInfo.Skip)
-                    .Take(pageInfo.PageSize);
+                    .Take(pageInfo.PageSize)
+                    .ToListAsync();
 
-                int totalItems = query.Count();
+                if (comments == null)
+                {
+                    return new OperationResult();
+                }
 
-                List<Comment> comments = await query.ToListAsync();
+                int totalItems = _context.Comments
+                    .Where(c => c.UserId == userId)
+                    .Count();
+
                 List<CommentWithPostIdDto> commentsDto = comments.Adapt<List<CommentWithPostIdDto>>();
 
                 return new OperationResult

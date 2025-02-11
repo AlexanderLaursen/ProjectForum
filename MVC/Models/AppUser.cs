@@ -1,8 +1,7 @@
-﻿namespace WebApi.Dto
+﻿namespace MVC.Models
 {
-    public class UserDto
+    public class AppUser
     {
-
         public string Id { get; set; }
         public string UserName { get; set; }
         public string Firstname { get; set; }
