@@ -9,6 +9,7 @@ namespace WebApi.Dto.Post
         public string Content { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public int Likes { get; set; }
+        public int ViewCount { get; set; }
         public bool Edited { get; set; }
 
         public int CategoryId { get; set; }

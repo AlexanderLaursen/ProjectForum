@@ -21,10 +21,18 @@
             @foreach (Post post in Model.Posts)
             {
                 <tr>
-                    <td>
+                    <td class="w-100">
                         <form asp-controller="Post" asp-action="GetPostById" asp-route-postId="@post.Id" method="get">
                             <button type="submit" class="btn btn-link">@post.Title</button>
                         </form>
+                    </td>
+                    <td>
+                        <div class="text-nowrap">
+                            Views: @post.ViewCount
+                        </div>
+                        <div class="text-nowrap">
+                            Likes: @post.Likes
+                        </div>
                     </td>
                 </tr>
             }

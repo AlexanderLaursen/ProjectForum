@@ -12,14 +12,12 @@ using WebApi.Models;
 
 namespace WebApi.Repository
 {
-    public class PostRepository : IPostRepository
+    public class PostRepository : BaseRepository, IPostRepository
     {
-        private readonly DataContext _context;
         private readonly ICommonRepository _commonRepository;
 
-        public PostRepository(DataContext context, ICommonRepository commonRepository)
+        public PostRepository(DataContext context, ICommonRepository commonRepository) : base(context)
         {
-            _context = context;
             _commonRepository = commonRepository;
         }
 
@@ -92,6 +90,8 @@ namespace WebApi.Repository
                 PostDto postDto = post.Adapt<PostDto>();
                 postDto.Comments = comments.Adapt<List<CommentDto>>();
                 List<PostDto> postList = [postDto];
+
+                await IncrementViewCountAsync(postId);
 
                 return new OperationResult
                 {
