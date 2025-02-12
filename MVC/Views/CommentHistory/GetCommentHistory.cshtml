@@ -28,7 +28,7 @@
                 <td>
                     <div class="text-nowrap">
                         <div>
-                            Created at: @Model.Comment.CreatedAt
+                            Created at: <display-date-time date-time="@Model.Comment.CreatedAt"/>
                         </div>
                         <div>
                             Likes: @Model.Comment.Likes
@@ -53,7 +53,7 @@
                     </td>
                     <td>
                         <div class="text-nowrap">
-                            Edited at: @commentHistory.CreatedAt
+                            Edited at: <display-date-time date-time="@commentHistory.CreatedAt" />
                         </div>
                     </td>
                 </tr>

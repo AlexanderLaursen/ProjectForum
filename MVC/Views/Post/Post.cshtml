@@ -52,7 +52,7 @@
                 <td>
                     <div class="text-nowrap">
                         <div>
-                            Created at: @Model.Post.CreatedAt
+                            Created at: <display-date-time date-time="@Model.Post.CreatedAt"></display-date-time>
                         </div>
                         <div>
                             Likes: @Model.Post.Likes
@@ -105,7 +105,7 @@
                     <td>
                         <div class="text-nowrap">
                             <div>
-                                Created at: @comment.CreatedAt
+                                Created at: <display-date-time date-time="@comment.CreatedAt" />
                             </div>
                             <div>
                                 Likes: @comment.Likes

@@ -239,7 +239,7 @@ namespace WebApi.Repository
             {
                 Comment comment = createCommentDto.Adapt<Comment>();
                 comment.UserId = userId;
-                comment.CreatedAt = DateTime.Now;
+                comment.CreatedAt = DateTime.UtcNow;
                 _context.Comments.Add(comment);
                 await _context.SaveChangesAsync();
 
@@ -312,8 +312,8 @@ namespace WebApi.Repository
                 {
                     CommentHistory commentHistory = new()
                     {
-                        Content = updateCommentDto.Content,
-                        CommentId = updateCommentDto.CommentId,
+                        Content = comment.Content,
+                        CommentId = comment.Id,
                         UserId = comment.UserId,
                         CreatedAt = comment.EditedAt == DateTime.MinValue ? comment.CreatedAt : comment.EditedAt,
                         User = comment.User,
@@ -327,7 +327,7 @@ namespace WebApi.Repository
 
                     comment.CommentHistory.Add(commentHistory);
                     comment.Edited = true;
-                    comment.EditedAt = DateTime.Now;
+                    comment.EditedAt = DateTime.UtcNow;
                     comment.Content = updateCommentDto.Content;
                     _context.Comments.Update(comment);
                     await _context.SaveChangesAsync();
