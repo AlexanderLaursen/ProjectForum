@@ -13,8 +13,10 @@
         @foreach (var comment in Model.Comments)
         {
             <tr>
-                <td>@comment.Content</td>
-                <td>@comment.CreatedAt.ToString("MMMM dd, yyyy")</td>
+                <a asp-controller="Post" asp-action="GetPostById" asp-route-postId="@comment.PostId">
+                    <td>@comment.Content</td>
+                </a>
+                <td><display-date-time date-time="@comment.CreatedAt" /></td>
             </tr>
         }
     </tbody>

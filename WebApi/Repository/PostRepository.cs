@@ -295,7 +295,7 @@ namespace WebApi.Repository
             {
                 Post post = createPostDto.Adapt<Post>();
                 post.UserId = userId;
-                post.CreatedAt = DateTime.Now;
+                post.CreatedAt = DateTime.UtcNow;
                 _context.Posts.Add(post);
                 await _context.SaveChangesAsync();
 
@@ -384,7 +384,7 @@ namespace WebApi.Repository
 
                     post.PostHistory.Add(postHistory);
                     post.Edited = true;
-                    post.EditedAt = DateTime.Now;
+                    post.EditedAt = DateTime.UtcNow;
                     post.Content = updatePostDto.Content;
                     post.Title = updatePostDto.Title;
                     post.CategoryId = updatePostDto.CategoryId;

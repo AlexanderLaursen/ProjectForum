@@ -13,8 +13,12 @@
         @foreach (var post in Model.Posts)
         {
             <tr>
-                <td>@post.Title</td>
-                <td>@post.CreatedAt.ToString("MMMM dd, yyyy")</td>
+                <td>
+                <a asp-controller="Post" asp-action="GetPostById" asp-route-postId="@post.Id">
+                    @post.Title
+                </a>
+                </td>
+                <td><display-date-time date-time="@post.CreatedAt" /></td>
             </tr>
         }
     </tbody>
