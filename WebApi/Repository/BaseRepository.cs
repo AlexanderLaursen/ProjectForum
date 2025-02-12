@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace WebApi.Repository
 {
-    public class BaseRepository
+    public class BaseRepository : IBaseRepository
     {
         protected readonly DataContext _context;
 

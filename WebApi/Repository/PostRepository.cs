@@ -70,6 +70,8 @@ namespace WebApi.Repository
                 //            .ToList()
                 //    }).FirstOrDefaultAsync();
 
+
+                // TODO: Error handling (check for null)
                 var post = await _context.Posts
                     .Where(p => p.Id == postId)
                     .Include(p => p.User)
@@ -106,7 +108,8 @@ namespace WebApi.Repository
                                 TotalItems = totalComments,
                             }
                         }
-                    }
+                    },
+                    InternalData = post
                 };
             }
             catch (Exception ex)
