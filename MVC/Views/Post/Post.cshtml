@@ -18,7 +18,7 @@
                 <td>
                     <div class="text-nowrap">
                         <div>
-                            <img src="@Model.Post.User.MdProfilePicture" alt="profile picture"/>
+                            <img src="@Model.Post.User.MdProfilePicture" alt="profile picture" />
                         </div>
                         <div>
                             User:
@@ -63,6 +63,11 @@
                         <div>
                             Edited: @Model.Post.Edited
                         </div>
+                        <div>
+                            <a asp-controller="Likes" asp-action="LikePost" asp-route-postId="@Model.Post.Id" class="text-decoration-none">
+                                <i class="bi bi-hand-thumbs-up" style="font-size: 1.5rem; color: black;"></i>
+                            </a>
+                        </div>
                         @if (Model.Post.Edited)
                         {
                             <form asp-controller="PostHistory" asp-action="GetPostHistory" asp-route-postId="@Model.Post.Id" method="get">
@@ -78,7 +83,7 @@
                     <td>
                         <div class="text-nowrap">
                             <div>
-                                <img src="@comment.User.MdProfilePicture" alt="profile picture"/>
+                                <img src="@comment.User.MdProfilePicture" alt="profile picture" />
                             </div>
                             <div>
                                 User:

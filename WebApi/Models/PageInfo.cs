@@ -4,7 +4,7 @@
     {
         private const int DEFAULT_PAGE_SIZE = 10;
 
-        private int _currentPage;
+        private int _currentPage = 1;
         public int CurrentPage
         {
             get => _currentPage;
@@ -24,7 +24,7 @@
             }
         }
 
-        private int _totalItems;
+        private int _totalItems = 0;
         public int TotalItems
         {
             get => _totalItems;
@@ -36,21 +36,24 @@
 
         public int TotalPages => (int)Math.Ceiling((decimal)TotalItems / PageSize);
 
-        public int Skip => (CurrentPage - 1) * PageSize;
+        public int Skip { get; private set; }
 
         public PageInfo()
         {
+            Skip = (CurrentPage - 1) * PageSize;
         }
 
         public PageInfo(int currentPage)
         {
             CurrentPage = currentPage;
+            Skip = (CurrentPage - 1) * PageSize;
         }
 
         public PageInfo(int currentPage, int itemsPerPage)
         {
             CurrentPage = currentPage;
             PageSize = itemsPerPage;
+            Skip = (CurrentPage - 1) * PageSize;
         }
 
         public PageInfo(int currentPage, int itemsPerPage, int totalItems)
@@ -58,6 +61,7 @@
             CurrentPage = currentPage;
             PageSize = itemsPerPage;
             TotalItems = totalItems;
+            Skip = (CurrentPage - 1) * PageSize;
         }
 
         private static int ValidatePage(int page)

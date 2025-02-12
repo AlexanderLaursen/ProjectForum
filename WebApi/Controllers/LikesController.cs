@@ -6,6 +6,7 @@ using WebApi.Dto;
 using WebApi.Dto.Post;
 using WebApi.Models;
 using WebApi.Repository;
+using WebApi.Services;
 
 namespace WebApi.Controllers
 {
@@ -13,22 +14,69 @@ namespace WebApi.Controllers
     [Route("api/v1/[controller]")]
     public class LikesController : Controller
     {
-        private readonly ILikesRepository _likesRepository;
-        private readonly IPostRepository _postRepository;
+        private readonly ILikesService _likesService;
 
-        public LikesController(ILikesRepository likesRepository, IPostRepository postRepository)
+        public LikesController(ILikesService likesService)
         {
-            _likesRepository = likesRepository;
-            _postRepository = postRepository;
+            _likesService = likesService;
         }
 
         [Authorize]
-        [HttpPost("{postId}")]
-        public async Task<IActionResult> LikePost(int postId)
+        [HttpPost("post/{postId}")]
+        public async Task<IActionResult> LikePostAsync(int postId)
         {
             if (postId <= 0)
             {
                 return BadRequest("Invalid post id.");
+            }
+
+            string? userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized();
+            }
+
+            OperationResultNew<PostLike> result = await _likesService.LikePostAsync(postId, userId);
+            if (result.Success)
+            {
+                return Ok();
+            }
+
+            return BadRequest("Failed to like post.");
+        }
+
+        [Authorize]
+        [HttpDelete("post/{postId}")]
+        public async Task<IActionResult> DeletePostLikeAsync(int postId)
+        {
+            if (postId <= 0)
+            {
+                return BadRequest();
+            }
+
+            string? userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if(string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized();
+            }
+
+            OperationResultNew<PostLike> result = await _likesService.DeletePostLikeAsync(postId, userId);
+
+            if (result.Success)
+            {
+                return Ok();
+            }
+
+            return BadRequest();
+        }
+
+        [Authorize]
+        [HttpPost("comment/{commentId}")]
+        public async Task<IActionResult> LikeCommentAsync(int commentId)
+        {
+            if (commentId <= 0)
+            {
+                return BadRequest("Invalid comment id.");
             }
 
             string? userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -38,26 +86,35 @@ namespace WebApi.Controllers
                 return Unauthorized();
             }
 
-            OperationResult postResult = await _postRepository.GetPostByIdAsync(postId, new PageInfo(0, 0));
+            OperationResultNew<CommentLike> result = await _likesService.LikeCommentAsync(commentId, userId);
 
-            if (!postResult.Success)
+            if (result.Success)
             {
-                return NotFound(postResult.ErrorMessage);
+                return Ok();
             }
 
-            Post post = postResult.InternalData as Post;
-            if (post == null)
-            {
-                return NotFound();
-            }
+            return BadRequest();
+        }
 
-            bool result = await _likesRepository.LikePostAsync(postId, userId);
-            if (result)
+        [Authorize]
+        [HttpDelete("comment/{commentId}")]
+        public async Task<IActionResult> DeleteCommentLikeAsync(int commentId)
+        {
+            if (commentId <= 0)
             {
-                return Ok(post);
+                return BadRequest();
             }
-
-            return BadRequest("Failed to like post.");
+            string? userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized();
+            }
+            OperationResultNew<CommentLike> result = await _likesService.DeleteCommentLikeAsync(commentId, userId);
+            if (result.Success)
+            {
+                return Ok();
+            }
+            return BadRequest();
         }
     }
 }

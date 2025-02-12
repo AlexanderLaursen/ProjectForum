@@ -298,7 +298,6 @@ namespace WebApi.Repository
             {
                 Post post = createPostDto.Adapt<Post>();
                 post.UserId = userId;
-                post.CreatedAt = DateTime.UtcNow;
                 _context.Posts.Add(post);
                 await _context.SaveChangesAsync();
 
