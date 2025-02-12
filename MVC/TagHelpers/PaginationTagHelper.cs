@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using System;
 using Microsoft.AspNetCore.WebUtilities;
 
-namespace Webserver.TagHelpers
+namespace MVC.TagHelpers
 {
     /// <summary>
     /// Pagination der bruger ViewContext og PageInfo til at lave pagination
