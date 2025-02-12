@@ -7,14 +7,28 @@ namespace WebApi.Data
 {
     public class DataContext : IdentityDbContext<AppUser>
     {
-        public DataContext(DbContextOptions<DataContext> options) : base(options)
-        {
-        }
-
         public DbSet<Post> Posts { get; set; }
         public DbSet<Comment> Comments { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<PostHistory> PostHistory { get; set; }
         public DbSet<CommentHistory> CommentHistory { get; set; }
+
+        public DataContext(DbContextOptions<DataContext> options) : base(options)
+        {
+        }
+
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
+
+            builder.Entity<AppUser>(entity =>
+            {
+                entity.Property(e => e.CreatedAt).HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                entity.Property(e => e.SmProfilePicture).HasDefaultValue("https://projectforum321321321.blob.core.windows.net/profile-pictures/resized/default_50.jpg");
+                entity.Property(e => e.MdProfilePicture).HasDefaultValue("https://projectforum321321321.blob.core.windows.net/profile-pictures/resized/default_100.jpg");
+                entity.Property(e => e.LgProfilePicture).HasDefaultValue("https://projectforum321321321.blob.core.windows.net/profile-pictures/resized/default_300.jpg");
+            });
+        }
     }
 }

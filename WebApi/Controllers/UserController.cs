@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Azure.Storage.Blobs.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Runtime.CompilerServices;
 using System.Security.Claims;
 using WebApi.Dto;
+using WebApi.Dto.User;
 using WebApi.Models;
 using WebApi.Repository;
 
@@ -102,47 +104,28 @@ namespace WebApi.Controllers
             return Ok();
         }
 
-        //[HttpGet("profile-picture/{username}")]
-        //public async Task<IActionResult> GetProfilePicture(string username)
+        //[HttpPost("/register/extend")]
+        //public async Task<IActionResult> RegisterExtended(RegisterDto registerDto)
         //{
-        //    OperationResult userOperation = await _userRepository.GetUserByUsernameAsync(username);
-
-        //    if (userOperation == null)
+        //    if (registerDto == null)
         //    {
-        //        return NotFound("User not found.");
+        //        return BadRequest();
         //    }
 
-        //    var user = userOperation.InternalData as AppUser;
+        //    OperationResult userOperation = await _userRepository.GetUserByUsernameAsync(registerDto.Email);
 
-        //    if (user == null)
+        //    if (!userOperation.Success)
         //    {
-        //        return Unauthorized("Invalid user credentials.");
+        //        return BadRequest();
         //    }
 
-        //    string profileImageUrl = user.SmProfilePicture;
-
-        //    if (string.IsNullOrEmpty(profileImageUrl))
+        //    if (userOperation.InternalData is not AppUser user)
         //    {
-        //        return NotFound("Profile picture not found.");
+        //        return BadRequest();
         //    }
 
-        //    List<string> data = [profileImageUrl];
 
-        //    OperationResult result = new OperationResult
-        //    {
-        //        Success = true,
-        //        Data = new Dictionary<string, object>
-        //        {
-        //            { "content", data }
-        //        }
-        //    };
 
-        //    if (data.Count == 0)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    return Ok(data);
         //}
     }
 }

@@ -11,8 +11,8 @@ public class BlobStorageService
 
     public BlobStorageService(IConfiguration configuration)
     {
-        _blobServiceClient = new BlobServiceClient(configuration["AzureBlobStorage:ConnectionString"]);
-        _containerName = configuration["AzureBlobStorage:ContainerName"];
+        _blobServiceClient = new BlobServiceClient(Environment.GetEnvironmentVariable("ConnectionStrings__ProjectForum__BlobConnection"));
+        _containerName = "profile-pictures";
     }
 
     public async Task<string> UploadFileAsync(Stream fileStream, string fileName)

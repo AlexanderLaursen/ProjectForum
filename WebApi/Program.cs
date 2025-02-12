@@ -27,7 +27,7 @@ builder.Services.AddSwaggerGen(options =>
 
 // Database connection
 builder.Services.AddDbContext<DataContext>(options =>
-    options.UseSqlite($"Data Source=.\\Data/SqliteTestDb.db"));
+    options.UseNpgsql(Environment.GetEnvironmentVariable("ConnectionStrings__ProjectForum__DefaultConnection")));
 
 // Authorization
 builder.Services.AddAuthorization();
