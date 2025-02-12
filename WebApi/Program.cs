@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Filters;
 using WebApi.Data;
+using WebApi.Models;
 using WebApi.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -26,11 +27,11 @@ builder.Services.AddSwaggerGen(options =>
 
 // Database connection
 builder.Services.AddDbContext<DataContext>(options =>
-    options.UseSqlite($"Data Source=.\\Data/SqliteTestDb.db"));
+    options.UseNpgsql(Environment.GetEnvironmentVariable("ConnectionStrings__ProjectForum__DefaultConnection")));
 
 // Authorization
 builder.Services.AddAuthorization();
-builder.Services.AddIdentityApiEndpoints<IdentityUser>()
+builder.Services.AddIdentityApiEndpoints<AppUser>()
     .AddEntityFrameworkStores<DataContext>();
 
 // Services
@@ -40,6 +41,9 @@ builder.Services.AddScoped<ICommentRepository, CommentRepository>();
 builder.Services.AddScoped<ICommentHistoryRepository, CommentHistoryRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<ICommonRepository, CommonRepository>();
+builder.Services.AddTransient<IUserRepository, UserRepository>();
+
+builder.Services.AddSingleton<BlobStorageService>();
 
 
 var app = builder.Build();
@@ -58,7 +62,7 @@ if (app.Environment.IsDevelopment())
 MapsterConfig.RegisterMappings();
 
 // Add Identity API
-app.MapIdentityApi<IdentityUser>();
+app.MapIdentityApi<AppUser>();
 app.UseAuthorization();
 
 app.UseHttpsRedirection();

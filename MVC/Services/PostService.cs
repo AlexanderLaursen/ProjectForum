@@ -9,6 +9,7 @@ namespace MVC.Services
     {
         private const string CATEGORY_PREFIX = "Category";
         private const string POST_PREFIX = "Post";
+        private const string USER_PREFIX = "User";
         private readonly HttpClient _httpClient;
         private readonly CommonApiService _commonApiService;
         public PostService(HttpClient httpClient, CommonApiService commonApiService)
@@ -85,6 +86,18 @@ namespace MVC.Services
 
 
             return await _commonApiService.PutAsync<Post>($"{POST_PREFIX}", updatePostDto, bearerToken);
+        }
+
+        public async Task<ApiResponse<Post>> GetPostsByUserIdAsync(string username, PageInfo pageInfo)
+        {
+            if (string.IsNullOrEmpty(username))
+            {
+                return new ApiResponse<Post>();
+            }
+
+            string url = _commonApiService.StringFactory($"{USER_PREFIX}/{username}/posts", pageInfo.CurrentPage, pageInfo.PageSize);
+
+            return await _commonApiService.GetApiResponseAsync<Post>(url);
         }
     }
 }

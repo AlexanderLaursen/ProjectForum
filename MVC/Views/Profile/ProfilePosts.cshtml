@@ -1,0 +1,23 @@
+﻿@model ProfileViewModel
+
+<h2>Posts</h2>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Created At</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var post in Model.Posts)
+        {
+            <tr>
+                <td>@post.Title</td>
+                <td>@post.CreatedAt.ToString("MMMM dd, yyyy")</td>
+            </tr>
+        }
+    </tbody>
+</table>
+<pagination posts-page-info="@Model.PostPageInfo" comments-page-info="@Model.CommentPageInfo"
+page-info="@Model.PostPageInfo" type="ProfilePosts" username="@Model.User.UserName"></pagination>

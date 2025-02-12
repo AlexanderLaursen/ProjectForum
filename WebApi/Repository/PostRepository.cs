@@ -47,7 +47,7 @@ namespace WebApi.Repository
                 //            p.Id,
                 //            p.Title,
                 //            p.Content,
-                //            User = new UserDto
+                //            User = new ShortUserDto
                 //            {
                 //                Id = p.User.Id,
                 //                UserName = p.User.UserName
@@ -63,7 +63,7 @@ namespace WebApi.Repository
                 //                c.Id,
                 //                c.Likes,
                 //                c.UserId,
-                //                User = new UserDto
+                //                User = new ShortUserDto
                 //                {
                 //                    Id = c.User.Id,
                 //                    UserName = c.User.UserName
@@ -138,7 +138,8 @@ namespace WebApi.Repository
 
                 int totalItems = query.Count();
 
-                var queryWithPagination = query.Skip(pageInfo.Skip)
+                var queryWithPagination = query
+                    .Skip(pageInfo.Skip)
                     .Take(pageInfo.PageSize);
 
                 List<Post> posts = await queryWithPagination.ToListAsync();
@@ -194,15 +195,22 @@ namespace WebApi.Repository
 
             try
             {
-                IQueryable<Post> query = _context.Posts
+                var posts = await _context.Posts
                     .Include(p => p.User)
                     .Where(p => p.UserId == userId)
                     .Skip(pageInfo.Skip)
-                    .Take(pageInfo.PageSize);
+                    .Take(pageInfo.PageSize)
+                    .ToListAsync();
 
-                int totalItems = query.Count();
+                if (posts == null)
+                {
+                    return new OperationResult();
+                }
 
-                List<Post> posts = await query.ToListAsync();
+                int totalItems = _context.Posts
+                    .Where(p => p.UserId == userId)
+                    .Count();
+
                 List<PostDto> postsDto = posts.Adapt<List<PostDto>>();
 
                 return new OperationResult

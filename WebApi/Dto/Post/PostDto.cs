@@ -13,7 +13,7 @@ namespace WebApi.Dto.Post
 
         public int CategoryId { get; set; }
 
-        public UserDto User { get; set; }
+        public ShortUserDto User { get; set; }
 
         public List<CommentDto> Comments { get; set; }
     }

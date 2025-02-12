@@ -16,7 +16,7 @@
                             User:
                         </div>
                         <div>
-                            @Model.Comment.User
+                            <a asp-controller="Profile" asp-action="Index" asp-route-username="@Model.Comment.User.UserName">@Model.Comment.User.UserName</a>
                         </div>
                     </div>
                 </td>
