@@ -1,12 +1,9 @@
-﻿@using MVC.Views.Shared
-@model PostViewModel
-@{
-}
+﻿@using MVC.Models
+@using MVC.Models.ViewModels
+@inject NavigationManager NavigationManager
+
 <div class="d-flex justify-content-end w-100 mb-2">
-    <form asp-controller="Comment" asp-action="CreateComment" method="get">
-        <input type="hidden" name="postId" value="@Model.Post.Id" />
-        <button type="submit" class="btn btn-primary">Create comment</button>
-    </form>
+    <button class="btn btn-primary" @onclick="OnClickCreateComment">Create comment</button>
 </div>
 
 
@@ -136,9 +133,12 @@
     </table>
 </div>
 
-<pagination page-info="@Model.PageInfo" id="@Model.Post.Id"></pagination>
+@code {
+    [Parameter]
+    public PostViewModel Model { get; set; }
 
-
-<component type="typeof(PostDetail)" render-mode="ServerPrerendered" param-Model="Model" />
-
-<pagination page-info="@Model.PageInfo" id="@Model.Post.Id"></pagination>
+    private void OnClickCreateComment()
+    {
+        NavigationManager.NavigateTo($"/Post/CreatePost?categoryId={Model.Post.CategoryId}");
+    }
+}

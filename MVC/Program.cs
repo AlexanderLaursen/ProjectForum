@@ -17,6 +17,8 @@ builder.Services.AddScoped<CommentHistoryService>();
 builder.Services.AddScoped<PostHistoryService>();
 builder.Services.AddTransient<UserService>();
 
+builder.Services.AddServerSideBlazor();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -27,6 +29,7 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseStaticFiles();
 
 app.UseRouting();
 
@@ -40,5 +43,7 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}")
     .WithStaticAssets();
+
+app.MapBlazorHub();
 
 app.Run();
