@@ -11,6 +11,8 @@ using WebApi.Dto.Comment;
 using WebApi.Dto.Post;
 using WebApi.Dto.PostHistory;
 using WebApi.Models;
+using Common.Enums;
+using System.Diagnostics.Eventing.Reader;
 
 namespace WebApi.Repository
 {
@@ -172,7 +174,7 @@ namespace WebApi.Repository
             }
         }
 
-        public async Task<OperationResult> GetPostsByCategoryIdAsync(int categoryId, PageInfo pageInfo)
+        public async Task<OperationResult> GetPostsByCategoryIdAsync(int categoryId, PageInfo pageInfo, SortBy sortBy = SortBy.Date, SortDirection sortDirection = SortDirection.Desc)
         {
             if (categoryId <= 0)
             {
@@ -185,25 +187,83 @@ namespace WebApi.Repository
 
             try
             {
-                IQueryable<Post> query = _context.Posts
-                    .Include(p => p.User)
-                    .Where(p => p.CategoryId == categoryId);
+                IQueryable<Post> postsQuery = _context.Posts.AsNoTracking();
 
-                int totalItems = query.Count();
+                if (sortBy == SortBy.Title)
+                {
+                    postsQuery = sortDirection == SortDirection.Asc
+                        ? _context.Posts
+                            .Where(p => p.CategoryId == categoryId)
+                            .OrderBy(p => p.Title)
+                        : _context.Posts
+                            .Where(p => p.CategoryId == categoryId)
+                            .OrderByDescending(p => p.Title);
+                }
+                else if (sortBy == SortBy.Views)
+                {
+                    postsQuery = sortDirection == SortDirection.Asc
+                        ? _context.Posts
+                            .Where(p => p.CategoryId == categoryId)
+                            .OrderBy(p => p.ViewCount)
+                        : _context.Posts
+                            .Where(p => p.CategoryId == categoryId)
+                            .OrderByDescending(p => p.ViewCount);
+                }
+                else if (sortBy == SortBy.Likes)
+                {
+                    postsQuery = sortDirection == SortDirection.Asc
+                        ? _context.Posts
+                            .Where(p => p.CategoryId == categoryId)
+                            .OrderBy(p => p.PostLikes.Count)
+                        : _context.Posts
+                            .Where(p => p.CategoryId == categoryId)
+                            .OrderByDescending(p => p.PostLikes.Count);
+                }
+                else
+                {
+                    postsQuery = sortDirection == SortDirection.Asc
+                        ? _context.Posts
+                            .Where(p => p.CategoryId == categoryId)
+                            .OrderBy(p => p.CreatedAt)
+                        : _context.Posts
+                            .Where(p => p.CategoryId == categoryId)
+                            .OrderByDescending(p => p.CreatedAt);
+                }
 
-                var queryWithPagination = query
-                    .Skip(pageInfo.Skip)
-                    .Take(pageInfo.PageSize);
+                int totalItems = postsQuery.Count();
 
-                List<Post> posts = await queryWithPagination.ToListAsync();
-                List<PostDto> postsDto = posts.Adapt<List<PostDto>>();
+                var postsDtoList = await postsQuery.Select(post => new PostDto
+                {
+                    Id = post.Id,
+                    Title = post.Title,
+                    Content = post.Content,
+                    CreatedAt = post.CreatedAt,
+                    Likes = post.PostLikes.Count,
+                    ViewCount = post.ViewCount,
+                    Edited = post.Edited,
+                    CategoryId = post.CategoryId,
+                    User = post.User.Adapt<ShortUserDto>()
+                }).ToListAsync();
+
+                //IQueryable<Post> query = _context.Posts
+                //    .Include(p => p.User)
+                //    .Where(p => p.CategoryId == categoryId);
+
+                //int totalItems = query.Count();
+
+                //var queryWithPagination = query
+                //    .Skip(pageInfo.Skip)
+                //    .Take(pageInfo.PageSize);
+
+                //List<Post> posts = await queryWithPagination.ToListAsync();
+                //List<PostDto> postsDto = posts.Adapt<List<PostDto>>();
 
                 return new OperationResult
                 {
                     Success = true,
                     Data = new Dictionary<string, object>
                     {
-                        { "content", postsDto },
+                        { "content", postsDtoList },
                         { "pageInfo", new PageInfo
                             {
                                 CurrentPage = pageInfo.CurrentPage,

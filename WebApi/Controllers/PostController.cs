@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Common.Enums;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using WebApi.Dto.Comment;
@@ -71,7 +72,7 @@ namespace WebApi.Controllers
         }
 
         [HttpGet("/api/v1/Category/{categoryId}/posts")]
-        public async Task<IActionResult> GetPostsByCategoryId(string categoryId, int page = 0, int pageSize = 0)
+        public async Task<IActionResult> GetPostsByCategoryId(string categoryId, int page = 0, int pageSize = 0, SortBy sortBy = SortBy.Date, SortDirection sortDirection = SortDirection.Desc)
         {
             if (!int.TryParse(categoryId, out int categoryInt))
             {
@@ -79,7 +80,7 @@ namespace WebApi.Controllers
             }
 
             PageInfo pageInfo = new PageInfo (page, pageSize);
-            OperationResult result = await _repository.GetPostsByCategoryIdAsync(categoryInt, pageInfo);
+            OperationResult result = await _repository.GetPostsByCategoryIdAsync(categoryInt, pageInfo, sortBy, sortDirection);
 
             if (result.Success)
             {

@@ -1,4 +1,5 @@
-﻿using WebApi.Dto.Post;
+﻿using Common.Enums;
+using WebApi.Dto.Post;
 using WebApi.Models;
 
 namespace WebApi.Repository
@@ -8,7 +9,7 @@ namespace WebApi.Repository
         public Task<OperationResultNew> GetPostDetailsAsync(int postId, string userId, PageInfo pageInfo);
         public Task<OperationResult> GetPostByIdAsync(int postId, PageInfo pageInfo);
         public Task<OperationResult> GetPostsByUsernameAsync (string userId, PageInfo pageInfo);
-        public Task<OperationResult> GetPostsByCategoryIdAsync(int categoryId, PageInfo pageInfo);
+        public Task<OperationResult> GetPostsByCategoryIdAsync(int categoryId, PageInfo pageInfo, SortBy sortBy, SortDirection sortDirection);
         public Task<OperationResult> GetPostHistoryByPostId(int postId, PageInfo pageInfo);
         public Task<OperationResult> CreatePostAsync(string userId, CreatePostDto createPostDto);
         public Task<OperationResult> UpdatePostAsync(string userId, UpdatePostDto updatePostDto);
