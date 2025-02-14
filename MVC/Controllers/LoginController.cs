@@ -37,7 +37,7 @@ namespace MVC.Controllers
 
             HttpContext.Session.SetJson("Bearer", response.Token.AccessToken);
 
-            ApiResponse<string> userIdResponse = await _loginService.GetUserIdByUsernameAsync(loginData.Email);
+            ApiResponseOld<string> userIdResponse = await _loginService.GetUserIdByUsernameAsync(loginData.Email);
 
             if (userIdResponse.IsSuccess)
             {

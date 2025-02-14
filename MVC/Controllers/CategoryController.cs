@@ -21,7 +21,7 @@ namespace MVC.Controllers
                 return View("Home");
             }
 
-            ApiResponse<Category> apiResponse = await _categoryService.GetCategoryByIdAsync(id);
+            ApiResponseOld<Category> apiResponse = await _categoryService.GetCategoryByIdAsync(id);
 
             PostsViewModel viewModel = new PostsViewModel
             {

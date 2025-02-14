@@ -5,6 +5,7 @@ using Swashbuckle.AspNetCore.Filters;
 using WebApi.Data;
 using WebApi.Models;
 using WebApi.Repository;
+using WebApi.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -35,13 +36,16 @@ builder.Services.AddIdentityApiEndpoints<AppUser>()
     .AddEntityFrameworkStores<DataContext>();
 
 // Services
+builder.Services.AddScoped<IBaseRepository, BaseRepository>();
 builder.Services.AddScoped<IPostRepository, PostRepository>();
 builder.Services.AddScoped<IPostHistoryRepository, PostHistoryRepository>();
 builder.Services.AddScoped<ICommentRepository, CommentRepository>();
 builder.Services.AddScoped<ICommentHistoryRepository, CommentHistoryRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<ICommonRepository, CommonRepository>();
-builder.Services.AddTransient<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<ILikesRepository, LikesRepository>();
+builder.Services.AddScoped<ILikesService, LikesService>();
 
 builder.Services.AddSingleton<BlobStorageService>();
 

@@ -37,7 +37,7 @@ namespace MVC.Controllers
         [HttpGet("/profile/{username}")]
         public async Task<IActionResult> Index(string username, int postPage = 0, int postSize = 0, int commentPage = 0, int commentSize = 0)
         {
-            ApiResponse<AppUser> user = await _userService.GetUserByUsernameAsync(username);
+            ApiResponseOld<AppUser> user = await _userService.GetUserByUsernameAsync(username);
 
 
             if (user == null)
@@ -46,10 +46,10 @@ namespace MVC.Controllers
             }
 
             PageInfo postPageInfo = new(postPage, postSize);
-            ApiResponse<Post> posts = await _postService.GetPostsByUserIdAsync(username, postPageInfo);
+            ApiResponseOld<Post> posts = await _postService.GetPostsByUserIdAsync(username, postPageInfo);
 
             PageInfo commentPageInfo = new(commentPage, commentSize);
-            ApiResponse<Comment> comments = await _commentService.GetCommentsByUserIdAsync(username, commentPageInfo);
+            ApiResponseOld<Comment> comments = await _commentService.GetCommentsByUserIdAsync(username, commentPageInfo);
 
             ProfileViewModel viewModel = new()
             {

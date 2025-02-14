@@ -12,11 +12,11 @@ namespace MVC.Services
             _commonApiService = commonApiService;
         }
 
-        public async Task<ApiResponse<CommentHistory>> GetCommentHistoryByIdAsync(int commentId, PageInfo pageInfo)
+        public async Task<ApiResponseOld<CommentHistory>> GetCommentHistoryByIdAsync(int commentId, PageInfo pageInfo)
         {
             if (commentId <= 0)
             {
-                return new ApiResponse<CommentHistory>();
+                return new ApiResponseOld<CommentHistory>();
             }
 
             string url = _commonApiService.StringFactory($"{COMMENT_HISTORY_PREFIX}/{commentId}", pageInfo.CurrentPage, pageInfo.PageSize);

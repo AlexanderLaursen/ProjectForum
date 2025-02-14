@@ -25,14 +25,14 @@ namespace MVC.Controllers
 
             PageInfo pageInfo = new PageInfo(page, pageSize);
 
-            ApiResponse<Comment> comment = await _commentService.GetCommentByIdAsync(commentId);
+            ApiResponseOld<Comment> comment = await _commentService.GetCommentByIdAsync(commentId);
 
             if (!comment.IsSuccess)
             {
                 return NotFound();
             }
 
-            ApiResponse<CommentHistory> result = await _commentHistoryService.GetCommentHistoryByIdAsync(commentId, pageInfo);
+            ApiResponseOld<CommentHistory> result = await _commentHistoryService.GetCommentHistoryByIdAsync(commentId, pageInfo);
 
             if (!result.IsSuccess)
             {

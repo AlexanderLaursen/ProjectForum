@@ -1,7 +1,8 @@
-﻿@model PostViewModel
+﻿@using MVC.Views.Shared
+@model PostViewModel
 @{
 }
-<div class="d-flex justify-content-end w-100 mb-2">
+@* <div class="d-flex justify-content-end w-100 mb-2">
     <form asp-controller="Comment" asp-action="CreateComment" method="get">
         <input type="hidden" name="postId" value="@Model.Post.Id" />
         <button type="submit" class="btn btn-primary">Create comment</button>
@@ -18,7 +19,7 @@
                 <td>
                     <div class="text-nowrap">
                         <div>
-                            <img src="@Model.Post.User.MdProfilePicture" alt="profile picture"/>
+                            <img src="@Model.Post.User.MdProfilePicture" alt="profile picture" />
                         </div>
                         <div>
                             User:
@@ -58,7 +59,15 @@
                             Likes: @Model.Post.Likes
                         </div>
                         <div>
+                            Views: @Model.Post.ViewCount
+                        </div>
+                        <div>
                             Edited: @Model.Post.Edited
+                        </div>
+                        <div>
+                            <a asp-controller="Likes" asp-action="LikePost" asp-route-postId="@Model.Post.Id" class="text-decoration-none">
+                                <i class="bi bi-hand-thumbs-up" style="font-size: 1.5rem; color: black;"></i>
+                            </a>
                         </div>
                         @if (Model.Post.Edited)
                         {
@@ -75,7 +84,7 @@
                     <td>
                         <div class="text-nowrap">
                             <div>
-                                <img src="@comment.User.MdProfilePicture" alt="profile picture"/>
+                                <img src="@comment.User.MdProfilePicture" alt="profile picture" />
                             </div>
                             <div>
                                 User:
@@ -125,6 +134,11 @@
             }
         </tbody>
     </table>
-</div>
+</div> *@
+@* 
+<pagination page-info="@Model.PageInfo" id="@Model.Post.Id"></pagination> *@
+
+
+<component type="typeof(PostDetail)" render-mode="ServerPrerendered" param-PostId="Model.Post.Id" param-Model="Model"/>
 
 <pagination page-info="@Model.PageInfo" id="@Model.Post.Id"></pagination>

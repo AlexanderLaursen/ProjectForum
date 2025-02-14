@@ -11,6 +11,7 @@ namespace WebApi.Dto.Comment
         public int Likes { get; set; }
         public int PostId { get; set; }
         public bool Edited { get; set; }
+        public bool LikedByUser { get; set; }
 
         public string UserId { get; set; }
         public ShortUserDto User { get; set; }

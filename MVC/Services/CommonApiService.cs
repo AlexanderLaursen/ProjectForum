@@ -22,7 +22,7 @@ namespace MVC.Services
             return $"{baseString}?page={page}&pageSize={pageSize}";
         }
 
-        public async Task<ApiResponse<T>> GetApiResponseAsync<T>(string url)
+        public async Task<ApiResponseOld<T>> GetApiResponseAsync<T>(string url)
         {
             try
             {
@@ -30,11 +30,11 @@ namespace MVC.Services
                 response.EnsureSuccessStatusCode();
 
                 string responseBody = await response.Content.ReadAsStringAsync();
-                var apiResponse = JsonSerializer.Deserialize<ApiResponse<T>>(responseBody, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                var apiResponse = JsonSerializer.Deserialize<ApiResponseOld<T>>(responseBody, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
                 if (apiResponse == null)
                 {
-                    return new ApiResponse<T>();
+                    return new ApiResponseOld<T>();
                 }
 
                 apiResponse.Content ??= new List<T>();
@@ -44,11 +44,31 @@ namespace MVC.Services
             }
             catch (Exception)
             {
-                return new ApiResponse<T>();
+                return new ApiResponseOld<T>();
             }
         }
 
-        public async Task<ApiResponse<T>> PostApiReponseAsync<T>(string url, object data, string bearerToken)
+        public async Task<ApiResponse<T>> GetAuthAsync<T>(string url, string bearerToken)
+        {
+            try
+            {
+                _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", bearerToken);
+
+                HttpResponseMessage response = await _httpClient.GetAsync(BASE_URL + url);
+                response.EnsureSuccessStatusCode();
+
+                string responseBody = await response.Content.ReadAsStringAsync();
+                var apiResponse = JsonSerializer.Deserialize<T>(responseBody, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+                return ApiResponse<T>.Success(content: apiResponse);
+            }
+            catch (Exception)
+            {
+                return ApiResponse<T>.Fail();
+            }
+        }
+
+        public async Task<ApiResponseOld<T>> PostApiReponseAsync<T>(string url, object data, string bearerToken)
         {
             try
             {
@@ -62,11 +82,17 @@ namespace MVC.Services
                 response.EnsureSuccessStatusCode();
 
                 string responseBody = await response.Content.ReadAsStringAsync();
-                var apiResponse = JsonSerializer.Deserialize<ApiResponse<T>>(responseBody, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+                if (string.IsNullOrEmpty(responseBody))
+                {
+                    return ApiResponseOld<T>.Success();
+                }
+
+                var apiResponse = JsonSerializer.Deserialize<ApiResponseOld<T>>(responseBody, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
                 if (apiResponse == null)
                 {
-                    return new ApiResponse<T>();
+                    return new ApiResponseOld<T>();
                 }
 
                 apiResponse.Content ??= new List<T>();
@@ -76,11 +102,11 @@ namespace MVC.Services
             }
             catch (Exception)
             {
-                return new ApiResponse<T>();
+                return new ApiResponseOld<T>();
             }
         }
 
-        public async Task<ApiResponse<T>> PutAsync<T>(string url, object data, string bearerToken)
+        public async Task<ApiResponseOld<T>> PutAsync<T>(string url, object data, string bearerToken)
         {
             try
             {
@@ -94,11 +120,11 @@ namespace MVC.Services
                 response.EnsureSuccessStatusCode();
 
                 string responseBody = await response.Content.ReadAsStringAsync();
-                var apiResponse = JsonSerializer.Deserialize<ApiResponse<T>>(responseBody, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                var apiResponse = JsonSerializer.Deserialize<ApiResponseOld<T>>(responseBody, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
                 if (apiResponse == null)
                 {
-                    return new ApiResponse<T>();
+                    return new ApiResponseOld<T>();
                 }
 
                 apiResponse.Content ??= new List<T>();
@@ -108,11 +134,11 @@ namespace MVC.Services
             }
             catch (Exception)
             {
-                return new ApiResponse<T>();
+                return new ApiResponseOld<T>();
             }
         }
 
-        public async Task<ApiResponse<T>> DeleteAsync<T>(string url, string bearerToken)
+        public async Task<ApiResponseOld<T>> DeleteAsync<T>(string url, string bearerToken)
         {
             try
             {
@@ -122,7 +148,7 @@ namespace MVC.Services
 
                 response.EnsureSuccessStatusCode();
 
-                ApiResponse<T> apiResponse = new ApiResponse<T>
+                ApiResponseOld<T> apiResponse = new ApiResponseOld<T>
                 {
                     IsSuccess = true
                 };
@@ -131,7 +157,7 @@ namespace MVC.Services
             }
             catch (Exception)
             {
-                return new ApiResponse<T>();
+                return new ApiResponseOld<T>();
             }
         }
     }

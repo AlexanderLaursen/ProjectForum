@@ -239,7 +239,6 @@ namespace WebApi.Repository
             {
                 Comment comment = createCommentDto.Adapt<Comment>();
                 comment.UserId = userId;
-                comment.CreatedAt = DateTime.UtcNow;
                 _context.Comments.Add(comment);
                 await _context.SaveChangesAsync();
 

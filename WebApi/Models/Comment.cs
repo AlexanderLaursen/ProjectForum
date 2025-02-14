@@ -18,5 +18,6 @@ namespace WebApi.Models
         public AppUser User { get; set; }
         public Post Post { get; set; }
         public List<CommentHistory> CommentHistory { get; set; }
+        public List<CommentLike> CommentLikes { get; set; }
     }
 }

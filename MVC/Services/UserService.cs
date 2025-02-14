@@ -16,11 +16,11 @@ namespace MVC.Services
             _httpClient = httpClient;
         }
 
-        public async Task<ApiResponse<AppUser>> GetUserByUsernameAsync (string username)
+        public async Task<ApiResponseOld<AppUser>> GetUserByUsernameAsync (string username)
         {
             if (string.IsNullOrEmpty(username))
             {
-                return new ApiResponse<AppUser>();
+                return new ApiResponseOld<AppUser>();
             }
 
             string url = _commonApiService.StringFactory($"{USER_PREDIX}/{username}");

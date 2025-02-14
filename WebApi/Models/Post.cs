@@ -9,6 +9,7 @@ namespace WebApi.Models
         public string Content { get; set; }
         public DateTime CreatedAt { get; set; }
         public int Likes { get; set; }
+        public int ViewCount { get; set; }
         public bool Active { get; set; }
         public bool Edited { get; set; }
         public DateTime EditedAt { get; set; }
@@ -20,5 +21,6 @@ namespace WebApi.Models
         public Category Category { get; set; }
         public List<Comment> Comments { get; set; }
         public List<PostHistory> PostHistory { get; set; }
+        public List<PostLike> PostLikes { get; set; }
     }
 }

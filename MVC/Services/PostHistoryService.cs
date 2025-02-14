@@ -12,11 +12,11 @@ namespace MVC.Services
             _commonApiService = commonApiService;
         }
 
-        public async Task<ApiResponse<PostHistory>> GetPostHistoryByIdAsync(int postId, PageInfo pageInfo)
+        public async Task<ApiResponseOld<PostHistory>> GetPostHistoryByIdAsync(int postId, PageInfo pageInfo)
         {
             if (postId <= 0)
             {
-                return new ApiResponse<PostHistory>();
+                return new ApiResponseOld<PostHistory>();
             }
 
             string url = _commonApiService.StringFactory($"{POST_HISTORY_PREFIX}/{postId}", pageInfo.CurrentPage, pageInfo.PageSize);

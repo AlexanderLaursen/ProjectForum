@@ -14,16 +14,16 @@ namespace MVC.Services
             _commonApiService = commonApiService;
         }
 
-        public async Task<ApiResponse<Category>> GetCategoriesAsync()
+        public async Task<ApiResponseOld<Category>> GetCategoriesAsync()
         {
             return await _commonApiService.GetApiResponseAsync<Category>(PREFIX);
         }
 
-        public async Task<ApiResponse<Category>> GetCategoryByIdAsync(int id)
+        public async Task<ApiResponseOld<Category>> GetCategoryByIdAsync(int id)
         {
             if(id <= 0)
             {
-                return new ApiResponse<Category>();
+                return new ApiResponseOld<Category>();
             }
 
             return await _commonApiService.GetApiResponseAsync<Category>($"{PREFIX}/{id}");

@@ -9,11 +9,13 @@ namespace MVC.Models
         public string Content { get; set; }
         public DateTime CreatedAt { get; set; }
         public int Likes { get; set; }
+        public int ViewCount { get; set; }
         public bool Active { get; set; }
         public bool Edited { get; set; }
         public DateTime EditedAt { get; set; }
         public string UserId { get; set; }
         public int CategoryId { get; set; }
+        public bool LikedByUser { get; set; }
 
 
         public AppUser User { get; set; }

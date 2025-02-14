@@ -22,7 +22,7 @@ namespace MVC.Controllers
         {
             ViewBag.IsLoggedIn = HttpContext.Session.GetString("Bearer") != null;
 
-            ApiResponse<Category> apiResponse = await _categoryService.GetCategoriesAsync();
+            ApiResponseOld<Category> apiResponse = await _categoryService.GetCategoriesAsync();
 
             HomeViewModel viewModel = new HomeViewModel
             {
