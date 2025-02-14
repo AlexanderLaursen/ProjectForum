@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using WebApi.Dto.Comment;
 using WebApi.Dto.Post;
 using WebApi.Models;
 using WebApi.Repository;
@@ -16,6 +17,39 @@ namespace WebApi.Controllers
         {
             _repository = repository;
         }
+
+        [Authorize]
+        [HttpGet("{postId}/details")]
+        public async Task<IActionResult> GetPostDetails(int postId, int page = 0, int pageSize = 0)
+        {
+            if (postId <= 0)
+            {
+                return BadRequest("Invalid post id.");
+            }
+
+            string? userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized("Invalid user credentials.");
+            }
+
+            PageInfo pageInfo = new PageInfo(page, pageSize);
+            OperationResultNew result = await _repository.GetPostDetailsAsync(postId, userId, pageInfo);
+            if (result.Success)
+            {
+                return Ok(result.Data);
+            }
+
+            return NotFound(result.ErrorMessage);
+        }
+
+        [Authorize]
+        [HttpGet("test2")]
+        public async Task<IActionResult> Test()
+        {
+            return Ok("Test");
+        }
+
 
         [HttpGet("{postId}")]
         public async Task<IActionResult> GetPostById(int postId, int page = 0, int pageSize = 0)

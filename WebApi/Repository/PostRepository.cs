@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Configuration.UserSecrets;
+using Swashbuckle.AspNetCore.SwaggerGen;
+using System.Runtime.InteropServices.ObjectiveC;
 using WebApi.Data;
 using WebApi.Dto;
 using WebApi.Dto.Comment;
@@ -21,6 +23,81 @@ namespace WebApi.Repository
             _commonRepository = commonRepository;
         }
 
+        public async Task<OperationResultNew> GetPostDetailsAsync(int postId, string userId, PageInfo pageInfo)
+        {
+            try
+            {
+                var query = _context.Posts
+                    .Where(p => p.Id == postId)
+                    .Select(p => new
+                    {
+                        Post = p,
+                        LikedByUser = p.PostLikes.Any(pl => pl.UserId == userId),
+                        Likes = p.PostLikes.Count(),
+                        p.User,
+
+                        CommentsQuery = p.Comments.OrderBy(c => c.CreatedAt)
+                            .Select(c => new
+                            {
+                                Comment = c,
+                                LikedByUser = c.CommentLikes.Any(cl => cl.UserId == userId),
+                                Likes = c.CommentLikes.Count(),
+                                c.User
+                            })
+                    });
+
+                var result = await query.Select(q => new
+                {
+                    q.Post,
+                    q.LikedByUser,
+                    q.Likes,
+                    q.User,
+
+                    TotalComments = q.CommentsQuery.Count(),
+
+                    Comments = q.CommentsQuery
+                        .Skip(pageInfo.Skip)
+                        .Take(pageInfo.PageSize)
+                        .ToList()
+                })
+                .SingleOrDefaultAsync();
+
+                if (result == null)
+                {
+                    return OperationResultNew.Fail("Not found.");
+                }
+
+                PostDto postDto = result.Post.Adapt<PostDto>();
+                postDto.Likes = result.Likes;
+                postDto.LikedByUser = result.LikedByUser;
+
+                List<CommentDto> comments = [];
+                foreach (var comment in result.Comments)
+                {
+                    CommentDto commentDto = comment.Comment.Adapt<CommentDto>();
+                    commentDto.LikedByUser = comment.LikedByUser;
+                    commentDto.Likes = comment.Likes;
+                    commentDto.User = comment.User.Adapt<ShortUserDto>();
+                    comments.Add(commentDto);
+                }
+
+                PageInfo newPageInfo = new PageInfo(pageInfo.CurrentPage, pageInfo.PageSize, result.TotalComments);
+
+                PostDetailsDto postDetailsDto = new PostDetailsDto
+                {
+                    PostDto = postDto,
+                    Comments = comments,
+                    PageInfo = newPageInfo
+                };
+
+                return OperationResultNew.IsSuccess(postDetailsDto);
+            }
+            catch (Exception)
+            {
+                return OperationResultNew.Fail();
+            }
+        }
+
         public async Task<OperationResult> GetPostByIdAsync(int postId, PageInfo pageInfo)
         {
             if (postId <= 0)
@@ -34,48 +111,15 @@ namespace WebApi.Repository
 
             try
             {
-                // SQL Server specific query
-
-                //var result = _context.Posts
-                //    .Where(p => p.Id == postId)
-                //    .Select(p => new
-                //    {
-                //        Post = new
-                //        {
-                //            p.Id,
-                //            p.Title,
-                //            p.Content,
-                //            User = new ShortUserDto
-                //            {
-                //                Id = p.User.Id,
-                //                UserName = p.User.UserName
-                //            }
-                //        },
-                //        TotalComments = p.Comments.Count(),
-                //        Comments = p.Comments
-                //            .OrderBy(c => c.Id)
-                //            .Skip(pageInfo.Skip)
-                //            .Take(pageInfo.PageSize)
-                //            .Select(c => new
-                //            {
-                //                c.Id,
-                //                c.Likes,
-                //                c.UserId,
-                //                User = new ShortUserDto
-                //                {
-                //                    Id = c.User.Id,
-                //                    UserName = c.User.UserName
-                //                }
-                //            })
-                //            .ToList()
-                //    }).FirstOrDefaultAsync();
-
-
                 // TODO: Error handling (check for null)
                 var post = await _context.Posts
                     .Where(p => p.Id == postId)
                     .Include(p => p.User)
                     .FirstOrDefaultAsync();
+
+                var postLikes = await _context.PostLikes
+                    .Where(pl => pl.PostId == postId)
+                    .CountAsync();
 
                 int totalComments = await _context.Comments
                     .Where(c => c.PostId == postId)
@@ -84,10 +128,16 @@ namespace WebApi.Repository
                 var comments = await _context.Comments
                     .Where(c => c.PostId == postId)
                     .Include(c => c.User)
+                    .Include(c => c.CommentLikes)
                     .OrderBy(c => c.Id)
                     .Skip(pageInfo.Skip)
                     .Take(pageInfo.PageSize)
                     .ToListAsync();
+
+                foreach (var comment in comments)
+                {
+                    comment.Likes = comment.CommentLikes.Count;
+                }
 
                 PostDto postDto = post.Adapt<PostDto>();
                 postDto.Comments = comments.Adapt<List<CommentDto>>();

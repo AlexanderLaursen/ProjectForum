@@ -25,14 +25,14 @@ namespace MVC.Controllers
 
             PageInfo pageInfo = new PageInfo(page, pageSize);
 
-            ApiResponse<Post> post = await _postService.GetPostByIdAsync(postId, pageInfo);
+            ApiResponseOld<Post> post = await _postService.GetPostByIdAsync(postId, pageInfo);
 
             if (!post.IsSuccess)
             {
                 return NotFound();
             }
 
-            ApiResponse<PostHistory> result = await _postHistoryService.GetPostHistoryByIdAsync(postId, pageInfo);
+            ApiResponseOld<PostHistory> result = await _postHistoryService.GetPostHistoryByIdAsync(postId, pageInfo);
 
             if (!result.IsSuccess)
             {

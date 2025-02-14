@@ -73,7 +73,7 @@ namespace MVC.Services
             };
         }
 
-        public async Task<ApiResponse<object>> RegisterAsync(LoginData loginData)
+        public async Task<ApiResponseOld<object>> RegisterAsync(LoginData loginData)
         {
             try
             {
@@ -84,7 +84,7 @@ namespace MVC.Services
 
                 if (response.IsSuccessStatusCode)
                 {
-                    return new ApiResponse<object>
+                    return new ApiResponseOld<object>
                     {
                         IsSuccess = true
                     };
@@ -92,19 +92,19 @@ namespace MVC.Services
             }
             catch
             {
-                return new ApiResponse<object>
+                return new ApiResponseOld<object>
                 {
                     IsSuccess = false
                 };
             }
 
-            return new ApiResponse<object>
+            return new ApiResponseOld<object>
             {
                 IsSuccess = false
             };
         }
 
-        public async Task<ApiResponse<string>> GetUserIdByUsernameAsync(string username)
+        public async Task<ApiResponseOld<string>> GetUserIdByUsernameAsync(string username)
         {
             try
             {
@@ -120,7 +120,7 @@ namespace MVC.Services
                     return response;
                 }
 
-                return new ApiResponse<string>
+                return new ApiResponseOld<string>
                 {
                     Content = response.Content,
                     IsSuccess = false
@@ -128,7 +128,7 @@ namespace MVC.Services
             }
             catch
             {
-                return new ApiResponse<string>
+                return new ApiResponseOld<string>
                 {
                     IsSuccess = false
                 };

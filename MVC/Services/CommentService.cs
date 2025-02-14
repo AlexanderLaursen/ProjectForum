@@ -16,11 +16,11 @@ namespace MVC.Services
             _commonApiService = commonApiService;
         }
 
-        public async Task<ApiResponse<Comment>> GetCommentByIdAsync(int commentId)
+        public async Task<ApiResponseOld<Comment>> GetCommentByIdAsync(int commentId)
         {
             if (commentId <= 0)
             {
-                return new ApiResponse<Comment>();
+                return new ApiResponseOld<Comment>();
             }
 
             string url = $"{COMMENT_PREFIX}/{commentId}";
@@ -28,11 +28,11 @@ namespace MVC.Services
             return await _commonApiService.GetApiResponseAsync<Comment>(url);
         }
 
-        public async Task<ApiResponse<Comment>> CreateCommentAsync(CreateCommentViewModel viewModel, string bearerToken)
+        public async Task<ApiResponseOld<Comment>> CreateCommentAsync(CreateCommentViewModel viewModel, string bearerToken)
         {
             if (viewModel == null)
             {
-                return new ApiResponse<Comment>();
+                return new ApiResponseOld<Comment>();
             }
 
             CreateCommentDto createcommentDto = new CreateCommentDto
@@ -44,31 +44,31 @@ namespace MVC.Services
             return await _commonApiService.PostApiReponseAsync<Comment>($"{COMMENT_PREFIX}", createcommentDto, bearerToken);
         }
 
-        public async Task<ApiResponse<Comment>> UpdateCommentByIdAsync(int commentId, UpdateCommentDto updateCommentDto, string bearerToken)
+        public async Task<ApiResponseOld<Comment>> UpdateCommentByIdAsync(int commentId, UpdateCommentDto updateCommentDto, string bearerToken)
         {
             if (commentId <= 0)
             {
-                return new ApiResponse<Comment>();
+                return new ApiResponseOld<Comment>();
             }
 
             return await _commonApiService.PutAsync<Comment>($"{COMMENT_PREFIX}", updateCommentDto, bearerToken);
         }
 
-        public async Task<ApiResponse<bool>> DeleteCommentAsync(int commentId, string bearerToken)
+        public async Task<ApiResponseOld<bool>> DeleteCommentAsync(int commentId, string bearerToken)
         {
             if (commentId <= 0)
             {
-                return new ApiResponse<bool>();
+                return new ApiResponseOld<bool>();
             }
 
             return await _commonApiService.DeleteAsync<bool>($"{COMMENT_PREFIX}?commentId={commentId}", bearerToken);
         }
 
-        public async Task<ApiResponse<Comment>> GetCommentsByUserIdAsync(string username, PageInfo pageInfo)
+        public async Task<ApiResponseOld<Comment>> GetCommentsByUserIdAsync(string username, PageInfo pageInfo)
         {
             if (string.IsNullOrEmpty(username))
             {
-                return new ApiResponse<Comment>();
+                return new ApiResponseOld<Comment>();
             }
 
             string url = _commonApiService.StringFactory($"{USER_PREFIX}/{username}/comments", pageInfo.CurrentPage, pageInfo.PageSize);

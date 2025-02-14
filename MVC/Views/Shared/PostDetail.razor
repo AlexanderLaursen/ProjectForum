@@ -1,11 +1,12 @@
-﻿@using MVC.Models
-@using MVC.Models.ViewModels
+﻿@using MVC.Helpers
 @inject NavigationManager NavigationManager
+@inject HttpContextService HttpContextService
+@inject LikeService LikeService
+@inject PostService PostService
 
 <div class="d-flex justify-content-end w-100 mb-2">
     <button class="btn btn-primary" @onclick="OnClickCreateComment">Create comment</button>
 </div>
-
 
 <div class="">
     <table class="table table-striped table-bordered table-hover">
@@ -22,26 +23,23 @@
                             User:
                         </div>
                         <div>
-                            <a asp-controller="Profile" asp-action="Index" asp-route-username="@Model.Post.User.UserName">@Model.Post.User.UserName</a>
+                            <a href="/profile/@Model.Post.User.UserName" target="_self">
+                                @Model.Post.User.UserName
+                            </a>
                         </div>
                     </div>
                 </td>
                 <td class="w-100">
                     @if (Model.UserId == Model.Post.User.Id)
                     {
-                        <form asp-controller="Post" asp-action="Update" method="get">
+                        <button class="btn btn-primary" @onclick="() => OnEditPostClicked(Model.Post.Id)">Edit post</button>
+                        <form method="post" action="/post/delete">
                             <input type="hidden" name="postId" value="@Model.Post.Id" />
-                            <button type="submit" class="btn btn-primary">Edit post</button>
-                        </form>
-                        <form asp-controller="Post" asp-action="DeletePost" method="post">
-                            <input type="hidden" name="postId" value="@Model.Post.Id" />
-                            <button type="submit" class="btn btn-danger">Delete post</button>
+                            <button type="submit" class="btn btn-danger">Delete Post</button>
                         </form>
                     }
-
                     <h3>
                         @Model.Post.Title
-
                     </h3>
                     <p>
                         @Model.Post.Content
@@ -50,7 +48,7 @@
                 <td>
                     <div class="text-nowrap">
                         <div>
-                            Created at: <display-date-time date-time="@Model.Post.CreatedAt"></display-date-time>
+                            Created at: <DisplayDateTime DateTime="@Model.Post.CreatedAt" />
                         </div>
                         <div>
                             Likes: @Model.Post.Likes
@@ -62,15 +60,25 @@
                             Edited: @Model.Post.Edited
                         </div>
                         <div>
-                            <a asp-controller="Likes" asp-action="LikePost" asp-route-postId="@Model.Post.Id" class="text-decoration-none">
-                                <i class="bi bi-hand-thumbs-up" style="font-size: 1.5rem; color: black;"></i>
-                            </a>
+                            @if (!Model.Post.LikedByUser)
+                            {
+                                <button class="btn py-0 px-1 " @onclick="() => OnPostLikeClicked(Model.Post.Id)">
+                                    <i class="bi bi-hand-thumbs-up" style="font-size: 1.5rem; color: black;"></i>
+                                </button>
+                            }
+                            else
+                            {
+                                <button class="btn btn-primary py-0 px-1" @onclick="() => OnPostDislikeClicked(Model.Post.Id)">
+                                    <i class="bi bi-hand-thumbs-up" style="font-size: 1.5rem; color: white;"></i>
+                                </button>
+                            }
+
                         </div>
                         @if (Model.Post.Edited)
                         {
-                            <form asp-controller="PostHistory" asp-action="GetPostHistory" asp-route-postId="@Model.Post.Id" method="get">
-                                <button type="submit" class="btn btn-primary">View edit history</button>
-                            </form>
+                            <a href="/PostHistory/@Model.Post.Id" target="_self" class="btn btn-primary">
+                                View edit history
+                            </a>
                         }
                     </div>
                 </td>
@@ -87,18 +95,20 @@
                                 User:
                             </div>
                             <div>
-                                <a asp-controller="Profile" asp-action="Index" asp-route-username="@comment.User.UserName">@comment.User.UserName</a>
+                                <a href="/profile/@comment.User.UserName" target="_self">
+                                    @comment.User.UserName
+                                </a>
                             </div>
                         </div>
                     </td>
                     <td class="w-100">
                         @if (Model.UserId == comment.UserId)
                         {
-                            <form asp-controller="Comment" asp-action="Update" method="get">
-                                <input type="hidden" name="commentId" value="@comment.Id" />
-                                <button type="submit" class="btn btn-primary">Edit comment</button>
-                            </form>
-                            <form asp-controller="Comment" asp-action="DeleteComment" method="post">
+                            <a href="/Comment/Update?commentId=@comment.Id" target="_self" class="btn btn-primary">
+                                Edit comment
+                            </a>
+
+                            <form action="/Comment/Delete" method="post">
                                 <input type="hidden" name="commentId" value="@comment.Id" />
                                 <input type="hidden" name="postId" value="@Model.Post.Id" />
                                 <button type="submit" class="btn btn-danger">Delete comment</button>
@@ -111,7 +121,7 @@
                     <td>
                         <div class="text-nowrap">
                             <div>
-                                Created at: <display-date-time date-time="@comment.CreatedAt" />
+                                Created at: <DisplayDateTime DateTime="comment.CreatedAt" />
                             </div>
                             <div>
                                 Likes: @comment.Likes
@@ -119,11 +129,25 @@
                             <div>
                                 Edited: @comment.Edited
                             </div>
+                            <div>
+                                @if (!comment.LikedByUser)
+                                {
+                                    <button class="btn py-0 px-1 " @onclick="() => OnCommentLikeClicked(comment)">
+                                        <i class="bi bi-hand-thumbs-up" style="font-size: 1.5rem; color: black;"></i>
+                                    </button>
+                                }
+                                else
+                                {
+                                    <button class="btn btn-primary py-0 px-1" @onclick="() => OnCommentDislikeClicked(comment)">
+                                        <i class="bi bi-hand-thumbs-up" style="font-size: 1.5rem; color: white;"></i>
+                                    </button>
+                                }
+                            </div>
                             @if (comment.Edited)
                             {
-                                <form asp-controller="CommentHistory" asp-action="GetCommentHistory" asp-route-commentId="@comment.Id" method="get">
-                                    <button type="submit" class="btn btn-primary">View edit history</button>
-                                </form>
+                                <a href="/CommentHistory/@comment.Id" target="_self" class="btn btn-primary">
+                                    View edit history
+                                </a>
                             }
                         </div>
                     </td>
@@ -135,10 +159,124 @@
 
 @code {
     [Parameter]
+    public int PostId { get; set; }
+
+    [Parameter]
     public PostViewModel Model { get; set; }
 
-    private void OnClickCreateComment()
+    private bool IsLoaded;
+
+    private bool Liked { get; set; }
+
+    protected override async Task OnInitializedAsync()
     {
-        NavigationManager.NavigateTo($"/Post/CreatePost?categoryId={Model.Post.CategoryId}");
+        string bearer = HttpContextService.HttpContext.Session.GetJson<string>("Bearer");
+        if (string.IsNullOrEmpty(bearer))
+        {
+            return;
+        }
+
+        if (IsLoaded)
+        {
+            return;
+        }
+
+        PageInfo pageInfo = new PageInfo();
+        var result = await PostService.GetPostDetails(PostId, pageInfo, bearer);
+        if (!result.IsSuccess)
+        {
+            return;
+        }
+
+        Model.Post = result.Content.PostDto;
+        Model.Comments = result.Content.Comments;
+        Model.PageInfo = result.Content.PageInfo;
+        IsLoaded = true;
+    }
+
+    private void OnClickCreateComment(MouseEventArgs e)
+    {
+        NavigationManager.NavigateTo($"/Comment/CreateComment?postId={Model.Post.Id}", true);
+    }
+
+    private async Task OnPostLikeClicked(int postId)
+    {
+        string bearer = HttpContextService.HttpContext.Session.GetJson<string>("Bearer");
+
+        if (string.IsNullOrEmpty(bearer))
+        {
+            NavigationManager.NavigateTo("/login", true);
+            return;
+        }
+
+        var result = await LikeService.LikePostAsync(postId, bearer);
+
+        if (result.IsSuccess)
+        {
+            Model.Post.LikedByUser = true;
+            Model.Post.Likes++;
+        }
+    }
+
+    private async Task OnPostDislikeClicked(int postId)
+    {
+        string bearer = HttpContextService.HttpContext.Session.GetJson<string>("Bearer");
+
+        if (string.IsNullOrEmpty(bearer))
+        {
+            NavigationManager.NavigateTo("/login", true);
+            return;
+        }
+
+        var result = await LikeService.DislikePostAsync(postId, bearer);
+
+        if (result.IsSuccess)
+        {
+            Model.Post.LikedByUser = false;
+            Model.Post.Likes--;
+        }
+    }
+
+    private async Task OnCommentLikeClicked(Comment comment)
+    {
+        string bearer = HttpContextService.HttpContext.Session.GetJson<string>("Bearer");
+
+        if (string.IsNullOrEmpty(bearer))
+        {
+            NavigationManager.NavigateTo("/login", true);
+            return;
+        }
+
+        var result = await LikeService.LikeCommentAsync(comment.Id, bearer);
+
+        if (result.IsSuccess)
+        {
+            comment.LikedByUser = true;
+            comment.Likes++;
+        }
+    }
+
+    private async Task OnCommentDislikeClicked(Comment comment)
+    {
+        string bearer = HttpContextService.HttpContext.Session.GetJson<string>("Bearer");
+
+        if (string.IsNullOrEmpty(bearer))
+        {
+            NavigationManager.NavigateTo("/login", true);
+            return;
+        }
+
+        var result = await LikeService.DislikeCommentAsync(comment.Id, bearer);
+
+        if (result.IsSuccess)
+        {
+            comment.LikedByUser = false;
+            comment.Likes--;
+        }
+    }
+
+    private void OnEditPostClicked(int postId)
+    {
+        NavigationManager.NavigateTo($"Post/Update?postId={postId}", true);
     }
 }

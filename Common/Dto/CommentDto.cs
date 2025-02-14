@@ -1,7 +1,10 @@
-﻿using Microsoft.AspNetCore.Identity;
-using WebApi.Models;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace WebApi.Dto.Comment
+namespace Common.Dto
 {
     public class CommentDto
     {

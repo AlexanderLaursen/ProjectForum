@@ -2,7 +2,7 @@
 @model PostViewModel
 @{
 }
-<div class="d-flex justify-content-end w-100 mb-2">
+@* <div class="d-flex justify-content-end w-100 mb-2">
     <form asp-controller="Comment" asp-action="CreateComment" method="get">
         <input type="hidden" name="postId" value="@Model.Post.Id" />
         <button type="submit" class="btn btn-primary">Create comment</button>
@@ -134,11 +134,11 @@
             }
         </tbody>
     </table>
-</div>
+</div> *@
+@* 
+<pagination page-info="@Model.PageInfo" id="@Model.Post.Id"></pagination> *@
 
-<pagination page-info="@Model.PageInfo" id="@Model.Post.Id"></pagination>
 
-
-<component type="typeof(PostDetail)" render-mode="ServerPrerendered" param-Model="Model" />
+<component type="typeof(PostDetail)" render-mode="ServerPrerendered" param-PostId="Model.Post.Id" param-Model="Model"/>
 
 <pagination page-info="@Model.PageInfo" id="@Model.Post.Id"></pagination>

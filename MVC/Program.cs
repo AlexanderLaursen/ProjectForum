@@ -15,7 +15,11 @@ builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<CommonApiService>();
 builder.Services.AddScoped<CommentHistoryService>();
 builder.Services.AddScoped<PostHistoryService>();
-builder.Services.AddTransient<UserService>();
+builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<LikeService>();
+
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<HttpContextService>();
 
 builder.Services.AddServerSideBlazor();
 

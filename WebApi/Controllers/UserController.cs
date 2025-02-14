@@ -114,7 +114,7 @@ namespace WebApi.Controllers
 
         //    OperationResult userOperation = await _userRepository.GetUserByUsernameAsync(registerDto.Email);
 
-        //    if (!userOperation.Success)
+        //    if (!userOperation.IsSuccess)
         //    {
         //        return BadRequest();
         //    }

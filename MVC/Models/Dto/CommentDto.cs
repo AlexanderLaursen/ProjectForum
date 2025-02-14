@@ -1,7 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
-using WebApi.Models;
-
-namespace WebApi.Dto.Comment
+﻿namespace MVC.Models.Dto
 {
     public class CommentDto
     {

@@ -1,0 +1,12 @@
+﻿<span>@dateTimeString</span>
+
+@code {
+    [Parameter]
+    public DateTime DateTime { get; set; }
+    private string dateTimeString;
+
+    protected override void OnInitialized()
+    {
+        dateTimeString = DateTime.ToLocalTime().ToString();
+    }
+}

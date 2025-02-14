@@ -37,7 +37,7 @@ namespace MVC.Controllers
                 Password = registerData.Password
             };
 
-            ApiResponse<object> response = await _authService.RegisterAsync(loginData);
+            ApiResponseOld<object> response = await _authService.RegisterAsync(loginData);
 
             if (response.IsSuccess)
             {

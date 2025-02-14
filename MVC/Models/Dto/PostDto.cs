@@ -1,19 +1,20 @@
-﻿using Microsoft.AspNetCore.Identity;
-using WebApi.Models;
-
-namespace WebApi.Dto.Comment
+﻿namespace MVC.Models.Dto
 {
-    public class CommentDto
+    public class PostDto
     {
         public int Id { get; set; }
+        public string Title { get; set; }
         public string Content { get; set; }
         public DateTime CreatedAt { get; set; }
         public int Likes { get; set; }
-        public int PostId { get; set; }
+        public int ViewCount { get; set; }
         public bool Edited { get; set; }
         public bool LikedByUser { get; set; }
 
-        public string UserId { get; set; }
+        public int CategoryId { get; set; }
+
         public ShortUserDto User { get; set; }
+
+        public List<CommentDto> Comments { get; set; }
     }
 }

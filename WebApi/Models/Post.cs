@@ -21,5 +21,6 @@ namespace WebApi.Models
         public Category Category { get; set; }
         public List<Comment> Comments { get; set; }
         public List<PostHistory> PostHistory { get; set; }
+        public List<PostLike> PostLikes { get; set; }
     }
 }

@@ -25,8 +25,8 @@ namespace MVC.Controllers
                 return BadRequest("Invalid category id.");
             }
             PageInfo pageInfo = new PageInfo(page, pageSize);
-            ApiResponse<Post> response = await _postService.GetPostsByCategoryIdAsync(categoryId, pageInfo);
-            ApiResponse<Category> categoryResponse = await _categoryService.GetCategoryByIdAsync(categoryId);
+            ApiResponseOld<Post> response = await _postService.GetPostsByCategoryIdAsync(categoryId, pageInfo);
+            ApiResponseOld<Category> categoryResponse = await _categoryService.GetCategoryByIdAsync(categoryId);
 
             if (!response.IsSuccess)
             {
@@ -52,7 +52,7 @@ namespace MVC.Controllers
             }
 
             PageInfo pageInfo = new PageInfo(page, pageSize);
-            ApiResponse<Post> response = await _postService.GetPostByIdAsync(postId, pageInfo);
+            ApiResponseOld<Post> response = await _postService.GetPostByIdAsync(postId, pageInfo);
 
             if (!response.IsSuccess)
             {
@@ -97,7 +97,7 @@ namespace MVC.Controllers
                 return RedirectToAction("Index", "Login");
             }
 
-            ApiResponse<Post> response = await _postService.CreatePostAsync(viewModel, bearerToken);
+            ApiResponseOld<Post> response = await _postService.CreatePostAsync(viewModel, bearerToken);
 
             if (!response.IsSuccess)
             {
@@ -115,7 +115,7 @@ namespace MVC.Controllers
                 return BadRequest();
             }
 
-            ApiResponse<Post> response = await _postService.GetPostByIdAsync(postId, new PageInfo());
+            ApiResponseOld<Post> response = await _postService.GetPostByIdAsync(postId, new PageInfo());
 
             UpdatePostViewModel viewModel = new()
             {
@@ -141,7 +141,7 @@ namespace MVC.Controllers
                 return RedirectToAction("Index", "Login");
             }
 
-            ApiResponse<Post> response = await _postService.UpdatePostAsync(viewModel, bearerToken);
+            ApiResponseOld<Post> response = await _postService.UpdatePostAsync(viewModel, bearerToken);
             if (!response.IsSuccess)
             {
                 return RedirectToAction("Update", new { postId = viewModel.PostId });
@@ -164,7 +164,7 @@ namespace MVC.Controllers
                 return RedirectToAction("Index", "Login");
             }
 
-            ApiResponse<bool> response = await _postService.DeletePostAsync(postId, bearerToken);
+            ApiResponseOld<bool> response = await _postService.DeletePostAsync(postId, bearerToken);
             if (!response.IsSuccess)
             {
                 return BadRequest();

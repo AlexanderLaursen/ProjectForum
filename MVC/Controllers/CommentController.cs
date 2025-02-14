@@ -40,7 +40,7 @@ namespace MVC.Controllers
                 return RedirectToAction("Index", "Login");
             }
 
-            ApiResponse<Comment> response = await _commentService.CreateCommentAsync(viewModel, bearerToken);
+            ApiResponseOld<Comment> response = await _commentService.CreateCommentAsync(viewModel, bearerToken);
 
             if (!response.IsSuccess)
             {
@@ -58,7 +58,7 @@ namespace MVC.Controllers
                 return BadRequest();
             }
 
-            ApiResponse<Comment> response = await _commentService.GetCommentByIdAsync(commentId);
+            ApiResponseOld<Comment> response = await _commentService.GetCommentByIdAsync(commentId);
 
             UpdateCommentViewModel updateCommentViewModel = new UpdateCommentViewModel
             {
@@ -84,7 +84,7 @@ namespace MVC.Controllers
                 return RedirectToAction("Index", "Login");
             }
 
-            ApiResponse<Comment> response = await _commentService.UpdateCommentByIdAsync(commentId, updateCommentDto, bearerToken);
+            ApiResponseOld<Comment> response = await _commentService.UpdateCommentByIdAsync(commentId, updateCommentDto, bearerToken);
             if (!response.IsSuccess)
             {
                 return BadRequest();
@@ -107,7 +107,7 @@ namespace MVC.Controllers
                 return RedirectToAction("Index", "Login");
             }
 
-            ApiResponse<bool> response = await _commentService.DeleteCommentAsync(commentId, bearerToken);
+            ApiResponseOld<bool> response = await _commentService.DeleteCommentAsync(commentId, bearerToken);
             if (!response.IsSuccess)
             {
                 return BadRequest();

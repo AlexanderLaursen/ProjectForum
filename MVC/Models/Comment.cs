@@ -13,7 +13,7 @@ namespace MVC.Models
         public DateTime EditedAt { get; set; }
         public string UserId { get; set; }
         public int PostId { get; set; }
-
+        public bool LikedByUser { get; set; }
 
         public AppUser User { get; set; }
         public Post Post { get; set; }
