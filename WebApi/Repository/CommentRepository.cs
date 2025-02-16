@@ -1,9 +1,11 @@
 ﻿using Mapster;
 using Microsoft.EntityFrameworkCore;
 using WebApi.Data;
-using WebApi.Dto.Comment;
-using WebApi.Dto.CommentHistory;
+using Common.Dto.Comment;
+using Common.Dto.CommentHistory;
 using WebApi.Models;
+using WebApi.Repository.Interfaces;
+using Common.Models;
 
 namespace WebApi.Repository
 {

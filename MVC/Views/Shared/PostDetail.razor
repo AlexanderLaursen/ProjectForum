@@ -1,4 +1,5 @@
-﻿@using MVC.Helpers
+﻿@using Common.Models
+@using MVC.Helpers
 @inject NavigationManager NavigationManager
 @inject HttpContextService HttpContextService
 @inject LikeService LikeService
@@ -189,12 +190,12 @@
 
         PageInfo pageInfo = new PageInfo();
         var result = await PostService.GetPostDetails(PostId, pageInfo, bearer);
-        if (!result.IsSuccess)
+        if (!result.IsSuccess || result.Content?.Post == null)
         {
             return;
         }
 
-        Model.Post = result.Content.PostDto;
+        Model.Post = result.Content.Post;
         Model.Comments = result.Content.Comments;
         Model.PageInfo = result.Content.PageInfo;
         IsLoaded = true;

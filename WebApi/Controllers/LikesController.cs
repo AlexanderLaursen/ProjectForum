@@ -2,8 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using SQLitePCL;
 using System.Security.Claims;
-using WebApi.Dto;
-using WebApi.Dto.Post;
+using Common.Dto;
+using Common.Dto.Post;
 using WebApi.Models;
 using WebApi.Repository;
 using WebApi.Services;

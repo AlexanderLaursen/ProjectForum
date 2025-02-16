@@ -1,11 +1,13 @@
 ﻿using Common.Enums;
+using Common.Dto.Comment;
+using Common.Dto.Post;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
-using WebApi.Dto.Comment;
-using WebApi.Dto.Post;
 using WebApi.Models;
-using WebApi.Repository;
+using WebApi.Repository.Interfaces;
+using WebApi.Models.Ope;
+using Common.Models;
 
 namespace WebApi.Controllers
 {

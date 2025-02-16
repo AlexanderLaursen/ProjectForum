@@ -1,7 +1,4 @@
-﻿
-using Microsoft.AspNetCore.Mvc;
-using MVC.Helpers;
-using MVC.Models;
+﻿using MVC.Models;
 
 namespace MVC.Services
 {

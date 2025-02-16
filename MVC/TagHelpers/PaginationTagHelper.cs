@@ -1,15 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.AspNetCore.Mvc.Routing;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Razor.TagHelpers;
-using System.Formats.Asn1;
-using MVC.Models;
-using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
-using System;
-using Microsoft.AspNetCore.WebUtilities;
 using Common.Enums;
+using Common.Models;
 
 namespace MVC.TagHelpers
 {

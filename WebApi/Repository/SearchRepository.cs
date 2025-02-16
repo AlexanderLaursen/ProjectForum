@@ -1,8 +1,11 @@
 ﻿using Common.Enums;
 using Microsoft.EntityFrameworkCore;
 using WebApi.Data;
-using WebApi.Dto;
+using Common.Models;
 using WebApi.Models;
+using WebApi.Models.Ope;
+using WebApi.Repository.Interfaces;
+using Common.Dto.Search;
 
 namespace WebApi.Repository
 {

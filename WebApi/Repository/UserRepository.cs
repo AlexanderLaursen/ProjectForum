@@ -1,8 +1,10 @@
 ﻿using Mapster;
 using Microsoft.AspNetCore.Identity;
 using WebApi.Data;
-using WebApi.Dto;
+using Common.Dto;
 using WebApi.Models;
+using WebApi.Repository.Interfaces;
+using Common.Dto.User;
 
 namespace WebApi.Repository
 {

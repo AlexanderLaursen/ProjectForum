@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MVC.Helpers;
 using MVC.Models;
-using MVC.Models.ViewModels;
 using MVC.Services;
 
 namespace MVC.Controllers

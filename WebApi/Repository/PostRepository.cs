@@ -1,18 +1,15 @@
 ﻿using Mapster;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage;
-using Microsoft.Extensions.Configuration.UserSecrets;
-using Swashbuckle.AspNetCore.SwaggerGen;
-using System.Runtime.InteropServices.ObjectiveC;
 using WebApi.Data;
-using WebApi.Dto;
-using WebApi.Dto.Comment;
-using WebApi.Dto.Post;
-using WebApi.Dto.PostHistory;
+using Common.Dto.Comment;
+using Common.Dto.Post;
+using Common.Dto.PostHistory;
 using WebApi.Models;
 using Common.Enums;
-using System.Diagnostics.Eventing.Reader;
+using Common.Models;
+using Common.Dto.User;
+using WebApi.Repository.Interfaces;
+using WebApi.Models.Ope;
 
 namespace WebApi.Repository
 {
@@ -88,7 +85,7 @@ namespace WebApi.Repository
                 PostDetailsDto postDetailsDto = new PostDetailsDto
                 {
                     PostDto = postDto,
-                    Comments = comments,
+                    CommentsDto = comments,
                     PageInfo = newPageInfo
                 };
 

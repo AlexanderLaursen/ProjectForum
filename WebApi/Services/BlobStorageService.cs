@@ -1,8 +1,4 @@
 ﻿using Azure.Storage.Blobs;
-using Microsoft.Extensions.Configuration;
-using System;
-using System.IO;
-using System.Threading.Tasks;
 
 public class BlobStorageService
 {
