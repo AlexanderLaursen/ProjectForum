@@ -3,18 +3,17 @@ using MVC.Helpers;
 using MVC.Models;
 using MVC.Models.ViewModels;
 using MVC.Services;
-using System.Net.Http;
-using System.Net.Http.Headers;
+using Common.Models;
 
 namespace MVC.Controllers
 {
     public class ProfileController : Controller
     {
         private readonly PostService _postService;
-        private readonly CommentService _commentService;
+        private readonly CommentServiceOld _commentService;
         private readonly UserService _userService;
 
-        public ProfileController (PostService postService, CommentService commentService, UserService userService)
+        public ProfileController (PostService postService, CommentServiceOld commentService, UserService userService)
         {
             _postService = postService;
             _commentService = commentService;

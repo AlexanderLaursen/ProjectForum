@@ -1,5 +1,7 @@
-﻿@model PostsViewModel
+﻿@using Common.Enums
+@model PostsViewModel
 @{
+    var type = Model.SortBy;
 }
 
 <div class="text-center">
@@ -7,32 +9,110 @@
 </div>
 
 <div class="d-flex justify-content-end w-100 mb-2">
-<form asp-controller="Post" asp-action="CreatePost" method="get">
-    <input type="hidden" name="categoryId" value="@Model.Category.Id" />
-    <button type="submit" class="btn btn-primary">Create post</button>
-</form>
+    <form asp-controller="Post" asp-action="CreatePost" method="get">
+        <input type="hidden" name="categoryId" value="@Model.Category.Id" />
+        <button type="submit" class="btn btn-primary">Create post</button>
+    </form>
 </div>
 
-<div class="">
+<div class="w-100">
     <table class="table table-striped table-hover">
         <thead>
+            <tr>
+                <th class="col-6">
+                    <a asp-controller="Post"
+                       asp-action="GetPostsByCategoryId"
+                       asp-route-page="1"
+                       asp-route-pageSize="@Model.PageInfo.PageSize"
+                       asp-route-categoryId="@Model.Category.Id"
+                       asp-route-sortBy="@SortBy.Title"
+                       asp-route-sortDirection="@(Model.SortDirection == SortDirection.Asc ? SortDirection.Desc : SortDirection.Asc)"
+                       class="text-black text-decoration-none">
+                        Title
+                        <caret sort-direction="@Model.SortDirection" active="@(Model.SortBy == SortBy.Title)"></caret>
+                    </a>
+                </th>
+                <th class="col-1 text-center align-middle text-nowrap">
+                    <a asp-controller="Post"
+                       asp-action="GetPostsByCategoryId"
+                       asp-route-page="1"
+                       asp-route-pageSize="@Model.PageInfo.PageSize"
+                       asp-route-categoryId="@Model.Category.Id"
+                       asp-route-sortBy="@SortBy.Comments"
+                       asp-route-sortDirection="@(Model.SortDirection == SortDirection.Asc ? SortDirection.Desc : SortDirection.Asc)"
+                       class="text-black text-decoration-none">
+                        Comments
+                        <caret sort-direction="@Model.SortDirection" active="@(Model.SortBy == SortBy.Comments)"></caret>
+                    </a>
+                </th>
+                <th class="col-1 text-center align-middle">
+                    <a asp-controller="Post"
+                       asp-action="GetPostsByCategoryId"
+                       asp-route-page="1"
+                       asp-route-pageSize="@Model.PageInfo.PageSize"
+                       asp-route-categoryId="@Model.Category.Id"
+                       asp-route-sortBy="@SortBy.Likes"
+                       asp-route-sortDirection="@(Model.SortDirection == SortDirection.Asc ? SortDirection.Desc : SortDirection.Asc)"
+                       class="text-black text-decoration-none">
+                        Likes
+                        <caret sort-direction="@Model.SortDirection" active="@(Model.SortBy == SortBy.Likes)"></caret>
+                    </a>
+                </th>
+                <th class="col-1 text-center align-middle">
+                    <a asp-controller="Post"
+                       asp-action="GetPostsByCategoryId"
+                       asp-route-page="1"
+                       asp-route-pageSize="@Model.PageInfo.PageSize"
+                       asp-route-categoryId="@Model.Category.Id"
+                       asp-route-sortBy="@SortBy.Views"
+                       asp-route-sortDirection="@(Model.SortDirection == SortDirection.Asc ? SortDirection.Desc : SortDirection.Asc)"
+                       class="text-black text-decoration-none">
+                        Views
+                        <caret sort-direction="@Model.SortDirection" active="@(Model.SortBy == SortBy.Views)"></caret>
+                    </a>
+                </th>
+                <th class="col-1 text-center align-middle">
+                    Author
+                </th>
+                <th class="col-2 text-center align-middle">
+                    <a asp-controller="Post"
+                       asp-action="GetPostsByCategoryId"
+                       asp-route-page="1"
+                       asp-route-pageSize="@Model.PageInfo.PageSize"
+                       asp-route-categoryId="@Model.Category.Id"
+                       asp-route-sortType="@SortBy.Date"
+                       asp-route-sortDirection="@(Model.SortDirection == SortDirection.Asc ? SortDirection.Desc : SortDirection.Asc)"
+                       class="text-black text-decoration-none">
+                        Created
+                        <caret sort-direction="@Model.SortDirection" active="@(Model.SortBy == SortBy.Date)"></caret>
+                    </a>
+                </th>
+            </tr>
         </thead>
+
         <tbody>
             @foreach (Post post in Model.Posts)
             {
-                <tr>
-                    <td class="w-100">
-                        <form asp-controller="Post" asp-action="GetPostById" asp-route-postId="@post.Id" method="get">
-                            <button type="submit" class="btn btn-link">@post.Title</button>
-                        </form>
+                <tr onclick="location.href='/Post/@post.Id';" style="cursor:pointer;">
+                    <td class="align-middle">
+                        @post.Title
                     </td>
-                    <td>
-                        <div class="text-nowrap">
-                            Views: @post.ViewCount
-                        </div>
-                        <div class="text-nowrap">
-                            Likes: @post.Likes
-                        </div>
+                    <td class="text-center align-middle">
+                        @post.CommentsCount
+                    </td>
+                    <td class="text-center align-middle">
+                        @post.Likes
+                    </td>
+                    <td class="text-center align-middle">
+                        @post.ViewCount
+                    </td>
+                    <td class="text-center align-middle">
+                        <a href="/profile/@post.User.UserName">
+                            @post.User.UserName
+                        </a>
+                    </td>
+                    <td class="text-center align-middle">
+                        <display-date-time date-time="post.CreatedAt"></display-date-time>
                     </td>
                 </tr>
             }
@@ -40,4 +120,4 @@
     </table>
 </div>
 
-<pagination page-info="@Model.PageInfo" id="@Model.Category.Id"></pagination>
+<pagination page-info="@Model.PageInfo" id="@Model.Category.Id" sort-by="@Model.SortBy" sort-direction="@Model.SortDirection"></pagination>

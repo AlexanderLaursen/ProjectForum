@@ -1,22 +1,46 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
-using WebApi.Dto.Comment;
+using Common.Dto.Comment;
 using WebApi.Models;
+using Common.Models;
+using WebApi.Services.Interfaces;
+using Microsoft.Extensions.Configuration.UserSecrets;
 
 namespace WebApi.Controllers
 {
     [ApiController]
     [Route("api/v1/[controller]")]
-    public class CommentController : Controller
+    public class CommentController : ControllerBase
     {
         private readonly ICommentRepository _repository;
-        public CommentController(ICommentRepository repository)
+        private readonly ICommentService _commentService;
+        public CommentController(ICommentRepository repository, ICommentService commentService)
         {
             _repository = repository;
+            _commentService = commentService;
         }
 
-        [HttpGet("{commentId}")]
+        [HttpGet("/api/v2/comments/{commentId}")]
+        public async Task<IActionResult> GetComment(int commentId, string? userId = null)
+        {
+            if (commentId <= 0)
+            {
+                return BadRequest("Invalid comment id.");
+            }
+
+            Result<CommentDto> result = await _commentService.GetCommentAsync(commentId, userId);
+
+            if (!result.IsSuccess)
+            {
+                return HandleErrors(result);
+            }
+
+            return Ok(result.Value);
+        }
+
+
+            [HttpGet("{commentId}")]
         public async Task<IActionResult> GetCommentById(int commentId)
         {
             if (commentId <= 0)

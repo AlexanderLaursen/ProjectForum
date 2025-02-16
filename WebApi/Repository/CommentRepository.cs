@@ -1,9 +1,13 @@
 ﻿using Mapster;
 using Microsoft.EntityFrameworkCore;
 using WebApi.Data;
-using WebApi.Dto.Comment;
-using WebApi.Dto.CommentHistory;
+using Common.Dto.Comment;
+using Common.Dto.CommentHistory;
 using WebApi.Models;
+using WebApi.Repository.Interfaces;
+using Common.Models;
+using Microsoft.Extensions.Configuration.UserSecrets;
+using Common.Dto.User;
 
 namespace WebApi.Repository
 {
@@ -416,5 +420,44 @@ namespace WebApi.Repository
             }
         }
 
+        // v2
+        public async Task<Result<CommentDto>> GetCommentAsync(int commentId, string? userId = null)
+        {
+            try
+            {
+                CommentDto? commentDto = await _context.Comments
+                    .Where(c => c.Id == commentId)
+                    .Select(c => new CommentDto
+                    {
+                        Id = c.Id,
+                        Content = c.Content,
+                        CreatedAt = c.CreatedAt,
+                        Likes = c.CommentLikes.Count,
+                        PostId = c.PostId,
+                        Edited = c.Edited,
+                        LikedByUser = c.CommentLikes.Any(cl => cl.UserId == userId),
+                        UserId = c.UserId,
+                        User = new ShortUserDto
+                        {
+                            Id = c.User.Id,
+                            UserName = c.User.UserName!,
+                            SmProfilePicture = c.User.SmProfilePicture!,
+                            MdProfilePicture = c.User.MdProfilePicture!,
+                            LgProfilePicture = c.User.LgProfilePicture!,
+                        }
+                    }).FirstOrDefaultAsync();
+
+                if (commentDto == null)
+                {
+                    return Result<CommentDto>.NotFound();
+                }
+
+                return Result<CommentDto>.Success(commentDto);
+            }
+            catch (Exception)
+            {
+                return Result<CommentDto>.Failure("Error while fetching comment from database.");
+            }
+        }
     }
 }

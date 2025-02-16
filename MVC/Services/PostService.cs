@@ -1,9 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Common.Dto.Post;
+using Common.Enums;
 using MVC.Models;
-using MVC.Models.Dto;
 using MVC.Models.ViewModels;
-using System.Net.Http.Headers;
-using System.Text;
+using Common.Models;
+using Mapster;
+using MVC.Repositories;
 
 namespace MVC.Services
 {
@@ -13,29 +14,36 @@ namespace MVC.Services
         private const string POST_PREFIX = "Post";
         private const string USER_PREFIX = "User";
         private readonly HttpClient _httpClient;
-        private readonly CommonApiService _commonApiService;
+        private readonly ApiRepository _commonApiService;
 
-        public PostService(HttpClient httpClient, CommonApiService commonApiService)
+        public PostService(HttpClient httpClient, ApiRepository commonApiService)
         {
             _httpClient = httpClient;
             _commonApiService = commonApiService;
         }
 
-        public async Task Test(string bearer)
-        {
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", bearer);
-            var result = await _httpClient.GetAsync("https://localhost:7052/api/v1/Post/test2");
-
-        }
-
-        public async Task<ApiResponse<PostDetailsDto>> GetPostDetails(int id, PageInfo pageInfo, string bearer)
+        public async Task<ApiResponse<PostDetails>> GetPostDetails(int id, PageInfo pageInfo, string bearer)
         {
             string url = _commonApiService.StringFactory($"{POST_PREFIX}/{id}/details", pageInfo.CurrentPage, pageInfo.PageSize);
 
-            return await _commonApiService.GetAuthAsync<PostDetailsDto>(url, bearer);
+            var resultDto = await _commonApiService.GetAuthAsync<PostDetailsDto>(url, bearer);
+
+            if (resultDto.Content.PostDto == null)
+            {
+                return ApiResponse<PostDetails>.Fail();
+            }
+
+            PostDetails postDetails = new()
+            {
+                Post = resultDto.Content.PostDto.Adapt<Post>(),
+                Comments = resultDto.Content.CommentsDto.Adapt<List<Comment>>(),
+                PageInfo = resultDto.PageInfo
+            };
+
+            return ApiResponse<PostDetails>.Success(postDetails);
         }
 
-        public async Task<ApiResponseOld<Post>> GetPostsByCategoryIdAsync(int categoryId, PageInfo pageInfo)
+        public async Task<ApiResponseOld<Post>> GetPostsByCategoryIdAsync(int categoryId, PageInfo pageInfo, SortDirection sortDirection, SortBy sortBy)
         {
             if (categoryId <= 0)
             {
@@ -44,7 +52,9 @@ namespace MVC.Services
 
             string url = _commonApiService.StringFactory($"{CATEGORY_PREFIX}/{categoryId}/posts", pageInfo.CurrentPage, pageInfo.PageSize);
 
-            return await _commonApiService.GetApiResponseAsync<Post>(url);
+            url += $"&sortDirection={sortDirection}&sortBy={sortBy}";
+
+            return await _commonApiService.GetApiResponseAsyncOld<Post>(url);
         }
 
         public async Task<ApiResponseOld<Post>> GetPostByIdAsync(int id, PageInfo pageInfo)
@@ -56,7 +66,7 @@ namespace MVC.Services
 
             string url = _commonApiService.StringFactory($"{POST_PREFIX}/{id}", pageInfo.CurrentPage, pageInfo.PageSize);
 
-            return await _commonApiService.GetApiResponseAsync<Post>(url);
+            return await _commonApiService.GetApiResponseAsyncOld<Post>(url);
         }
 
         public async Task<ApiResponseOld<Post>> CreatePostAsync(CreatePostViewModel viewModel, string bearerToken)
@@ -114,7 +124,7 @@ namespace MVC.Services
 
             string url = _commonApiService.StringFactory($"{USER_PREFIX}/{username}/posts", pageInfo.CurrentPage, pageInfo.PageSize);
 
-            return await _commonApiService.GetApiResponseAsync<Post>(url);
+            return await _commonApiService.GetApiResponseAsyncOld<Post>(url);
         }
     }
 

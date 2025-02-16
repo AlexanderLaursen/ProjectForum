@@ -1,0 +1,76 @@
+﻿@model SearchViewModel
+
+@{
+    PageInfo pageInfo = new PageInfo(Model.PageInfo.CurrentPage, Model.PageInfo.PageSize, Model.PageInfo.TotalPages);
+}
+
+@if (Model.PageInfo.TotalItems == 0)
+{
+    <h1>Search</h1>
+    <h3>Found @Model.PageInfo.TotalItems results for "@Model.SearchString"</h3>
+}
+else
+{
+    <h1>Search</h1>
+    <h3>Found @Model.PageInfo.TotalItems results for "@Model.SearchString"</h3>
+
+    <table class="table table-striped table-hover">
+        <thead>
+        </thead>
+        <tbody>
+            @foreach (var result in Model.SearchResults)
+            {
+                @if (result.Type == Common.Enums.ContentType.Post)
+                {
+                    <tr onclick="location.href='/Post/@result.Id';" style="cursor:pointer;">
+                        <td>
+                            <p class="mb-1">Post:</p>
+                            <div>
+                                <h5 class="mb-1">@result.Title</h5>
+                                @if (result.Content.Length > 255)
+                                {
+                                    <p>@result.Content.Substring(0, 255)...</p>
+                                }
+                                else
+                                {
+                                    <p>@result.Content</p>
+                                }
+                            </div>
+                    </tr>
+                }
+                else if (result.Type == Common.Enums.ContentType.Comment)
+                {
+                    <tr onclick="location.href='/Post/@result.Id';" style="cursor:pointer;">
+                        <td>
+                            <p class="mb-1">Comment:</p>
+                            <div>
+                                @if (@result.Content.Length > 255)
+                                {
+                                    <p>@result.Content.Substring(0, 255) ...</p>
+                                }
+                                else
+                                {
+                                    <p>@result.Content</p>
+                                }
+                            </div>
+                        </td>
+                    </tr>
+                }
+                else if (result.Type == Common.Enums.ContentType.User)
+                {
+                    <tr onclick="location.href='/Profile/@result.Title';" style="cursor:pointer;">
+                        <td>
+                            <p class="mb-1">User:</p>
+                            <div>
+                                <h5>@result.Title</h5>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+
+    <pagination page-info="pageInfo" search-string="@Model.SearchString"></pagination>
+}
+

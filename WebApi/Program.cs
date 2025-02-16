@@ -5,7 +5,9 @@ using Swashbuckle.AspNetCore.Filters;
 using WebApi.Data;
 using WebApi.Models;
 using WebApi.Repository;
+using WebApi.Repository.Interfaces;
 using WebApi.Services;
+using WebApi.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -46,6 +48,12 @@ builder.Services.AddScoped<ICommonRepository, CommonRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ILikesRepository, LikesRepository>();
 builder.Services.AddScoped<ILikesService, LikesService>();
+builder.Services.AddScoped<ISearchRepository, SearchRepository>();
+
+// Services
+builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<ICommentHistoryService, CommentHistoryService>();
+builder.Services.AddScoped<ICommentService, CommentService>();
 
 builder.Services.AddSingleton<BlobStorageService>();
 

@@ -3,14 +3,15 @@ using MVC.Helpers;
 using MVC.Models.ViewModels;
 using MVC.Models;
 using MVC.Services;
-using MVC.Models.Dto;
+using Common.Dto;
+using Common.Dto.Comment;
 
 namespace MVC.Controllers
 {
     public class CommentController : Controller
     {
-        private readonly CommentService _commentService;
-        public CommentController(CommentService commentService)
+        private readonly CommentServiceOld _commentService;
+        public CommentController(CommentServiceOld commentService)
         {
             _commentService = commentService;
         }

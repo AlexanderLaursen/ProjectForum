@@ -2,6 +2,7 @@
 using MVC.Models.ViewModels;
 using MVC.Models;
 using MVC.Services;
+using Common.Models;
 
 namespace MVC.Controllers
 {

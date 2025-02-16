@@ -1,4 +1,7 @@
-﻿namespace MVC.Models
+﻿using Common.Models;
+
+
+namespace MVC.Models
 {
     public class ApiResponseOld<T>
     {

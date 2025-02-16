@@ -1,10 +1,13 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Common.Enums;
+using Common.Dto.Comment;
+using Common.Dto.Post;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
-using WebApi.Dto.Comment;
-using WebApi.Dto.Post;
 using WebApi.Models;
-using WebApi.Repository;
+using WebApi.Repository.Interfaces;
+using WebApi.Models.Ope;
+using Common.Models;
 
 namespace WebApi.Controllers
 {
@@ -71,15 +74,15 @@ namespace WebApi.Controllers
         }
 
         [HttpGet("/api/v1/Category/{categoryId}/posts")]
-        public async Task<IActionResult> GetPostsByCategoryId(string categoryId, int page = 0, int pageSize = 0)
+        public async Task<IActionResult> GetPostsByCategoryId(int categoryId, int page = 0, int pageSize = 0, SortBy sortBy = SortBy.Date, SortDirection sortDirection = SortDirection.Desc)
         {
-            if (!int.TryParse(categoryId, out int categoryInt))
+            if (categoryId <= 0)
             {
-                return BadRequest("Invalid category id.");
+                return BadRequest();
             }
 
             PageInfo pageInfo = new PageInfo (page, pageSize);
-            OperationResult result = await _repository.GetPostsByCategoryIdAsync(categoryInt, pageInfo);
+            OperationResult result = await _repository.GetPostsByCategoryIdAsync(categoryId, pageInfo, sortBy, sortDirection);
 
             if (result.Success)
             {
