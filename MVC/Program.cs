@@ -13,10 +13,10 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<HttpClient>();
 builder.Services.AddScoped<CategoryApiService>();
 builder.Services.AddScoped<PostService>();
-builder.Services.AddScoped<CommentService>();
+builder.Services.AddScoped<CommentServiceOld>();
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<ApiRepository>();
-builder.Services.AddScoped<CommentHistoryService>();
+builder.Services.AddScoped<CommentHistoryApiService>();
 builder.Services.AddScoped<PostHistoryService>();
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<LikeService>();
@@ -25,6 +25,7 @@ builder.Services.AddScoped<SearchService>();
 builder.Services.AddScoped<IApiRepository, ApiRepository>();
 
 builder.Services.AddScoped<ICategoryApiService, CategoryApiService>();
+builder.Services.AddScoped<ICommentHistoryApiService, CommentHistoryApiService>();
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<HttpContextService>();

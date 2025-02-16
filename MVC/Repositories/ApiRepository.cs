@@ -240,5 +240,20 @@ namespace MVC.Repositories
                     return Result<T>.Failure();
             }
         }
+
+        public PaginatedResult<T> HandlePaginatedError<T>(HttpStatusCode statusCode)
+        {
+            switch (statusCode)
+            {
+                case HttpStatusCode.NotFound:
+                    return PaginatedResult<T>.NotFound();
+                case HttpStatusCode.BadRequest:
+                    return PaginatedResult<T>.InvalidInput();
+                case HttpStatusCode.Unauthorized:
+                    return PaginatedResult<T>.Unauthorized();
+                default:
+                    return PaginatedResult<T>.Failure();
+            }
+        }
     }
 }

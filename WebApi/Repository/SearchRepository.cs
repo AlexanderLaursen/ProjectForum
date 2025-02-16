@@ -80,7 +80,7 @@ namespace WebApi.Repository
 
 
                 // TODO USE NEW RESULT
-                WebApi.Models.PaginatedResult<SearchResultDto> paginatedResult = new(result, pageInfo);
+                WebApi.Models.PaginatedResultOld<SearchResultDto> paginatedResult = new(result, pageInfo);
 
                 return OperationResultNew.IsSuccess(paginatedResult);
             }

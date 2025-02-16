@@ -1,9 +1,8 @@
-using Common.Dto.Category;
 using Common.Models;
 using Microsoft.AspNetCore.Mvc;
 using MVC.Models;
 using MVC.Models.ViewModels;
-using MVC.Services;
+using MVC.Services.Interfaces;
 using System.Diagnostics;
 
 namespace MVC.Controllers
@@ -11,9 +10,9 @@ namespace MVC.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-        private readonly CategoryApiService _categoryService;
+        private readonly ICategoryApiService _categoryService;
 
-        public HomeController(ILogger<HomeController> logger, CategoryApiService categoryService)
+        public HomeController(ILogger<HomeController> logger, ICategoryApiService categoryService)
         {
             _logger = logger;
             _categoryService = categoryService;

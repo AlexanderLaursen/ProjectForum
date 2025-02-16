@@ -4,7 +4,7 @@ using WebApi.Services.Interfaces;
 namespace WebApi.Controllers
 {
     [ApiController]
-    [Route("api/v1/[controller]")]
+    [Route("api/v2/[controller]")]
     public class CategoriesController : ControllerBase
     {
         private readonly ICategoryService _categoryService;
@@ -31,12 +31,12 @@ namespace WebApi.Controllers
         {
             var result = await _categoryService.GetCategoriesAsync();
 
-            if (result.IsSuccess)
+            if (!result.IsSuccess)
             {
-                return Ok(result.Value);
+                return HandleErrors(result);
             }
 
-            return BadRequest(result.ErrorMessage);
+            return Ok(result.Value);
         }
     }
 }

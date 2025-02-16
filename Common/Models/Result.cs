@@ -4,7 +4,7 @@ using System.Net;
 
 namespace Common.Models
 {
-    public class Result<T>
+    public class Result<T> : IResult<T>
     {
         public bool IsSuccess { get; }
         public T? Value { get; }

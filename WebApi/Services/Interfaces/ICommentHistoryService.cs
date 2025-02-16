@@ -1,10 +1,10 @@
-﻿using WebApi.Models;
+﻿using Common.Dto.CommentHistory;
 using Common.Models;
-using Common.Dto.CommentHistory;
+using WebApi.Models;
 
-namespace WebApi.Repository.Interfaces
+namespace WebApi.Services.Interfaces
 {
-    public interface ICommentHistoryRepository
+    public interface ICommentHistoryService
     {
         public Task<Result<CommentHistoriesDto>> GetCommentHistoryAsync(int commentId, PageInfo pageInfo);
     }

@@ -1,23 +1,25 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MVC.Models;
 using MVC.Models.ViewModels;
-using MVC.Services;
 using Common.Models;
+using MVC.Services.Interfaces;
+using Common.Enums;
+using System.Diagnostics;
 
 namespace MVC.Controllers
 {
     public class CommentHistoryController : Controller
     {
-        private readonly CommentHistoryService _commentHistoryService;
-        private readonly CommentService _commentService;
-        public CommentHistoryController(CommentHistoryService commentHistoryService, CommentService commentService)
+        private readonly ICommentHistoryApiService _commentHistoryService;
+        private readonly ILogger<CommentHistoryController> _logger;
+        public CommentHistoryController(ICommentHistoryApiService commentHistoryService, ILogger<CommentHistoryController> logger)
         {
             _commentHistoryService = commentHistoryService;
-            _commentService = commentService;
-        }
+            _logger = logger;
+        }   
 
-        [HttpGet("/CommentHistory/{commentId}")]
-        public async Task<IActionResult> GetCommentHistory(int commentId, int page = 0, int pageSize = 0)
+        [HttpGet("/comment-history/{commentId}")]
+        public async Task<IActionResult> GetCommentHistory(int commentId, int page, int pageSize)
         {
             if (commentId <= 0)
             {
@@ -25,29 +27,22 @@ namespace MVC.Controllers
             }
 
             PageInfo pageInfo = new PageInfo(page, pageSize);
+            Result<CommentHistories> result = await _commentHistoryService.GetCommentHistoryAsync(commentId, pageInfo);
 
-            ApiResponseOld<Comment> comment = await _commentService.GetCommentByIdAsync(commentId);
-
-            if (!comment.IsSuccess)
+            if (result.IsSuccess && result.Value != null)
             {
-                return NotFound();
+                CommentHistoryViewModel viewModel = new CommentHistoryViewModel
+                {
+                    Comment = result.Value.Comment,
+                    CommentHistory = result.Value.CommentHistory,
+                    PageInfo = result.Value.PageInfo
+                };
+
+                return View(viewModel);
             }
 
-            ApiResponseOld<CommentHistory> result = await _commentHistoryService.GetCommentHistoryByIdAsync(commentId, pageInfo);
-
-            if (!result.IsSuccess)
-            {
-                return NotFound();
-            }
-
-            CommentHistoryViewModel viewModel = new CommentHistoryViewModel
-            {
-                Comment = comment.Content[0],
-                CommentHistory = result.Content,
-                PageInfo = result.PageInfo
-            };
-
-            return View(viewModel);
+            _logger.LogError(result.ErrorMessage);
+            return View("Error", new ErrorViewModel());
         }
     }
 }

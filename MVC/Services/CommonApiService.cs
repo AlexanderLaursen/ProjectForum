@@ -6,7 +6,10 @@ namespace MVC.Services
 {
     public class CommonApiService
     {
-        public const string BASE_URL = "https://localhost:7052/api/v1/";
+        public const string BASE_URL = "https://localhost:7052/api/v2/";
+        public const string COMMENT_HISTORY_PREFIX = "comment-history";
+        public const string COMMENT_PREFIX = "comments";
+        public const string USER_PREFIX = "User";
 
         public string UrlFactory(string prefix, PageInfo? pageInfo = null, IEnumerable<string>? queryStrings = null)
         {

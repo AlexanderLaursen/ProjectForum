@@ -6,13 +6,13 @@ using MVC.Repositories;
 
 namespace MVC.Services
 {
-    public class CommentService
+    public class CommentServiceOld
     {
         private const string COMMENT_PREFIX = "Comment";
         private const string USER_PREFIX = "User";
         private readonly HttpClient _httpClient;
         private readonly ApiRepository _commonApiService;
-        public CommentService(HttpClient httpClient, ApiRepository commonApiService)
+        public CommentServiceOld(HttpClient httpClient, ApiRepository commonApiService)
         {
             _httpClient = httpClient;
             _commonApiService = commonApiService;
