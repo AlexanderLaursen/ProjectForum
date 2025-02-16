@@ -1,4 +1,5 @@
 ﻿using MVC.Models;
+using MVC.Repositories;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -8,9 +9,9 @@ namespace MVC.Services
     public class UserService
     {
         private const string USER_PREDIX = "User";
-        private readonly CommonApiService _commonApiService;
+        private readonly ApiRepository _commonApiService;
         private readonly HttpClient _httpClient;
-        public UserService(CommonApiService commonApiService, HttpClient httpClient)
+        public UserService(ApiRepository commonApiService, HttpClient httpClient)
         {
             _commonApiService = commonApiService;
             _httpClient = httpClient;
@@ -25,7 +26,7 @@ namespace MVC.Services
 
             string url = _commonApiService.StringFactory($"{USER_PREDIX}/{username}");
 
-            return await _commonApiService.GetApiResponseAsync<AppUser>(url);
+            return await _commonApiService.GetApiResponseAsyncOld<AppUser>(url);
         }
 
         public async Task<HttpResponseMessage> UploadPictureAsync(IFormFile file, string username, string bearerToken)

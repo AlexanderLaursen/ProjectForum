@@ -1,14 +1,15 @@
 ﻿using MVC.Models;
 using Common.Models;
+using MVC.Repositories;
 
 namespace MVC.Services
 {
     public class CommentHistoryService
     {
         const string COMMENT_HISTORY_PREFIX = "CommentHistory";
-        private readonly CommonApiService _commonApiService;
+        private readonly ApiRepository _commonApiService;
 
-        public CommentHistoryService(CommonApiService commonApiService)
+        public CommentHistoryService(ApiRepository commonApiService)
         {
             _commonApiService = commonApiService;
         }
@@ -22,7 +23,7 @@ namespace MVC.Services
 
             string url = _commonApiService.StringFactory($"{COMMENT_HISTORY_PREFIX}/{commentId}", pageInfo.CurrentPage, pageInfo.PageSize);
 
-            return await _commonApiService.GetApiResponseAsync<CommentHistory>(url);
+            return await _commonApiService.GetApiResponseAsyncOld<CommentHistory>(url);
         }
     }
 }

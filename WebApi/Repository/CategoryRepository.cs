@@ -4,6 +4,8 @@ using WebApi.Data;
 using Common.Dto.Category;
 using WebApi.Models;
 using WebApi.Repository.Interfaces;
+using Common.Models;
+using Common.Enums;
 
 namespace WebApi.Repository
 {
@@ -16,69 +18,57 @@ namespace WebApi.Repository
             _context = context;
         }
 
-        public async Task<OperationResult> GetAllCategoriesAsync()
+        public async Task<Result<CategoriesDto>> GetCategoriesAsync()
         {
             try
             {
-
-                List<Category> categories = await _context.Categories.ToListAsync();
-                List<CategoryDto> categoriesDtos = categories.Adapt<List<CategoryDto>>();
-
-                return new OperationResult
-                {
-                    Success = true,
-                    Data = new Dictionary<string, object>
+                List<CategoryDto> categoriesResult = await _context.Categories
+                    .Select(c => new CategoryDto
                     {
-                        { "content", categoriesDtos }
-                    }
+                        Id = c.Id,
+                        Name = c.Name,
+                        Description = c.Description,
+                    })
+                    .ToListAsync();
+
+                CategoriesDto categoriesDto = new()
+                {
+                    Categories = categoriesResult,
                 };
+
+                return Result<CategoriesDto>.Success(categoriesDto);
             }
             catch (Exception ex)
             {
-                return new OperationResult
-                {
-                    Success = false,
-                    ErrorMessage = $"{ex.Message} - {ex.InnerException?.ToString()}"
-                };
+                return Result<CategoriesDto>.Failure(ex.Message, ResultStatus.Error);
             }
         }
 
-        public async Task<OperationResult> GetCategoryByIdAsync(int id)
+        public async Task<Result<CategoryDto>> GetCategoryByIdAsync(int id)
         {
             try
             {
-                Category? category = await _context.Categories.FirstOrDefaultAsync(c => c.Id == id);
-                if (category == null)
-                {
-                    return new OperationResult
+                CategoryDto? categoryResult = await _context.Categories
+                    .Where(c => c.Id == id)
+                    .Select(c => new CategoryDto
                     {
-                        Success = false,
-                        ErrorMessage = "Category not found."
-                    };
+                        Id = c.Id,
+                        Name = c.Name,
+                        Description = c.Description,
+                    })
+                    .FirstOrDefaultAsync();
+
+                if (categoryResult == null)
+                {
+                    return Result<CategoryDto>.NotFound();
                 }
 
-                CategoryDto categoryDto = category.Adapt<CategoryDto>();
-
-                List<CategoryDto> categoryDtoList = [categoryDto];
-
-                return new OperationResult
-                {
-                    Success = true,
-                    Data = new Dictionary<string, object>
-                    {
-                        { "content", categoryDtoList }
-                    }
-                };
+                return Result<CategoryDto>.Success(categoryResult);
             }
             catch (Exception ex)
             {
-                return new OperationResult
-                {
-                    Success = false,
-                    ErrorMessage = $"{ex.Message} - {ex.InnerException?.ToString()}"
-                };
+                return Result<CategoryDto>.Failure(ex.Message, ResultStatus.Error);
             }
-
         }
     }
 }

@@ -1,10 +1,11 @@
 ﻿using MVC.Models;
 using Common.Dto;
 using Common.Dto.Search;
+using MVC.Repositories;
 
 namespace MVC.Services
 {
-    public class SearchService : CommonApiService
+    public class SearchService : ApiRepository
     {
         public SearchService(HttpClient httpClient) : base(httpClient)
         {
@@ -15,7 +16,7 @@ namespace MVC.Services
 
             string url = ($"Search?searchString={searchString}&page={pageInfo.CurrentPage}&pageSize={pageInfo.PageSize}");
 
-            var result = await GetAsync<PaginatedResult<SearchResultDto>>(url);
+            var result = await GetAsyncOld<PaginatedResult<SearchResultDto>>(url);
 
             return result;
         }

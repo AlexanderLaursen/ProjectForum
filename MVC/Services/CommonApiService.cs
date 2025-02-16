@@ -1,180 +1,46 @@
-﻿using MVC.Models;
-using System.Net.Http.Headers;
-using System.Text;
-using System.Text.Json;
+﻿using Common.Dto.Category;
+using Common.Models;
+using Mapster;
 
 namespace MVC.Services
 {
     public class CommonApiService
     {
-        private const string BASE_URL = "https://localhost:7052/api/v1/";
+        public const string BASE_URL = "https://localhost:7052/api/v1/";
 
-        private readonly HttpClient _httpClient;
-        public CommonApiService(HttpClient httpClient)
+        public string UrlFactory(string prefix, PageInfo? pageInfo = null, IEnumerable<string>? queryStrings = null)
         {
-            _httpClient = httpClient;
+            var uriBuilder = new UriBuilder(BASE_URL);
+            uriBuilder.Path += prefix;
+            var query = new List<string>();
+
+            if (pageInfo != null)
+            {
+                query.Add($"page={pageInfo.CurrentPage}");
+                query.Add($"pageSize={pageInfo.PageSize}");
+            }
+
+            if (queryStrings != null && queryStrings.Any())
+            {
+                query.AddRange(queryStrings);
+            }
+
+            uriBuilder.Query = string.Join("&", query);
+            return uriBuilder.ToString();
         }
 
-        public string StringFactory (string baseString, int page = 0, int pageSize = 0)
+        public Result<TNew> ConvertDto<TOld, TNew>(Result<TOld> result)
         {
-            return $"{baseString}?page={page}&pageSize={pageSize}";
+            return result.IsSuccess
+                ? Result<TNew>.Success(result.Value.Adapt<TNew>())
+                : Result<TNew>.ConvertDtoError<TOld, TNew>(result);
         }
 
-        public async Task<ApiResponse<T>> GetAsync<T>(string url)
+        public Result<List<TNew>> ConvertDtoList<TList, TSingle, TNew>(Result<TList> result, List<TSingle> resultList)
         {
-            try
-            {
-                HttpResponseMessage response = await _httpClient.GetAsync(BASE_URL + url);
-                response.EnsureSuccessStatusCode();
-
-                string responseBody = await response.Content.ReadAsStringAsync();
-                var apiResponse = JsonSerializer.Deserialize<T>(responseBody, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-
-                return ApiResponse<T>.Success(apiResponse);
-            }
-            catch (Exception)
-            {
-                return ApiResponse<T>.Fail();
-            }
-        }
-
-        public async Task<ApiResponseOld<T>> GetApiResponseAsync<T>(string url)
-        {
-            try
-            {
-                HttpResponseMessage response = await _httpClient.GetAsync(BASE_URL + url);
-                response.EnsureSuccessStatusCode();
-
-                string responseBody = await response.Content.ReadAsStringAsync();
-                var apiResponse = JsonSerializer.Deserialize<ApiResponseOld<T>>(responseBody, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-
-                if (apiResponse == null)
-                {
-                    return new ApiResponseOld<T>();
-                }
-
-                apiResponse.Content ??= new List<T>();
-                apiResponse.IsSuccess = true;
-
-                return apiResponse;
-            }
-            catch (Exception)
-            {
-                return new ApiResponseOld<T>();
-            }
-        }
-
-        public async Task<ApiResponse<T>> GetAuthAsync<T>(string url, string bearerToken)
-        {
-            try
-            {
-                _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", bearerToken);
-
-                HttpResponseMessage response = await _httpClient.GetAsync(BASE_URL + url);
-                response.EnsureSuccessStatusCode();
-
-                string responseBody = await response.Content.ReadAsStringAsync();
-                var apiResponse = JsonSerializer.Deserialize<T>(responseBody, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-
-                return ApiResponse<T>.Success(content: apiResponse);
-            }
-            catch (Exception)
-            {
-                return ApiResponse<T>.Fail();
-            }
-        }
-
-        public async Task<ApiResponseOld<T>> PostApiReponseAsync<T>(string url, object data, string bearerToken)
-        {
-            try
-            {
-                string json = JsonSerializer.Serialize(data);
-                StringContent content = new StringContent(json, Encoding.UTF8, "application/json");
-
-                _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", bearerToken);
-
-                HttpResponseMessage response = await _httpClient.PostAsync(BASE_URL + url, content);
-
-                response.EnsureSuccessStatusCode();
-
-                string responseBody = await response.Content.ReadAsStringAsync();
-
-                if (string.IsNullOrEmpty(responseBody))
-                {
-                    return ApiResponseOld<T>.Success();
-                }
-
-                var apiResponse = JsonSerializer.Deserialize<ApiResponseOld<T>>(responseBody, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-
-                if (apiResponse == null)
-                {
-                    return new ApiResponseOld<T>();
-                }
-
-                apiResponse.Content ??= new List<T>();
-                apiResponse.IsSuccess = true;
-
-                return apiResponse;
-            }
-            catch (Exception)
-            {
-                return new ApiResponseOld<T>();
-            }
-        }
-
-        public async Task<ApiResponseOld<T>> PutAsync<T>(string url, object data, string bearerToken)
-        {
-            try
-            {
-                string json = JsonSerializer.Serialize(data);
-                StringContent content = new StringContent(json, Encoding.UTF8, "application/json");
-
-                _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", bearerToken);
-
-                HttpResponseMessage response = await _httpClient.PutAsync(BASE_URL + url, content);
-
-                response.EnsureSuccessStatusCode();
-
-                string responseBody = await response.Content.ReadAsStringAsync();
-                var apiResponse = JsonSerializer.Deserialize<ApiResponseOld<T>>(responseBody, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-
-                if (apiResponse == null)
-                {
-                    return new ApiResponseOld<T>();
-                }
-
-                apiResponse.Content ??= new List<T>();
-                apiResponse.IsSuccess = true;
-
-                return apiResponse;
-            }
-            catch (Exception)
-            {
-                return new ApiResponseOld<T>();
-            }
-        }
-
-        public async Task<ApiResponseOld<T>> DeleteAsync<T>(string url, string bearerToken)
-        {
-            try
-            {
-                _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", bearerToken);
-
-                HttpResponseMessage response = await _httpClient.DeleteAsync(BASE_URL + url);
-
-                response.EnsureSuccessStatusCode();
-
-                ApiResponseOld<T> apiResponse = new ApiResponseOld<T>
-                {
-                    IsSuccess = true
-                };
-
-                return apiResponse;
-            }
-            catch (Exception)
-            {
-                return new ApiResponseOld<T>();
-            }
+            return result.IsSuccess
+                ? Result<List<TNew>>.Success(resultList.Adapt<List<TNew>>())
+                : Result<List<TNew>>.ConvertDtoError<TList, List<TNew>>(result);
         }
     }
 }

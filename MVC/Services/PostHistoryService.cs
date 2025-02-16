@@ -1,14 +1,15 @@
 ﻿using MVC.Models;
 using Common.Models;
+using MVC.Repositories;
 
 namespace MVC.Services
 {
     public class PostHistoryService
     {
         const string POST_HISTORY_PREFIX = "PostHistory";
-        private readonly CommonApiService _commonApiService;
+        private readonly ApiRepository _commonApiService;
 
-        public PostHistoryService(CommonApiService commonApiService)
+        public PostHistoryService(ApiRepository commonApiService)
         {
             _commonApiService = commonApiService;
         }
@@ -22,7 +23,7 @@ namespace MVC.Services
 
             string url = _commonApiService.StringFactory($"{POST_HISTORY_PREFIX}/{postId}", pageInfo.CurrentPage, pageInfo.PageSize);
 
-            return await _commonApiService.GetApiResponseAsync<PostHistory>(url);
+            return await _commonApiService.GetApiResponseAsyncOld<PostHistory>(url);
 
         }
     }

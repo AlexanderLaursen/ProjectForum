@@ -5,20 +5,21 @@ using MVC.Helpers;
 using MVC.Models;
 using MVC.Models.ViewModels;
 using MVC.Services;
+using MVC.Services.Interfaces;
 
 namespace MVC.Controllers
 {
     public class PostController : Controller
     {
         private readonly PostService _postService;
-        private readonly CategoryService _categoryService;
-        public PostController(PostService postService, CategoryService categoryService)
+        private readonly ICategoryApiService _categoryService;
+        public PostController(PostService postService, ICategoryApiService categoryService)
         {
             _postService = postService;
             _categoryService = categoryService;
         }
 
-        [HttpGet("/Category/{categoryId}/posts")]
+        [HttpGet("/categories/{categoryId}/posts")]
         public async Task<IActionResult> GetPostsByCategoryId(PostsViewModel oldViewModel, int categoryId, int page, int pageSize, SortDirection sortDirection = 0, SortBy sortBy = 0)
         {
             if (categoryId <= 0)
@@ -27,7 +28,7 @@ namespace MVC.Controllers
             }
             PageInfo pageInfo = new PageInfo(page, pageSize);
             ApiResponseOld<Post> response = await _postService.GetPostsByCategoryIdAsync(categoryId, pageInfo, sortDirection, sortBy);
-            ApiResponseOld<Category> categoryResponse = await _categoryService.GetCategoryByIdAsync(categoryId);
+            Result<Category> categoryResult = await _categoryService.GetCategoryByIdAsync(categoryId);
 
             if (!response.IsSuccess)
             {
@@ -36,7 +37,7 @@ namespace MVC.Controllers
 
             PostsViewModel viewModel = new PostsViewModel
             {
-                Category = categoryResponse.Content[0],
+                Category = categoryResult.Value,
                 Posts = response.Content,
                 PageInfo = response.PageInfo,
                 SortBy = sortBy,

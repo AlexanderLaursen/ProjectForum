@@ -78,7 +78,9 @@ namespace WebApi.Repository
 
                 pageInfo.TotalItems = totalItems;
 
-                PaginatedResult<SearchResultDto> paginatedResult = new(result, pageInfo);
+
+                // TODO USE NEW RESULT
+                WebApi.Models.PaginatedResult<SearchResultDto> paginatedResult = new(result, pageInfo);
 
                 return OperationResultNew.IsSuccess(paginatedResult);
             }
