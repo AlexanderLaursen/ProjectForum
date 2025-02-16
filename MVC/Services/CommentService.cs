@@ -1,6 +1,7 @@
 ﻿using MVC.Models.ViewModels;
 using MVC.Models;
-using MVC.Models.Dto;
+using Common.Models;
+using Common.Dto.Comment;
 
 namespace MVC.Services
 {

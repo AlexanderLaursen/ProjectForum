@@ -1,8 +1,8 @@
 ﻿using Common.Enums;
+using Common.Models;
 using Microsoft.AspNetCore.Mvc;
 using MVC.Helpers;
 using MVC.Models;
-using MVC.Models.Dto;
 using MVC.Models.ViewModels;
 using MVC.Services;
 

@@ -1,6 +1,6 @@
 ﻿using MVC.Models;
-using Common.Models;
 using Common.Dto;
+using Common.Dto.Search;
 
 namespace MVC.Services
 {

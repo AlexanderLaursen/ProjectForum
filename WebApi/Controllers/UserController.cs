@@ -1,12 +1,7 @@
-﻿using Azure.Storage.Blobs.Models;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Runtime.CompilerServices;
-using System.Security.Claims;
-using WebApi.Dto;
-using WebApi.Dto.User;
 using WebApi.Models;
-using WebApi.Repository;
+using WebApi.Repository.Interfaces;
 
 namespace WebApi.Controllers
 {

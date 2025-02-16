@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc.ApplicationModels;
-using MVC.Models;
-using System.Buffers.Text;
+﻿using MVC.Models;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;

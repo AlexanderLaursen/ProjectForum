@@ -1,10 +1,9 @@
-﻿using Common.Enums;
-using Microsoft.AspNetCore.Mvc;
+﻿using Common.Dto.Post;
+using Common.Enums;
 using MVC.Models;
-using MVC.Models.Dto;
 using MVC.Models.ViewModels;
-using System.Net.Http.Headers;
-using System.Text;
+using Common.Models;
+using Mapster;
 
 namespace MVC.Services
 {
@@ -22,11 +21,25 @@ namespace MVC.Services
             _commonApiService = commonApiService;
         }
 
-        public async Task<ApiResponse<PostDetailsDto>> GetPostDetails(int id, PageInfo pageInfo, string bearer)
+        public async Task<ApiResponse<PostDetails>> GetPostDetails(int id, PageInfo pageInfo, string bearer)
         {
             string url = _commonApiService.StringFactory($"{POST_PREFIX}/{id}/details", pageInfo.CurrentPage, pageInfo.PageSize);
 
-            return await _commonApiService.GetAuthAsync<PostDetailsDto>(url, bearer);
+            var resultDto = await _commonApiService.GetAuthAsync<PostDetailsDto>(url, bearer);
+
+            if (resultDto.Content.PostDto == null)
+            {
+                return ApiResponse<PostDetails>.Fail();
+            }
+
+            PostDetails postDetails = new()
+            {
+                Post = resultDto.Content.PostDto.Adapt<Post>(),
+                Comments = resultDto.Content.CommentsDto.Adapt<List<Comment>>(),
+                PageInfo = resultDto.PageInfo
+            };
+
+            return ApiResponse<PostDetails>.Success(postDetails);
         }
 
         public async Task<ApiResponseOld<Post>> GetPostsByCategoryIdAsync(int categoryId, PageInfo pageInfo, SortDirection sortDirection, SortBy sortBy)

@@ -1,4 +1,6 @@
-﻿namespace WebApi.Models
+﻿using Common.Models;
+
+namespace WebApi.Models
 {
     public class OperationResultNew<T>
     {

@@ -1,8 +1,9 @@
 ﻿using Mapster;
 using Microsoft.EntityFrameworkCore;
 using WebApi.Data;
-using WebApi.Dto.Category;
+using Common.Dto.Category;
 using WebApi.Models;
+using WebApi.Repository.Interfaces;
 
 namespace WebApi.Repository
 {

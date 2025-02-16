@@ -3,7 +3,8 @@ using MVC.Helpers;
 using MVC.Models.ViewModels;
 using MVC.Models;
 using MVC.Services;
-using MVC.Models.Dto;
+using Common.Dto;
+using Common.Dto.Comment;
 
 namespace MVC.Controllers
 {

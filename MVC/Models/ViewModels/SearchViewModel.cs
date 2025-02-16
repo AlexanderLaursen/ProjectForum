@@ -1,4 +1,5 @@
 ﻿using Common.Dto;
+using Common.Dto.Search;
 
 namespace MVC.Models.ViewModels
 {

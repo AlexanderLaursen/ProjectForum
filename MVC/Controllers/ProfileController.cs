@@ -3,8 +3,7 @@ using MVC.Helpers;
 using MVC.Models;
 using MVC.Models.ViewModels;
 using MVC.Services;
-using System.Net.Http;
-using System.Net.Http.Headers;
+using Common.Models;
 
 namespace MVC.Controllers
 {

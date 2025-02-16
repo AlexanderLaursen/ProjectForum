@@ -1,4 +1,6 @@
-﻿namespace MVC.Models.ViewModels
+﻿using Common.Models;
+
+namespace MVC.Models.ViewModels
 {
     public class ProfileViewModel
     {
