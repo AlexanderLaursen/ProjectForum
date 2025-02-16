@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 
 namespace Common.Enums
 {
-    public enum SortDirection
+    public enum ContentType
     {
-        Desc,
-        Asc
+        Post,
+        Comment,
+        User
     }
 }

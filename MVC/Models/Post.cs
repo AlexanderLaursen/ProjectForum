@@ -16,6 +16,7 @@ namespace MVC.Models
         public string UserId { get; set; }
         public int CategoryId { get; set; }
         public bool LikedByUser { get; set; }
+        public int CommentsCount { get; set; }
 
 
         public AppUser User { get; set; }

@@ -11,7 +11,7 @@ namespace MVC.TagHelpers
         {
             TagBuilder tag = new TagBuilder("span");
 
-            tag.InnerHtml.Append(DateTime.ToLocalTime().ToString());
+            tag.InnerHtml.Append(DateTime.ToLocalTime().ToString("dd/MM/yyyy - HH:mm"));
 
             output.Content.AppendHtml(tag);
         }

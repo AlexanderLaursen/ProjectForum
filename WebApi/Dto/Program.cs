@@ -46,6 +46,7 @@ builder.Services.AddScoped<ICommonRepository, CommonRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ILikesRepository, LikesRepository>();
 builder.Services.AddScoped<ILikesService, LikesService>();
+builder.Services.AddScoped<ISearchRepository, SearchRepository>();
 
 builder.Services.AddSingleton<BlobStorageService>();
 

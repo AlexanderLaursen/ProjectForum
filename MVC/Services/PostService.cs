@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Common.Enums;
+using Microsoft.AspNetCore.Mvc;
 using MVC.Models;
 using MVC.Models.Dto;
 using MVC.Models.ViewModels;
@@ -21,13 +22,6 @@ namespace MVC.Services
             _commonApiService = commonApiService;
         }
 
-        public async Task Test(string bearer)
-        {
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", bearer);
-            var result = await _httpClient.GetAsync("https://localhost:7052/api/v1/Post/test2");
-
-        }
-
         public async Task<ApiResponse<PostDetailsDto>> GetPostDetails(int id, PageInfo pageInfo, string bearer)
         {
             string url = _commonApiService.StringFactory($"{POST_PREFIX}/{id}/details", pageInfo.CurrentPage, pageInfo.PageSize);
@@ -35,7 +29,7 @@ namespace MVC.Services
             return await _commonApiService.GetAuthAsync<PostDetailsDto>(url, bearer);
         }
 
-        public async Task<ApiResponseOld<Post>> GetPostsByCategoryIdAsync(int categoryId, PageInfo pageInfo)
+        public async Task<ApiResponseOld<Post>> GetPostsByCategoryIdAsync(int categoryId, PageInfo pageInfo, SortDirection sortDirection, SortBy sortBy)
         {
             if (categoryId <= 0)
             {
@@ -43,6 +37,8 @@ namespace MVC.Services
             }
 
             string url = _commonApiService.StringFactory($"{CATEGORY_PREFIX}/{categoryId}/posts", pageInfo.CurrentPage, pageInfo.PageSize);
+
+            url += $"&sortDirection={sortDirection}&sortBy={sortBy}";
 
             return await _commonApiService.GetApiResponseAsync<Post>(url);
         }

@@ -17,6 +17,7 @@ builder.Services.AddScoped<CommentHistoryService>();
 builder.Services.AddScoped<PostHistoryService>();
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<LikeService>();
+builder.Services.AddScoped<SearchService>();
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<HttpContextService>();

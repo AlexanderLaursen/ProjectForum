@@ -11,6 +11,7 @@ namespace Common.Enums
         Date,
         Title,
         Views,
-        Likes
+        Likes,
+        Comments
     }
 }

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Common.Enums;
+using Microsoft.AspNetCore.Mvc;
 using MVC.Helpers;
 using MVC.Models;
 using MVC.Models.Dto;
@@ -18,14 +19,14 @@ namespace MVC.Controllers
         }
 
         [HttpGet("/Category/{categoryId}/posts")]
-        public async Task<IActionResult> GetPostsByCategoryId(int categoryId, int page, int pageSize)
+        public async Task<IActionResult> GetPostsByCategoryId(PostsViewModel oldViewModel, int categoryId, int page, int pageSize, SortDirection sortDirection = 0, SortBy sortBy = 0)
         {
             if (categoryId <= 0)
             {
                 return BadRequest("Invalid category id.");
             }
             PageInfo pageInfo = new PageInfo(page, pageSize);
-            ApiResponseOld<Post> response = await _postService.GetPostsByCategoryIdAsync(categoryId, pageInfo);
+            ApiResponseOld<Post> response = await _postService.GetPostsByCategoryIdAsync(categoryId, pageInfo, sortDirection, sortBy);
             ApiResponseOld<Category> categoryResponse = await _categoryService.GetCategoryByIdAsync(categoryId);
 
             if (!response.IsSuccess)
@@ -37,7 +38,9 @@ namespace MVC.Controllers
             {
                 Category = categoryResponse.Content[0],
                 Posts = response.Content,
-                PageInfo = response.PageInfo
+                PageInfo = response.PageInfo,
+                SortBy = sortBy,
+                SortDirection = sortDirection
             };
 
             return View("Posts", viewModel);

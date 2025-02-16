@@ -232,18 +232,22 @@ namespace WebApi.Repository
 
                 int totalItems = postsQuery.Count();
 
-                var postsDtoList = await postsQuery.Select(post => new PostDto
-                {
-                    Id = post.Id,
-                    Title = post.Title,
-                    Content = post.Content,
-                    CreatedAt = post.CreatedAt,
-                    Likes = post.PostLikes.Count,
-                    ViewCount = post.ViewCount,
-                    Edited = post.Edited,
-                    CategoryId = post.CategoryId,
-                    User = post.User.Adapt<ShortUserDto>()
-                }).ToListAsync();
+                var postsDtoList = await postsQuery
+                    .Skip(pageInfo.Skip)
+                    .Take(pageInfo.PageSize)
+                    .Select(post => new PostDto
+                        {
+                            Id = post.Id,
+                            Title = post.Title,
+                            Content = post.Content,
+                            CreatedAt = post.CreatedAt,
+                            Likes = post.PostLikes.Count,
+                            CommentsCount = post.Comments.Count,
+                            ViewCount = post.ViewCount,
+                            Edited = post.Edited,
+                            CategoryId = post.CategoryId,
+                            User = post.User.Adapt<ShortUserDto>()
+                        }).ToListAsync();
 
                 //IQueryable<Post> query = _context.Posts
                 //    .Include(p => p.User)

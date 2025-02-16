@@ -12,6 +12,7 @@ namespace WebApi.Dto.Post
         public int ViewCount { get; set; }
         public bool Edited { get; set; }
         public bool LikedByUser { get; set; }
+        public int CommentsCount { get; set; }
 
         public int CategoryId { get; set; }
 

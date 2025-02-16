@@ -22,6 +22,24 @@ namespace MVC.Services
             return $"{baseString}?page={page}&pageSize={pageSize}";
         }
 
+        public async Task<ApiResponse<T>> GetAsync<T>(string url)
+        {
+            try
+            {
+                HttpResponseMessage response = await _httpClient.GetAsync(BASE_URL + url);
+                response.EnsureSuccessStatusCode();
+
+                string responseBody = await response.Content.ReadAsStringAsync();
+                var apiResponse = JsonSerializer.Deserialize<T>(responseBody, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+                return ApiResponse<T>.Success(apiResponse);
+            }
+            catch (Exception)
+            {
+                return ApiResponse<T>.Fail();
+            }
+        }
+
         public async Task<ApiResponseOld<T>> GetApiResponseAsync<T>(string url)
         {
             try

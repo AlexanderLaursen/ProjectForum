@@ -13,6 +13,19 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/MVC.styles.css" asp-append-version="true" />
+
+    <style>
+        button.btn-fix {
+            background-color: #6f42c1;
+            border-color: #6f42c1;
+        }
+
+            button.btn-fix:hover {
+                background-color: #5a30a1;
+                border-color: #5a30a1;
+            }
+    </style>
+
     <base href="~/" />
     <component type="typeof(Microsoft.AspNetCore.Components.Web.HeadOutlet)"
                render-mode="ServerPrerendered" />
@@ -37,14 +50,20 @@
                     </ul>
                 </div>
                 <div class="d-flex justify-content-center align-items-center w-100">
+                    <form class="d-flex ms-auto me-5" role="search" asp-controller="Search" asp-action="Index" method="get">
+                        <input class="form-control ms-auto me-2" type="search" placeholder="Search..." name="searchString" />
+                        <button type="submit" class="btn text-white btn-fix">
+                            Search
+                        </button>
+                    </form>
                     @if (isLoggedIn)
                     {
-                        <a class="btn btn-primary ms-auto me-2" asp-controller="Profile" asp-action="Index">Profile</a>
+                        <a class="btn btn-primary me-2" asp-controller="Profile" asp-action="Index">Profile</a>
                         <a class="btn btn-danger me-2" asp-controller="Login" asp-action="Logout">Logout</a>
                     }
                     else
                     {
-                        <a class="btn btn-primary ms-auto me-2" asp-controller="Login" asp-action="Index">Login</a>
+                        <a class="btn btn-primary me-2" asp-controller="Login" asp-action="Index">Login</a>
                         <a class="btn btn-secondary me-2" asp-controller="Register" asp-action="Index">Register</a>
                     }
                 </div>

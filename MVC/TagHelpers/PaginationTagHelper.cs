@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using System;
 using Microsoft.AspNetCore.WebUtilities;
+using Common.Enums;
 
 namespace MVC.TagHelpers
 {
@@ -30,6 +31,9 @@ namespace MVC.TagHelpers
         public int Iterator { get; set; } = 1;
         public string Type { get; set; }
         public string Username { get; set; }
+
+        public SortBy SortBy { get; set; }
+        public SortDirection SortDirection { get; set; }
 
         public override void Process(TagHelperContext context, TagHelperOutput output)
         {
@@ -127,6 +131,11 @@ namespace MVC.TagHelpers
                     url += $"&pageSize={PageInfo.PageSize}";
                 }
 
+                if (SortDirection != SortDirection.Desc || SortBy != SortBy.Date)
+                {
+                    url += $"&sortBy={SortBy}&sortDirection={SortDirection}";
+                }
+
                 return url;
             }
 
@@ -161,6 +170,17 @@ namespace MVC.TagHelpers
                 return url;
             }
 
+            if (currentUrl.StartsWith("/Search"))
+            {
+                string url = $"/Search?searchString={SearchString}&page={targetPage}";
+                if (PageInfo.PageSize != 10)
+                {
+                    url += $"&pageSize={PageInfo.PageSize}";
+                }
+
+                return url;
+            }
+
             if (Type == "ProfilePosts")
             {
                 string url = $"/Profile/{Username}?postPage={targetPage}&postSize={PostsPageInfo.PageSize}&commentPage={CommentsPageInfo.CurrentPage}&commentSize={CommentsPageInfo.PageSize}";
@@ -175,7 +195,7 @@ namespace MVC.TagHelpers
                 return url;
             }
 
-            return string.Empty;
+            return "";
         }
 
         /// <summary>
