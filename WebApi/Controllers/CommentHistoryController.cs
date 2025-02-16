@@ -1,23 +1,25 @@
-﻿using Common.Models;
+﻿using Common.Dto.CommentHistory;
+using Common.Models;
 using Microsoft.AspNetCore.Mvc;
 using WebApi.Models;
 using WebApi.Repository.Interfaces;
+using WebApi.Services.Interfaces;
 
 namespace WebApi.Controllers
 {
     [ApiController]
-    [Route("api/v1/[controller]")]
-    public class CommentHistoryController : Controller
+    [Route("api/v2/[controller]")]
+    public class CommentHistoryController : ControllerBase
     {
-        private readonly ICommentHistoryRepository _commentHistoryRepository;
+        private readonly ICommentHistoryService _commentHistoryService;
 
-        public CommentHistoryController(ICommentHistoryRepository commentHistoryRepository)
+        public CommentHistoryController(ICommentHistoryService commentHistoryService)
         {
-            _commentHistoryRepository = commentHistoryRepository;
+            _commentHistoryService = commentHistoryService;
         }
 
-        [HttpGet("{commentId}")]
-        public async Task<IActionResult> GetCommentHistoryById(int commentId, int page = 0, int pageSize = 0)
+        [HttpGet("/api/v2/comment-history/{commentId}")]
+        public async Task<IActionResult> GetCommentHistory(int commentId, int page = 0, int pageSize = 0)
         {
             if (commentId <= 0)
             {
@@ -25,15 +27,14 @@ namespace WebApi.Controllers
             }
 
             PageInfo pageInfo = new PageInfo(page, pageSize);
+            Result<CommentHistoriesDto> result = await _commentHistoryService.GetCommentHistoryAsync(commentId, pageInfo);
 
-            OperationResult result = await _commentHistoryRepository.GetCommentHistoryByIdAsync(commentId, pageInfo);
-
-            if (!result.Success)
+            if (!result.IsSuccess)
             {
-                return NotFound(result.ErrorMessage);
+                return HandleErrors(result);
             }
 
-            return Ok(result.Data);
+            return Ok(result.Value);
         }
     }
 }

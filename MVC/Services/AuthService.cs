@@ -1,6 +1,7 @@
 ﻿using System.Text;
 using System.Text.Json;
 using MVC.Models;
+using MVC.Repositories;
 
 namespace MVC.Services
 {
@@ -13,9 +14,9 @@ namespace MVC.Services
         public bool IsLoggedIn;
 
         private readonly HttpClient _httpClient;
-        private readonly CommonApiService _commonApiService;
+        private readonly ApiRepository _commonApiService;
 
-        public AuthService(HttpClient httpClient, CommonApiService commonApiService)
+        public AuthService(HttpClient httpClient, ApiRepository commonApiService)
         {
             _httpClient = httpClient;
             _commonApiService = commonApiService;
@@ -109,7 +110,7 @@ namespace MVC.Services
 
                 string url = $"{USER_ENDPOINT}/{username}/id";
 
-                var response = await _commonApiService.GetApiResponseAsync<string>(url);
+                var response = await _commonApiService.GetApiResponseAsyncOld<string>(url);
 
                 if (response.IsSuccess)
                 {

@@ -1,10 +1,9 @@
 ﻿using Common.Dto.Category;
 using Common.Models;
-using WebApi.Models;
 
-namespace WebApi.Repository.Interfaces
+namespace WebApi.Services.Interfaces
 {
-    public interface ICategoryRepository
+    public interface ICategoryService
     {
         public Task<Result<CategoriesDto>> GetCategoriesAsync();
         public Task<Result<CategoryDto>> GetCategoryByIdAsync(int id);

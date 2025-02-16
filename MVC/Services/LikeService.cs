@@ -1,8 +1,9 @@
 ﻿using MVC.Models;
+using MVC.Repositories;
 
 namespace MVC.Services
 {
-    public class LikeService : CommonApiService
+    public class LikeService : ApiRepository
     {
         public LikeService(HttpClient httpClient) : base(httpClient)
         {

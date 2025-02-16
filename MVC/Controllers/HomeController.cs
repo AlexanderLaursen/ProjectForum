@@ -1,7 +1,8 @@
+using Common.Models;
 using Microsoft.AspNetCore.Mvc;
 using MVC.Models;
 using MVC.Models.ViewModels;
-using MVC.Services;
+using MVC.Services.Interfaces;
 using System.Diagnostics;
 
 namespace MVC.Controllers
@@ -9,27 +10,33 @@ namespace MVC.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-        private readonly CategoryService _categoryService;
+        private readonly ICategoryApiService _categoryService;
 
-        public HomeController(ILogger<HomeController> logger, CategoryService categoryService)
+        public HomeController(ILogger<HomeController> logger, ICategoryApiService categoryService)
         {
             _logger = logger;
             _categoryService = categoryService;
         }
 
-        [HttpGet("/")]
+        [HttpGet()]
         public async Task<IActionResult> Index()
         {
-            ViewBag.IsLoggedIn = HttpContext.Session.GetString("Bearer") != null;
+            Result<List<Category>> categories = await _categoryService.GetCategoriesAsync();
 
-            ApiResponseOld<Category> apiResponse = await _categoryService.GetCategoriesAsync();
-
-            HomeViewModel viewModel = new HomeViewModel
+            if (categories.IsSuccess && categories.Value != null)
             {
-                Categories = apiResponse.Content
-            };
+                HomeViewModel viewModel = new HomeViewModel
+                {
+                    Categories = categories.Value
+                };
 
-            return View(viewModel);
+                return View(viewModel);
+            }
+            else
+            {
+                _logger.LogError(categories.ErrorMessage);
+                return View("Error");
+            }
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

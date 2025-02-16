@@ -11,13 +11,15 @@ namespace WebApi.Repository
     public class CommentHistoryRepository : ICommentHistoryRepository
     {
         private readonly DataContext _context;
+        private readonly ILogger<CommentHistoryRepository> _logger;
 
-        public CommentHistoryRepository(DataContext context)
+        public CommentHistoryRepository(DataContext context, ILogger<CommentHistoryRepository> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
-        public async Task<OperationResult> GetCommentHistoryByIdAsync(int commentId, PageInfo pageInfo)
+        public async Task<Result<CommentHistoriesDto>> GetCommentHistoryAsync(int commentId, PageInfo pageInfo)
         {
             try
             {
@@ -26,46 +28,38 @@ namespace WebApi.Repository
                 int totalItems = await query.CountAsync();
 
                 var commentHistoryList = await query
+                    .Select(ch => new CommentHistoryDto
+                    {
+                        Id = ch.Id,
+                        CommentId = ch.CommentId,
+                        Content = ch.Content,
+                        CreatedAt = ch.CreatedAt,
+                        UserId = ch.UserId
+                    })
                     .OrderByDescending(c => c.CreatedAt)
                     .Skip(pageInfo.Skip)
                     .Take(pageInfo.PageSize)
                     .ToListAsync();
 
-                if (commentHistoryList == null)
+                if (commentHistoryList.Count == 0)
                 {
-                    return new OperationResult
-                    {
-                        Success = false,
-                        ErrorMessage = "Comment History not found."
-                    };
+                    return Result<CommentHistoriesDto>.NotFound();
                 }
 
-                List<CommentHistoryDto> commentHistoryDtoList = commentHistoryList.Adapt<List<CommentHistoryDto>>();
-
-                return new OperationResult
+                CommentHistoriesDto commentHistoriesDto = new CommentHistoriesDto
                 {
-                    Success = true,
-                    Data = new Dictionary<string, object>
-                    {
-                        { "content", commentHistoryDtoList },
-                        { "pageInfo", new PageInfo
-                            {
-                                CurrentPage = pageInfo.CurrentPage,
-                                PageSize = pageInfo.PageSize,
-                                TotalItems = totalItems,
-                            }
-                        }
-                    }
+                    CommentHistories = commentHistoryList,
+                    PageInfo = new PageInfo(pageInfo.CurrentPage, pageInfo.PageSize, totalItems),
                 };
+
+                return Result<CommentHistoriesDto>.Success(commentHistoriesDto);
             }
             catch (Exception ex)
             {
-                return new OperationResult
-                {
-                    Success = false,
-                    ErrorMessage = $"{ex.Message} - {ex.InnerException?.ToString()}"
-                };
+                _logger.LogError(ex, "Error while getting comment history.");
+                return Result<CommentHistoriesDto>.Failure("Unknown error.");
             }
+
         }
     }
 }

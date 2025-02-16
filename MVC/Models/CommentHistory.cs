@@ -1,4 +1,7 @@
-﻿namespace MVC.Models
+﻿using Common.Dto.Comment;
+using Common.Dto.CommentHistory;
+
+namespace MVC.Models
 {
     public class CommentHistory
     {

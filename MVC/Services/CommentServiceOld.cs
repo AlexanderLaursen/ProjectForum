@@ -2,16 +2,17 @@
 using MVC.Models;
 using Common.Models;
 using Common.Dto.Comment;
+using MVC.Repositories;
 
 namespace MVC.Services
 {
-    public class CommentService
+    public class CommentServiceOld
     {
         private const string COMMENT_PREFIX = "Comment";
         private const string USER_PREFIX = "User";
         private readonly HttpClient _httpClient;
-        private readonly CommonApiService _commonApiService;
-        public CommentService(HttpClient httpClient, CommonApiService commonApiService)
+        private readonly ApiRepository _commonApiService;
+        public CommentServiceOld(HttpClient httpClient, ApiRepository commonApiService)
         {
             _httpClient = httpClient;
             _commonApiService = commonApiService;
@@ -26,7 +27,7 @@ namespace MVC.Services
 
             string url = $"{COMMENT_PREFIX}/{commentId}";
 
-            return await _commonApiService.GetApiResponseAsync<Comment>(url);
+            return await _commonApiService.GetApiResponseAsyncOld<Comment>(url);
         }
 
         public async Task<ApiResponseOld<Comment>> CreateCommentAsync(CreateCommentViewModel viewModel, string bearerToken)
@@ -74,7 +75,7 @@ namespace MVC.Services
 
             string url = _commonApiService.StringFactory($"{USER_PREFIX}/{username}/comments", pageInfo.CurrentPage, pageInfo.PageSize);
 
-            return await _commonApiService.GetApiResponseAsync<Comment>(url);
+            return await _commonApiService.GetApiResponseAsyncOld<Comment>(url);
         }
     }
 }

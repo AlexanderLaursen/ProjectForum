@@ -10,8 +10,8 @@ namespace MVC.Controllers
 {
     public class CommentController : Controller
     {
-        private readonly CommentService _commentService;
-        public CommentController(CommentService commentService)
+        private readonly CommentServiceOld _commentService;
+        public CommentController(CommentServiceOld commentService)
         {
             _commentService = commentService;
         }

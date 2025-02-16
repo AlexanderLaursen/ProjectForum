@@ -1,6 +1,7 @@
 ﻿using WebApi.Models;
 using WebApi.Repository.Interfaces;
 using Common.Models;
+using WebApi.Services.Interfaces;
 
 namespace WebApi.Services
 {

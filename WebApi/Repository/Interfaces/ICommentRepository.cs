@@ -11,4 +11,6 @@ public interface ICommentRepository
     public Task<OperationResult> CreateCommentAsync(string userId, CreateCommentDto createCommentDto);
     public Task<OperationResult> UpdateCommentAsync(string userId, UpdateCommentDto updateCommentDto);
     public Task<OperationResult> DeleteCommentAsync(int commentId, string userId);
+
+    public Task<Result<CommentDto>> GetCommentAsync(int commentId, string? userId = null);
 }

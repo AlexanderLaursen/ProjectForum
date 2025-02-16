@@ -4,6 +4,7 @@ using MVC.Models;
 using MVC.Models.ViewModels;
 using Common.Models;
 using Mapster;
+using MVC.Repositories;
 
 namespace MVC.Services
 {
@@ -13,9 +14,9 @@ namespace MVC.Services
         private const string POST_PREFIX = "Post";
         private const string USER_PREFIX = "User";
         private readonly HttpClient _httpClient;
-        private readonly CommonApiService _commonApiService;
+        private readonly ApiRepository _commonApiService;
 
-        public PostService(HttpClient httpClient, CommonApiService commonApiService)
+        public PostService(HttpClient httpClient, ApiRepository commonApiService)
         {
             _httpClient = httpClient;
             _commonApiService = commonApiService;
@@ -53,7 +54,7 @@ namespace MVC.Services
 
             url += $"&sortDirection={sortDirection}&sortBy={sortBy}";
 
-            return await _commonApiService.GetApiResponseAsync<Post>(url);
+            return await _commonApiService.GetApiResponseAsyncOld<Post>(url);
         }
 
         public async Task<ApiResponseOld<Post>> GetPostByIdAsync(int id, PageInfo pageInfo)
@@ -65,7 +66,7 @@ namespace MVC.Services
 
             string url = _commonApiService.StringFactory($"{POST_PREFIX}/{id}", pageInfo.CurrentPage, pageInfo.PageSize);
 
-            return await _commonApiService.GetApiResponseAsync<Post>(url);
+            return await _commonApiService.GetApiResponseAsyncOld<Post>(url);
         }
 
         public async Task<ApiResponseOld<Post>> CreatePostAsync(CreatePostViewModel viewModel, string bearerToken)
@@ -123,7 +124,7 @@ namespace MVC.Services
 
             string url = _commonApiService.StringFactory($"{USER_PREFIX}/{username}/posts", pageInfo.CurrentPage, pageInfo.PageSize);
 
-            return await _commonApiService.GetApiResponseAsync<Post>(url);
+            return await _commonApiService.GetApiResponseAsyncOld<Post>(url);
         }
     }
 
