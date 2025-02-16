@@ -14,21 +14,24 @@
         </thead>
         <tbody>
             <tr>
-                <td>
-                    <div class="text-nowrap">
-                        <div>
-                            <img src="@Model.Post.User.MdProfilePicture" alt="profile picture" />
+                @if (Model.PageInfo.CurrentPage == 1)
+                {
+                    <td>
+                        <div class="text-nowrap">
+                            <div>
+                                <img src="@Model.Post.User.MdProfilePicture" alt="profile picture" />
+                            </div>
+                            <div>
+                                User:
+                            </div>
+                            <div>
+                                <a href="/profile/@Model.Post.User.UserName" target="_self">
+                                    @Model.Post.User.UserName
+                                </a>
+                            </div>
                         </div>
-                        <div>
-                            User:
-                        </div>
-                        <div>
-                            <a href="/profile/@Model.Post.User.UserName" target="_self">
-                                @Model.Post.User.UserName
-                            </a>
-                        </div>
-                    </div>
-                </td>
+                    </td>
+                
                 <td class="w-100">
                     @if (Model.UserId == Model.Post.User.Id)
                     {
@@ -45,6 +48,8 @@
                         @Model.Post.Content
                     </p>
                 </td>
+
+                
                 <td>
                     <div class="text-nowrap">
                         <div>
@@ -82,6 +87,7 @@
                         }
                     </div>
                 </td>
+                }
             </tr>
             @foreach (Comment comment in Model.Comments)
             {
