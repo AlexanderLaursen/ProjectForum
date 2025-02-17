@@ -9,6 +9,7 @@ namespace Common.Dto.Post
         public string Title { get; set; }
         public string Content { get; set; }
         public DateTime CreatedAt { get; set; }
+        public DateTime EditedAt { get; set; }
         public int Likes { get; set; }
         public int ViewCount { get; set; }
         public bool Edited { get; set; }

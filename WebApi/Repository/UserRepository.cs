@@ -6,6 +6,7 @@ using WebApi.Models;
 using WebApi.Repository.Interfaces;
 using Common.Dto.User;
 using Common.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace WebApi.Repository
 {

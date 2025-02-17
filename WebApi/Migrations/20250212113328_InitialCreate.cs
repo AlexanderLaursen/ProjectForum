@@ -214,7 +214,7 @@ namespace WebApi.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "CommentsDto",
+                name: "PagedCommentsDto",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
@@ -304,7 +304,7 @@ namespace WebApi.Migrations
                     table.ForeignKey(
                         name: "FK_CommentHistory_Comments_CommentId",
                         column: x => x.CommentId,
-                        principalTable: "CommentsDto",
+                        principalTable: "PagedCommentsDto",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -358,12 +358,12 @@ namespace WebApi.Migrations
 
             migrationBuilder.CreateIndex(
                 name: "IX_Comments_PostId",
-                table: "CommentsDto",
+                table: "PagedCommentsDto",
                 column: "PostId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Comments_UserId",
-                table: "CommentsDto",
+                table: "PagedCommentsDto",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
@@ -420,7 +420,7 @@ namespace WebApi.Migrations
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "CommentsDto");
+                name: "PagedCommentsDto");
 
             migrationBuilder.DropTable(
                 name: "Posts");

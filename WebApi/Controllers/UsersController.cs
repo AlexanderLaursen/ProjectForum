@@ -12,12 +12,12 @@ namespace WebApi.Controllers
 {
     [ApiController]
     [Route("api/v2/[controller]")]
-    public class UserController : ControllerBase
+    public class UsersController : ControllerBase
     {
         private readonly BlobStorageService _blobStorageService;
-        private readonly ILogger<UserController> _logger;
+        private readonly ILogger<UsersController> _logger;
         private readonly IUserService _userService;
-        public UserController(BlobStorageService blobStorageService, ILogger<UserController> logger, IUserService userService)
+        public UsersController(BlobStorageService blobStorageService, ILogger<UsersController> logger, IUserService userService)
         {
             _blobStorageService = blobStorageService;
             _userService = userService;

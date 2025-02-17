@@ -8,14 +8,12 @@ namespace WebApi.Repository.Interfaces
 {
     public interface IPostRepository
     {
-        public Task<OperationResultNew> GetPostDetailsAsync(int postId, string userId, PageInfo pageInfo);
-        public Task<OperationResult> GetPostByIdAsync(int postId, PageInfo pageInfo);
-        public Task<OperationResult> GetPostsByUsernameAsync(string userId, PageInfo pageInfo);
-        public Task<OperationResult> GetPostsByCategoryIdAsync(int categoryId, PageInfo pageInfo, SortBy sortBy, SortDirection sortDirection);
-        public Task<OperationResult> GetPostHistoryByPostId(int postId, PageInfo pageInfo);
-        public Task<OperationResult> CreatePostAsync(string userId, CreatePostDto createPostDto);
-        public Task<OperationResult> UpdatePostAsync(string userId, UpdatePostDto updatePostDto);
-        public Task<OperationResult> DeletePostAsync(int postId, string userId);
-        public Task<Result<PostDto>> GetPostAsync(int postId);
+        public Task<Result<PostDto>> GetPostAsync(int postId, string? userId = null);
+        public Task<Result<Post>> GetFullPostAsync(int postId);
+        public Task<Result<PagedPostsDto>> GetPostsByCategoryAsync(int categoryId, PageInfo pageInfo, SortBy sortBy, SortDirection sortDirection);
+        public Task<Result<PagedPostsDto>> GetPostsByUserIdAsync(string userId, PageInfo pageInfo);
+        public Task<Result<PostDto>> CreatePostAsync(string userId, CreatePostDto createPostDto);
+        public Task<Result<PostDto>> UpdatePostAsync(Post post, UpdatePostDto updatePostDto);
+        public Task<Result<PostDto>> DeletePostAsync(Post post);
     }
 }

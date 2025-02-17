@@ -6,10 +6,10 @@ namespace Common.Models
 {
     public class Result<T> : IResult<T>
     {
-        public bool IsSuccess { get; }
-        public T? Value { get; }
-        public string? ErrorMessage { get; }
-        public ResultStatus Status { get; }
+        public bool IsSuccess { get; set; }
+        public T? Value { get; set;  }
+        public string? ErrorMessage { get; set; }
+        public ResultStatus Status { get; set; }
 
         public Result(bool isSuccess, T? value, string? errorMessage, ResultStatus status)
         {

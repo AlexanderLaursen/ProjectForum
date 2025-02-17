@@ -316,7 +316,7 @@ namespace WebApi.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("CommentsDto");
+                    b.ToTable("PagedCommentsDto");
                 });
 
             modelBuilder.Entity("WebApi.Models.CommentHistory", b =>
@@ -558,7 +558,7 @@ namespace WebApi.Migrations
             modelBuilder.Entity("WebApi.Models.Comment", b =>
                 {
                     b.HasOne("WebApi.Models.Post", "Post")
-                        .WithMany("CommentsDto")
+                        .WithMany("PagedCommentsDto")
                         .HasForeignKey("PostId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -686,7 +686,7 @@ namespace WebApi.Migrations
 
             modelBuilder.Entity("WebApi.Models.Post", b =>
                 {
-                    b.Navigation("CommentsDto");
+                    b.Navigation("PagedCommentsDto");
 
                     b.Navigation("PostHistory");
 

@@ -32,7 +32,7 @@ namespace WebApi.Migrations
 
             migrationBuilder.AlterColumn<DateTime>(
                 name: "CreatedAt",
-                table: "CommentsDto",
+                table: "PagedCommentsDto",
                 type: "timestamp with time zone",
                 nullable: false,
                 defaultValueSql: "CURRENT_TIMESTAMP",
@@ -70,7 +70,7 @@ namespace WebApi.Migrations
                     table.ForeignKey(
                         name: "FK_CommentLikes_Comments_CommentId",
                         column: x => x.CommentId,
-                        principalTable: "CommentsDto",
+                        principalTable: "PagedCommentsDto",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -152,7 +152,7 @@ namespace WebApi.Migrations
 
             migrationBuilder.AlterColumn<DateTime>(
                 name: "CreatedAt",
-                table: "CommentsDto",
+                table: "PagedCommentsDto",
                 type: "timestamp with time zone",
                 nullable: false,
                 oldClrType: typeof(DateTime),
