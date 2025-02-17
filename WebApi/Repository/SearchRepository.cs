@@ -12,23 +12,15 @@ namespace WebApi.Repository
     public class SearchRepository : ISearchRepository
     {
         private readonly DataContext _context;
-        public SearchRepository(DataContext context)
+        private readonly ILogger<SearchRepository> _logger;
+        public SearchRepository(DataContext context, ILogger<SearchRepository> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
-        public async Task<OperationResultNew> SearchAsync(string searchString, PageInfo pageInfo = null!)
+        public async Task<Result<PagedSearchResultDto>> SearchAsync(string searchString, PageInfo pageInfo)
         {
-            if (string.IsNullOrEmpty(searchString))
-            {
-                return OperationResultNew.Fail("Invalid search query.");
-            }
-
-            if (pageInfo == null)
-            {
-                pageInfo = new PageInfo();
-            }
-
             try
             {
                 var postQuery = _context.Posts
@@ -56,7 +48,7 @@ namespace WebApi.Repository
                 string searchStringWithWildcard = $"%{searchString}%";
 
                 var userQuery = _context.Users
-                    .Where(u => EF.Functions.ILike(u.UserName, searchStringWithWildcard))
+                    .Where(u => EF.Functions.ILike(u.UserName!, searchStringWithWildcard))
                     .Select(u => new SearchResultDto
                     {
                         Id = 0,
@@ -78,15 +70,18 @@ namespace WebApi.Repository
 
                 pageInfo.TotalItems = totalItems;
 
+                PagedSearchResultDto paginatedResult = new PagedSearchResultDto
+                {
+                    PageInfo = pageInfo,
+                    SearchResults = result
+                };
 
-                // TODO USE NEW RESULT
-                WebApi.Models.PaginatedResultOld<SearchResultDto> paginatedResult = new(result, pageInfo);
-
-                return OperationResultNew.IsSuccess(paginatedResult);
+                return Result<PagedSearchResultDto>.Success(paginatedResult);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return OperationResultNew.Fail("An error occurred while searching.");
+                _logger.LogError(ex, "An error occurred while searching.");
+                return Result<PagedSearchResultDto>.Failure("An error occurred while searching.");
             }
         }
     }

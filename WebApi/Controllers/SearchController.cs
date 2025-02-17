@@ -2,18 +2,22 @@
 using WebApi.Models;
 using WebApi.Repository.Interfaces;
 using Common.Models;
+using Common.Dto.Search;
+using WebApi.Services.Interfaces;
 
 namespace WebApi.Controllers
 {
     [ApiController]
-    [Route("api/v1/[controller]")]
-    public class SearchController : Controller
+    [Route("api/v2/[controller]")]
+    public class SearchController : ControllerBase
     {
-        private readonly ISearchRepository _searchRepository;
+        private readonly ISearchService _searchService;
+        private readonly ILogger<SearchController> _logger;
 
-        public SearchController(ISearchRepository searchRepository)
+        public SearchController(ISearchService searchService, ILogger<SearchController> logger)
         {
-            _searchRepository = searchRepository;
+            _searchService = searchService;
+            _logger = logger;
         }
 
         [HttpGet]
@@ -25,15 +29,15 @@ namespace WebApi.Controllers
             }
 
             PageInfo pageInfo = new PageInfo(page, pageSize);
+            Result<PagedSearchResultDto> result = await _searchService.SearchAsync(searchString, pageInfo);
 
-            var result = await _searchRepository.SearchAsync(searchString, pageInfo);
-
-            if (result.Success)
+            if (result.IsSuccess)
             {
-                return Ok(result.Data);
+                return Ok(result.Value);
             }
 
-            return NotFound(result.ErrorMessage);
+            _logger.LogError(result.ErrorMessage);
+            return HandleErrors(result);
         }
     }
 }

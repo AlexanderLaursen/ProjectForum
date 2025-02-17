@@ -5,6 +5,7 @@ using Common.Dto;
 using WebApi.Models;
 using WebApi.Repository.Interfaces;
 using Common.Dto.User;
+using Common.Models;
 
 namespace WebApi.Repository
 {
@@ -12,78 +13,67 @@ namespace WebApi.Repository
     {
         private readonly UserManager<AppUser> _userManager;
         private readonly DataContext _context;
+        private readonly ILogger<UserRepository> _logger;
 
-        public UserRepository(UserManager<AppUser> userManager, DataContext context)
+        public UserRepository(UserManager<AppUser> userManager, DataContext context, ILogger<UserRepository> logger)
         {
             _userManager = userManager;
             _context = context;
+            _logger = logger;
         }
 
-        public async Task<OperationResult> GetUserByUsernameAsync(string username)
+        public async Task<Result<AppUser>> GetAppUserAsync(string userId)
         {
-            if (string.IsNullOrEmpty(username))
+            try
             {
-                return new OperationResult
+                var user = await _userManager.FindByIdAsync(userId);
+
+                if (user != null)
                 {
-                    Success = false,
-                    ErrorMessage = "Invalid username."
-                };
+                    return Result<AppUser>.Success(user);
+                }
+
+                return Result<AppUser>.NotFound("User not found.");
             }
-
-            var user = await _userManager.FindByNameAsync(username);
-            if (user == null)
+            catch (Exception ex)
             {
-                return new OperationResult
-                {
-                    Success = false,
-                    ErrorMessage = "User not found."
-                };
+                _logger.LogError(ex, "An error occurred while getting the user.");
+                return Result<AppUser>.Failure("Unexpected error while getting user.");
             }
-
-            UserDto userDto = user.Adapt<UserDto>();
-            List<UserDto> userList = [userDto];
-
-            return new OperationResult
-            {
-                Success = true,
-                Data = new Dictionary<string, object>
-                    {
-                        { "content", userList }
-                    },
-                InternalData = user
-            };
-
         }
 
-        public Task<OperationResult> UpdateUserAsync(AppUser user)
+        public async Task<Result<UserDto>> GetUserAsync(string userName)
         {
-            if (user == null)
+            try
             {
-                return Task.FromResult(new OperationResult
+                var user = await _userManager.FindByNameAsync(userName);
+                if (user == null)
                 {
-                    Success = false,
-                    ErrorMessage = "Invalid user."
-                });
-            }
+                    return Result<UserDto>.NotFound("User not found.");
+                }
 
+                return Result<UserDto>.Success(user.Adapt<UserDto>());
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while getting the user.");
+                return Result<UserDto>.Failure("Unexpected error while getting user.");
+            }
+        }
+
+        public async Task<Result<UserDto>> UpdateUserAsync(AppUser user)
+        {
             try
             {
                 _context.Update(user);
-                _context.SaveChangesAsync();
+                await _context.SaveChangesAsync();
 
-                return Task.FromResult(new OperationResult
-                {
-                    Success = true,
-                    InternalData = user
-                });
+                return Result<UserDto>.Success(user.Adapt<UserDto>());
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return Task.FromResult(new OperationResult
-                {
-                    Success = false,
-                    ErrorMessage = "An error occurred while updating the user."
-                });
+                _logger.LogError(ex, "An error occurred while updating the user.");
+                return Result<UserDto>.Failure("Unexpected error while updating user.");
             }
         }
     }

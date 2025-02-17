@@ -77,7 +77,7 @@ namespace MVC.Repositories
         {
             try
             {
-                HttpResponseMessage response = await _httpClient.GetAsync(BASE_URL + url);
+                HttpResponseMessage response = await _httpClient.GetAsync(BASE_URL_OLD + url);
                 response.EnsureSuccessStatusCode();
 
                 string responseBody = await response.Content.ReadAsStringAsync();
@@ -95,7 +95,7 @@ namespace MVC.Repositories
         {
             try
             {
-                HttpResponseMessage response = await _httpClient.GetAsync(BASE_URL + url);
+                HttpResponseMessage response = await _httpClient.GetAsync(BASE_URL_OLD + url);
                 response.EnsureSuccessStatusCode();
 
                 string responseBody = await response.Content.ReadAsStringAsync();
@@ -123,7 +123,7 @@ namespace MVC.Repositories
             {
                 _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", bearerToken);
 
-                HttpResponseMessage response = await _httpClient.GetAsync(BASE_URL + url);
+                HttpResponseMessage response = await _httpClient.GetAsync(BASE_URL_OLD + url);
                 response.EnsureSuccessStatusCode();
 
                 string responseBody = await response.Content.ReadAsStringAsync();
@@ -146,7 +146,7 @@ namespace MVC.Repositories
 
                 _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", bearerToken);
 
-                HttpResponseMessage response = await _httpClient.PostAsync(BASE_URL + url, content);
+                HttpResponseMessage response = await _httpClient.PostAsync(BASE_URL_OLD + url, content);
 
                 response.EnsureSuccessStatusCode();
 
@@ -184,7 +184,7 @@ namespace MVC.Repositories
 
                 _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", bearerToken);
 
-                HttpResponseMessage response = await _httpClient.PutAsync(BASE_URL + url, content);
+                HttpResponseMessage response = await _httpClient.PutAsync(BASE_URL_OLD + url, content);
 
                 response.EnsureSuccessStatusCode();
 
@@ -213,7 +213,7 @@ namespace MVC.Repositories
             {
                 _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", bearerToken);
 
-                HttpResponseMessage response = await _httpClient.DeleteAsync(BASE_URL + url);
+                HttpResponseMessage response = await _httpClient.DeleteAsync(BASE_URL_OLD + url);
 
                 response.EnsureSuccessStatusCode();
 

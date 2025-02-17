@@ -5,51 +5,26 @@ using WebApi.Repository.Interfaces;
 using System.IdentityModel.Tokens.Jwt;
 using Common.Dto.User;
 using Common.Models;
+using WebApi.Services.Interfaces;
+using System.Security.Claims;
 
 namespace WebApi.Controllers
 {
     [ApiController]
-    [Route("api/v1/[controller]")]
+    [Route("api/v2/[controller]")]
     public class UserController : ControllerBase
     {
-        private readonly ICommonRepository _commonRepository;
-        private readonly IUserRepository _userRepository;
         private readonly BlobStorageService _blobStorageService;
         private readonly ILogger<UserController> _logger;
-        public UserController(ICommonRepository commonRepository, IUserRepository userRepository, BlobStorageService blobStorageService, ILogger<UserController> logger)
+        private readonly IUserService _userService;
+        public UserController(BlobStorageService blobStorageService, ILogger<UserController> logger, IUserService userService)
         {
-            _commonRepository = commonRepository;
-            _userRepository = userRepository;
             _blobStorageService = blobStorageService;
+            _userService = userService;
             _logger = logger;
         }
-
-        [HttpGet("{username}/id")]
-        public IActionResult GetUserIdByUsername(string username)
-        {
-            if (string.IsNullOrWhiteSpace(username))
-            {
-                return BadRequest();
-            }
-
-            string? userId = _commonRepository.GetUserIdByUsernameAsync(username).Result;
-
-            if (string.IsNullOrWhiteSpace(userId))
-            {
-                return NotFound();
-            }
-
-            Dictionary<string, object> data = new()
-            {
-                 { "content", new List<string> { userId } }
-            };
-
-            return Ok(data);
-        }
-
-        [HttpGet("/api/v2/username/id")]
         
-        [HttpGet("/api/v2/{username}")]
+        [HttpGet("{username}")]
         public async Task<IActionResult> GetUserAsync(string username)
         
         {
@@ -58,7 +33,7 @@ namespace WebApi.Controllers
                 return BadRequest();
             }
 
-            Result<UserDto> result = await _userRepository.GetUserByUsernameAsync(username);
+            Result<UserDto> result = await _userService.GetUserAsync(username);
             if (result.IsSuccess)
             {
                 return Ok(result.Value);
@@ -70,30 +45,32 @@ namespace WebApi.Controllers
 
         [Authorize]
         [HttpPost("upload-profile-picture")]
-        public async Task<IActionResult> UploadProfilePicture(IFormFile file, string username)
+        public async Task<IActionResult> UploadProfilePicture(IFormFile file)
         {
             if (file == null || file.Length == 0)
             {
                 return BadRequest("No file uploaded.");
             }
 
-            OperationResult userOperation = await _userRepository.GetUserByUsernameAsync(username);
+            string? userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-            if (userOperation == null)
+            if (string.IsNullOrEmpty(userId))
             {
-                return Unauthorized("Invalid user credentials.");
+                return BadRequest();
             }
 
-            var user = userOperation.InternalData as AppUser;
+            Result<AppUser> userResult = await _userService.GetAppUserAsync(userId);
 
-            if (user == null)
+            if (!userResult.IsSuccess || userResult.Value == null)
             {
-                return Unauthorized("Invalid user credentials.");
+                return BadRequest();
             }
+
+            AppUser user = userResult.Value;
 
             using var stream = file.OpenReadStream();
 
-            string fileName = $"original/{user.Id}";
+            string fileName = $"original/{userId}";
             string filePath = await _blobStorageService.UploadFileAsync(stream, fileName);
 
             string newUrl = filePath.Replace("original", "resized");
@@ -102,7 +79,7 @@ namespace WebApi.Controllers
             user.MdProfilePicture = newUrl + "_100.jpg";
             user.LgProfilePicture = newUrl + "_300.jpg";
 
-            await _userRepository.UpdateUserAsync(user);
+            await _userService.UpdateUserAsync(user);
 
             return Ok();
         }

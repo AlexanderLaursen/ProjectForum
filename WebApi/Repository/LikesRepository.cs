@@ -1,56 +1,64 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Common.Models;
+using Microsoft.EntityFrameworkCore;
 using WebApi.Data;
 using WebApi.Models;
 using WebApi.Repository.Interfaces;
 
 namespace WebApi.Repository
 {
-    public class LikesRepository : BaseRepository, ILikesRepository
+    public class LikesRepository : ILikesRepository
     {
-        public LikesRepository(DataContext context) : base(context)
+        private readonly DataContext _context;
+        private readonly ILogger<LikesRepository> _logger;
+        public LikesRepository(DataContext context, ILogger<LikesRepository> logger)
         {
+            _context = context;
+            _logger = logger;
         }
 
-        public async Task<OperationResultNew<PostLike>> GetLikeByPostIdAsync(int postId, string userId)
+        public async Task<Result<PostLike>> GetLikePostAsync(int postId, string userId)
         {
             try
             {
                 var result = await _context.PostLikes.FirstOrDefaultAsync(pl => pl.PostId == postId && pl.UserId == userId);
-
+                
                 if (result == null)
                 {
-                    return OperationResultNew<PostLike>.IsFailure("Post is not liked by user.");
+                    return Result<PostLike>.NotFound("Post is not liked by user.");
                 }
 
-                return OperationResultNew<PostLike>.IsSuccess(result);
+                return Result<PostLike>.Success(result);
             }
             catch (Exception ex)
             {
-                return OperationResultNew<PostLike>.IsFailure(ex.Message);
-            };
+                _logger.LogError(ex, "Error occured while getting post like.");
+                return Result<PostLike>.Failure("Error occured while getting post like.");
+            }
         }
 
-        public async Task<OperationResultNew<PostLike>> LikePostAsync(int postId, string userId)
+        public async Task<Result<PostLike>> LikePostAsync(int postId, string userId)
         {
-            if (postId <= 0 || string.IsNullOrEmpty(userId))
-            {
-                return OperationResultNew<PostLike>.IsFailure("Bad request.");
-            }
-
             try
             {
-                await _context.PostLikes.AddAsync(new PostLike { PostId = postId, UserId = userId });
-                await _context.SaveChangesAsync();
+                PostLike postLike = new PostLike { PostId = postId, UserId = userId };
+                await _context.PostLikes.AddAsync(postLike);
+                int changes = await _context.SaveChangesAsync();
+                
+                if (changes == 0)
+                {
+                    return Result<PostLike>.Failure("Unexpected error occured.");
+                }
 
-                return OperationResultNew<PostLike>.IsSuccess(new PostLike { PostId = postId, UserId = userId });
+                return Result<PostLike>.Success(postLike);
             }
             catch (Exception ex)
             {
-                return OperationResultNew<PostLike>.IsFailure(ex.Message);
+                _logger.LogError(ex, "Error occured while liking post.");
+                return Result<PostLike>.Failure("Error occured while liking post.");
             }
         }
 
-        public async Task<OperationResultNew<CommentLike>> GetLikeByCommentIdAsync(int commentId, string userId)
+        public async Task<Result<CommentLike>> GetLikeCommentAsync(int commentId, string userId)
         {
             try
             {
@@ -58,76 +66,81 @@ namespace WebApi.Repository
 
                 if (result == null)
                 {
-                    return OperationResultNew<CommentLike>.IsFailure("Comment is not liked by user.");
+                    return Result<CommentLike>.NotFound("Comment is not liked by user.");
                 }
 
-                return OperationResultNew<CommentLike>.IsSuccess(result);
+                return Result<CommentLike>.Success(result);
             }
             catch (Exception ex)
             {
-                return OperationResultNew<CommentLike>.IsFailure(ex.Message);
+                _logger.LogError(ex, "Error occured while getting comment like.");
+                return Result<CommentLike>.Failure("Errpr occured while getting comment like.");
             }
         }
 
-        public async Task<OperationResultNew<CommentLike>> LikeCommentAsync(int commentId, string userId)
+        public async Task<Result<CommentLike>> LikeCommentAsync(int commentId, string userId)
         {
-            if (commentId <= 0 || string.IsNullOrEmpty(userId))
-            {
-                return OperationResultNew<CommentLike>.IsFailure("Bad request.");
-            }
-
             try
             {
-                await _context.CommentLikes.AddAsync(new CommentLike { CommentId = commentId, UserId = userId });
-                await _context.SaveChangesAsync();
+                CommentLike commentLike = new CommentLike { CommentId = commentId, UserId = userId };
+                await _context.CommentLikes.AddAsync(commentLike);
+                int changes = await _context.SaveChangesAsync();
 
-                return OperationResultNew<CommentLike>.IsSuccess(new CommentLike { CommentId = commentId, UserId = userId });
+                if (changes == 0)
+                {
+                    return Result<CommentLike>.Failure("Unexpected error occured.");
+                }
+
+                return Result<CommentLike>.Success(commentLike);
             }
             catch (Exception ex)
             {
-                return OperationResultNew<CommentLike>.IsFailure(ex.Message);
+                _logger.LogError(ex, "Error occured while liking comment.");
+                return Result<CommentLike>.Failure("Error occured while liking comment.");
             }
         }
 
-        public async Task<OperationResultNew<PostLike>> DeletePostLikeAsync(int postId, string userId)
+        public async Task<Result<PostLike>> DeletePostLikeAsync(int postId, string userId)
         {
             var result = await _context.PostLikes.FirstOrDefaultAsync(pl => pl.PostId == postId && pl.UserId == userId);
 
             if (result == null)
             {
-                return OperationResultNew<PostLike>.IsFailure("Post is not liked by user.");
+                return Result<PostLike>.NotFound("Post is not liked by user.");
             }
 
             try
             {
                 _context.PostLikes.Remove(result);
                 await _context.SaveChangesAsync();
-                return OperationResultNew<PostLike>.IsSuccess(result);
+                return Result<PostLike>.Success(result);
             }
             catch (Exception ex)
             {
-                return OperationResultNew<PostLike>.IsFailure(ex.Message);
+                _logger.LogError(ex, "Error occured while deleting post like.");
+                return Result<PostLike>.Failure("Error occured while deleting post like.");
             }
         }
 
-        public async Task<OperationResultNew<CommentLike>> DeleteCommentLikeAsync(int commentId, string userId)
+        public async Task<Result<CommentLike>> DeleteCommentLikeAsync(int commentId, string userId)
         {
             var result = await _context.CommentLikes.FirstOrDefaultAsync(cl => cl.CommentId == commentId && cl.UserId == userId);
 
             if (result == null)
             {
-                return OperationResultNew<CommentLike>.IsFailure("Comment is not liked by user.");
+                return Result<CommentLike>.Failure("Comment is not liked by user.");
             }
 
             try
             {
                 _context.CommentLikes.Remove(result);
                 await _context.SaveChangesAsync();
-                return OperationResultNew<CommentLike>.IsSuccess(result);
+                return Result<CommentLike>.Success(result);
             }
             catch (Exception ex)
             {
-                return OperationResultNew<CommentLike>.IsFailure(ex.Message);
+                _logger.LogError(ex, "Error occured while deleting comment like.");
+                return Result<CommentLike>.Failure("Error occured while deleting comment like.");
             }
         }
     }

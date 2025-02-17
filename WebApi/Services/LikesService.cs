@@ -2,6 +2,9 @@
 using WebApi.Repository.Interfaces;
 using Common.Models;
 using WebApi.Services.Interfaces;
+using Common.Dto.Post;
+using Common.Dto.Comment;
+using System.Runtime.CompilerServices;
 
 namespace WebApi.Services
 {
@@ -17,71 +20,51 @@ namespace WebApi.Services
             _commentRepository = commentRepository;
         }
 
-        public async Task<OperationResultNew<PostLike>> LikePostAsync(int postId, string userId)
+        public async Task<Result<PostLike>> LikePostAsync(int postId, string userId)
         {
-            if (postId <= 0 || string.IsNullOrEmpty(userId))
+            Result<PostDto> postResult = await _postRepository.GetPostAsync(postId);
+
+            if (!postResult.IsSuccess)
             {
-                return OperationResultNew<PostLike>.IsFailure("Bad request.");
+                return Result<PostLike>.NotFound("Post not found.");
             }
 
-            OperationResult postResult = await _postRepository.GetPostByIdAsync(postId, new PageInfo());
+            Result<PostLike> like = await _likesRepository.GetLikePostAsync(postId, userId);
 
-            if (!postResult.Success)
+            if (like.IsSuccess)
             {
-                return OperationResultNew<PostLike>.IsFailure("Post not found.");
-            }
-
-            var like = await _likesRepository.GetLikeByPostIdAsync(postId, userId);
-
-            if (like.Success)
-            {
-                return OperationResultNew<PostLike>.IsFailure("Post is already liked by user.");
+                return Result<PostLike>.Failure("Post is already liked by user.");
             }
 
             return await _likesRepository.LikePostAsync(postId, userId);
         }
 
-        public async Task<OperationResultNew<CommentLike>> LikeCommentAsync(int commentId, string userId)
+        public async Task<Result<CommentLike>> LikeCommentAsync(int commentId, string userId)
         {
-            if (commentId <= 0 || string.IsNullOrEmpty(userId))
+            Result<CommentDto> commentResult = await _commentRepository.GetCommentAsync(commentId);
+
+            if (!commentResult.IsSuccess)
             {
-                return OperationResultNew<CommentLike>.IsFailure("Bad request.");
+                return Result<CommentLike>.Failure("Comment not found.");
             }
 
-            OperationResult commentResult = await _commentRepository.GetCommentByIdAsync(commentId);
+            Result<CommentLike> like = await _likesRepository.GetLikeCommentAsync(commentId, userId);
 
-            if (!commentResult.Success)
+            if (like.IsSuccess)
             {
-                return OperationResultNew<CommentLike>.IsFailure("Comment not found.");
-            }
-
-            var like = await _likesRepository.GetLikeByCommentIdAsync(commentId, userId);
-
-            if (like.Success)
-            {
-                return OperationResultNew<CommentLike>.IsFailure("Comment is already liked by user.");
+                return Result<CommentLike>.Failure("Comment is already liked by user.");
             }
 
             return await _likesRepository.LikeCommentAsync(commentId, userId);
         }
 
-        public async Task<OperationResultNew<PostLike>> DeletePostLikeAsync(int postId, string userId)
+        public async Task<Result<PostLike>> RemovePostLikeAsync(int postId, string userId)
         {
-            if (postId <= 0 || string.IsNullOrEmpty(userId))
-            {
-                return OperationResultNew<PostLike>.IsFailure("Bad request.");
-            }
-
             return await _likesRepository.DeletePostLikeAsync(postId, userId);
         }
 
-        public async Task<OperationResultNew<CommentLike>> DeleteCommentLikeAsync(int commentId, string userId)
+        public async Task<Result<CommentLike>> RemoveCommentLikeAsync(int commentId, string userId)
         {
-            if (commentId <= 0 || string.IsNullOrEmpty(userId))
-            {
-                return OperationResultNew<CommentLike>.IsFailure("Bad request.");
-            }
-
             return await _likesRepository.DeleteCommentLikeAsync(commentId, userId);
         }
     }
