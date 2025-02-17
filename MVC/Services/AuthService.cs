@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using System.Text.Json;
+using Common.Dto.User;
 using Common.Models;
 using MVC.Helpers;
 using MVC.Models;
@@ -143,6 +144,11 @@ namespace MVC.Services
                     IsSuccess = false
                 };
             }
+        }
+
+        public async Task<Result<UserDto>> GetUserAsync(string userName)
+        {
+            return await _authRepository.GetUserAsync(userName);
         }
     }
 }

@@ -3,21 +3,25 @@ using Microsoft.AspNetCore.Mvc;
 using WebApi.Models;
 using WebApi.Repository.Interfaces;
 using System.IdentityModel.Tokens.Jwt;
+using Common.Dto.User;
+using Common.Models;
 
 namespace WebApi.Controllers
 {
     [ApiController]
     [Route("api/v1/[controller]")]
-    public class UserController : Controller
+    public class UserController : ControllerBase
     {
         private readonly ICommonRepository _commonRepository;
         private readonly IUserRepository _userRepository;
         private readonly BlobStorageService _blobStorageService;
-        public UserController(ICommonRepository commonRepository, IUserRepository userRepository, BlobStorageService blobStorageService)
+        private readonly ILogger<UserController> _logger;
+        public UserController(ICommonRepository commonRepository, IUserRepository userRepository, BlobStorageService blobStorageService, ILogger<UserController> logger)
         {
             _commonRepository = commonRepository;
             _userRepository = userRepository;
             _blobStorageService = blobStorageService;
+            _logger = logger;
         }
 
         [HttpGet("{username}/id")]
@@ -44,8 +48,8 @@ namespace WebApi.Controllers
         }
 
         [HttpGet("/api/v2/username/id")]
-
-        [HttpGet("{username}")]
+        
+        [HttpGet("/api/v2/{username}")]
         public async Task<IActionResult> GetUserAsync(string username)
         
         {
@@ -54,13 +58,14 @@ namespace WebApi.Controllers
                 return BadRequest();
             }
 
-            OperationResult result = await _userRepository.GetUserByUsernameAsync(username);
-            if (!result.Success)
+            Result<UserDto> result = await _userRepository.GetUserByUsernameAsync(username);
+            if (result.IsSuccess)
             {
-                return NotFound();
+                return Ok(result.Value);
             }
 
-            return Ok(result.Data);
+            _logger.LogError("Error occurred while getting user.");
+            return HandleErrors<UserDto>(result);
         }
 
         [Authorize]

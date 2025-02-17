@@ -1,8 +1,10 @@
-﻿using Common.Models;
+﻿using Common.Dto.User;
+using Common.Models;
 using Microsoft.AspNetCore.Mvc;
 using MVC.Helpers;
 using MVC.Models;
 using MVC.Services;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace MVC.Controllers
 {
@@ -36,15 +38,15 @@ namespace MVC.Controllers
             }
 
             HttpContext.Session.SetJson("Bearer", result.Value.AccessToken);
+            
+            Result<UserDto> userResult = await _authService.GetUserAsync(loginData.Email);
 
-            ApiResponseOld<string> userIdResponse = await _authService.GetUserIdByUsernameAsync(loginData.Email);
-
-            if (userIdResponse.IsSuccess)
-            {
-                HttpContext.Session.SetJson("Username", loginData.Email);
-                HttpContext.Session.SetJson("UserId", userIdResponse.Content[0]);
-                return RedirectToAction("Index", "Home");
-            }
+            //if (userIdResponse.IsSuccess)
+            //{
+            //    HttpContext.Session.SetJson("Username", loginData.Email);
+            //    HttpContext.Session.SetJson("UserId", userIdResponse.Content[0]);
+            //    return RedirectToAction("Index", "Home");
+            //}
 
             return View();
         }
