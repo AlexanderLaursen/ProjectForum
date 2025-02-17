@@ -16,10 +16,12 @@ namespace WebApi.Repository
     public class PostRepository : BaseRepository, IPostRepository
     {
         private readonly ICommonRepository _commonRepository;
+        private readonly ILogger<PostRepository> _logger;
 
-        public PostRepository(DataContext context, ICommonRepository commonRepository) : base(context)
+        public PostRepository(DataContext context, ICommonRepository commonRepository, ILogger<PostRepository> logger) : base(context)
         {
             _commonRepository = commonRepository;
+            _logger = logger;
         }
 
         public async Task<OperationResultNew> GetPostDetailsAsync(int postId, string userId, PageInfo pageInfo)
@@ -590,5 +592,36 @@ namespace WebApi.Repository
             }
         }
 
+        public async Task<Result<PostDto>> GetPostAsync(int postId)
+        {
+            try
+            {
+                PostDto? postDto = await _context.Posts
+                    .Where(r => r.Id == postId)
+                    .Select(r => new PostDto
+                    {
+                        Id = r.Id,
+                        Title = r.Title,
+                        Content = r.Content,
+                        CreatedAt = r.CreatedAt,
+                        Likes = r.PostLikes.Count,
+                        Edited = r.Edited,
+                        CategoryId = r.CategoryId,
+                        User = r.User.Adapt<ShortUserDto>()
+                    }).FirstOrDefaultAsync();
+
+                if (postDto == null)
+                {
+                    return Result<PostDto>.NotFound();
+                }
+
+                return Result<PostDto>.Success(postDto);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error while getting post from database.");
+                return Result<PostDto>.Failure("Unkown error while fetching post.");
+            }
+        }
     }
 }

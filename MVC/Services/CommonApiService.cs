@@ -8,7 +8,9 @@ namespace MVC.Services
     {
         public const string BASE_URL = "https://localhost:7052/api/v2/";
         public const string COMMENT_HISTORY_PREFIX = "comment-history";
+        public const string POST_HISTORY_PREFIX = "post-history";
         public const string COMMENT_PREFIX = "comments";
+        public const string POST_PREFIX = "posts";
         public const string USER_PREFIX = "User";
 
         public string UrlFactory(string prefix, PageInfo? pageInfo = null, IEnumerable<string>? queryStrings = null)

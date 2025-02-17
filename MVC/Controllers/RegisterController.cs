@@ -41,7 +41,7 @@ namespace MVC.Controllers
 
             if (response.IsSuccess)
             {
-                return RedirectToAction("Index", "Login");
+                return RedirectToAction("Index", "LoginAsync");
             }
             return View("Index");
         }

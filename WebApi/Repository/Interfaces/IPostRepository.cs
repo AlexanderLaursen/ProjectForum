@@ -16,5 +16,6 @@ namespace WebApi.Repository.Interfaces
         public Task<OperationResult> CreatePostAsync(string userId, CreatePostDto createPostDto);
         public Task<OperationResult> UpdatePostAsync(string userId, UpdatePostDto updatePostDto);
         public Task<OperationResult> DeletePostAsync(int postId, string userId);
+        public Task<Result<PostDto>> GetPostAsync(int postId);
     }
 }

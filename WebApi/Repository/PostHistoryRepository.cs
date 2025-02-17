@@ -11,66 +11,55 @@ namespace WebApi.Repository
     public class PostHistoryRepository : IPostHistoryRepository
     {
         private readonly DataContext _context;
+        private readonly ILogger<PostHistoryRepository> _logger;
 
-        public PostHistoryRepository(DataContext context)
+        public PostHistoryRepository(DataContext context, ILogger<PostHistoryRepository> logger)
         {
             _context = context;
+            _logger = logger;
         }
-        public async Task<OperationResult> GetPostHistoryByIdAsync(int postId, PageInfo pageInfo)
+
+        public async Task<Result<PostHistoriesDto>> GetPostHistoryAsync(int postId, PageInfo pageInfo)
         {
             try
             {
-
-                if (postId <= 0)
-                {
-                    return new OperationResult();
-                }
-
                 var query = _context.PostHistory
                     .Where(p => p.PostId == postId);
 
                 int totalCount = await query.CountAsync();
 
-                var result = await query
+                var postHistoryResult = await query
+                    .Select(ph => new PostHistoryDto
+                    {
+                        Id = ph.Id,
+                        PostId = ph.PostId,
+                        Title = ph.Title,
+                        Content = ph.Content,
+                        CreatedAt = ph.CreatedAt,
+                        UserId = ph.UserId
+                    })
                     .OrderByDescending(p => p.CreatedAt)
                     .Skip(pageInfo.Skip)
                     .Take(pageInfo.PageSize)
                     .ToListAsync();
 
-                if (result == null)
+                if (postHistoryResult.Count == 0)
                 {
-                    return new OperationResult
-                    {
-                        Success = false,
-                        ErrorMessage = "Post History not found."
-                    };
+                    return Result<PostHistoriesDto>.NotFound();
                 }
 
-                List<PostHistoryDto> postHistoryDtoList = result.Adapt<List<PostHistoryDto>>();
-
-                return new OperationResult
+                PostHistoriesDto postHistoriesDto = new PostHistoriesDto
                 {
-                    Success = true,
-                    Data = new Dictionary<string, object>
-                {
-                    { "content", postHistoryDtoList },
-                    { "pageInfo", new PageInfo
-                        {
-                            CurrentPage = pageInfo.CurrentPage,
-                            PageSize = pageInfo.PageSize,
-                            TotalItems = totalCount,
-                        }
-                    }
-                }
+                    PostHistories = postHistoryResult,
+                    PageInfo = new PageInfo(pageInfo.CurrentPage, pageInfo.PageSize, totalCount),
                 };
+
+                return Result<PostHistoriesDto>.Success(postHistoriesDto);
             }
-            catch
+            catch (Exception ex)
             {
-                return new OperationResult
-                {
-                    Success = false,
-                    ErrorMessage = "An error occurred while fetching post history."
-                };
+                _logger.LogError(ex, "Error while getting post history.");
+                return Result<PostHistoriesDto>.Failure("Unkown error while fetching PostHistory from database.");
             }
         }
     }

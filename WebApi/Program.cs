@@ -53,7 +53,9 @@ builder.Services.AddScoped<ISearchRepository, SearchRepository>();
 // Services
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<ICommentHistoryService, CommentHistoryService>();
+builder.Services.AddScoped<IPostHistoryService, PostHistoryService>();
 builder.Services.AddScoped<ICommentService, CommentService>();
+builder.Services.AddScoped<IPostService, PostService>();
 
 builder.Services.AddSingleton<BlobStorageService>();
 

@@ -11,21 +11,24 @@ builder.Services.AddSession();
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddScoped<HttpClient>();
-builder.Services.AddScoped<CategoryApiService>();
 builder.Services.AddScoped<PostService>();
 builder.Services.AddScoped<CommentServiceOld>();
 builder.Services.AddScoped<AuthService>();
-builder.Services.AddScoped<ApiRepository>();
+builder.Services.AddScoped<CommonApiService>();
 builder.Services.AddScoped<CommentHistoryApiService>();
-builder.Services.AddScoped<PostHistoryService>();
+builder.Services.AddScoped<PostHistoryApiService>();
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<LikeService>();
 builder.Services.AddScoped<SearchService>();
+builder.Services.AddScoped<ApiRepository>();
 
 builder.Services.AddScoped<IApiRepository, ApiRepository>();
+builder.Services.AddScoped<IAuthRepository, AuthRepository>();
 
-builder.Services.AddScoped<ICategoryApiService, CategoryApiService>();
+builder.Services.AddScoped<IPostHistoryApiService, PostHistoryApiService>();
 builder.Services.AddScoped<ICommentHistoryApiService, CommentHistoryApiService>();
+builder.Services.AddScoped<ICategoryApiService, CategoryApiService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<HttpContextService>();

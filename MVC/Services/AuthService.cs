@@ -1,11 +1,15 @@
 ﻿using System.Text;
 using System.Text.Json;
+using Common.Models;
+using MVC.Helpers;
 using MVC.Models;
 using MVC.Repositories;
+using MVC.Repositories.Interfaces;
+using MVC.Services.Interfaces;
 
 namespace MVC.Services
 {
-    public class AuthService
+    public class AuthService : CommonApiService, IAuthService
     {
         private const string BASE_URL = "https://localhost:7052/";
         private const string LOGIN_ENDPOINT = "login";
@@ -15,14 +19,23 @@ namespace MVC.Services
 
         private readonly HttpClient _httpClient;
         private readonly ApiRepository _commonApiService;
+        private readonly IApiRepository _apiRepository;
+        private readonly IAuthRepository _authRepository;
 
-        public AuthService(HttpClient httpClient, ApiRepository commonApiService)
+        public AuthService(HttpClient httpClient, ApiRepository commonApiService, IApiRepository apiRepository, IAuthRepository authRepository)
         {
             _httpClient = httpClient;
             _commonApiService = commonApiService;
+            _apiRepository = apiRepository;
+            _authRepository = authRepository;
         }
 
-        public async Task<LoginResponse> LoginAsync(LoginData loginData)
+        public async Task<Result<BearerToken>> LoginAsync(LoginData loginData)
+        {
+            return await _authRepository.LoginAsync(loginData);
+        }
+
+        public async Task<LoginResponse> LoginAsyncOld(LoginData loginData)
         {
             try
             {

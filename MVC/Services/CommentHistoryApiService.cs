@@ -28,29 +28,22 @@ namespace MVC.Services
 
             await Task.WhenAll(commentHistoryTask, commentTask);
 
-            if (!commentHistoryTask.Result.IsSuccess || !commentTask.Result.IsSuccess)
+            Result<CommentHistoriesDto> commentHistoryResult = await commentHistoryTask;
+            Result<CommentDto> commentResult = await commentTask;
+
+            if (!commentHistoryResult.IsSuccess || !commentHistoryResult.IsSuccess)
             {
-                return Result<CommentHistories>.Failure();
+                return Result<CommentHistories>.ConvertDtoError<CommentHistoriesDto, CommentHistories>(commentHistoryResult);
             }
 
-            if (commentHistoryTask.Result.Value?.CommentHistories.Count == 0 || string.IsNullOrEmpty(commentTask.Result.Value?.Content))
+            CommentHistories commentHistories = new CommentHistories
             {
-                return Result<CommentHistories>.NotFound();
-            }
+                CommentHistory = commentHistoryResult.Value!.CommentHistories.Adapt<List<CommentHistory>>(),
+                Comment = commentResult.Value.Adapt<Comment>(),
+                PageInfo = commentHistoryResult.Value.PageInfo,
+            };
 
-            if (commentTask.Result.IsSuccess)
-            {
-                CommentHistories commentHistories = new CommentHistories
-                {
-                    Comment = commentTask.Result.Value.Adapt<Comment>(),
-                    CommentHistory = commentHistoryTask.Result.Value!.CommentHistories.Adapt<List<CommentHistory>>(),
-                    PageInfo = commentHistoryTask.Result.Value.PageInfo,
-                };
-
-                return Result<CommentHistories>.Success(commentHistories);
-            }
-            
-            return Result<CommentHistories>.Failure();
+            return Result<CommentHistories>.Success(commentHistories);
         }
     }
 }

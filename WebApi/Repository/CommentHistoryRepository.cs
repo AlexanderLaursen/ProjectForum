@@ -17,6 +17,7 @@ namespace WebApi.Repository
         {
             _context = context;
             _logger = logger;
+            //_logger.LogInformation($"CommentHistoryRepository constructed with DataContext hash code: {_context.GetHashCode()}"); // Log hash code
         }
 
         public async Task<Result<CommentHistoriesDto>> GetCommentHistoryAsync(int commentId, PageInfo pageInfo)
@@ -57,9 +58,8 @@ namespace WebApi.Repository
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error while getting comment history.");
-                return Result<CommentHistoriesDto>.Failure("Unknown error.");
+                return Result<CommentHistoriesDto>.Failure("Unkown error while fetching CommentHistory from database.");
             }
-
         }
     }
 }

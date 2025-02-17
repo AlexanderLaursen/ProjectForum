@@ -6,7 +6,6 @@ using Common.Dto.CommentHistory;
 using WebApi.Models;
 using WebApi.Repository.Interfaces;
 using Common.Models;
-using Microsoft.Extensions.Configuration.UserSecrets;
 using Common.Dto.User;
 
 namespace WebApi.Repository
@@ -15,11 +14,14 @@ namespace WebApi.Repository
     {
         private readonly DataContext _context;
         private readonly ICommonRepository _commonRepository;
+        private readonly ILogger<CommentRepository> _logger;
 
-        public CommentRepository(DataContext context, ICommonRepository commonRepository)
+        public CommentRepository(DataContext context, ICommonRepository commonRepository, ILogger<CommentRepository> logger)
         {
             _context = context;
             _commonRepository = commonRepository;
+            _logger = logger;
+            //_logger.LogInformation($"CommentRepository constructed with DataContext hash code: {_context.GetHashCode()}"); // Log hash code
         }
 
         public async Task<OperationResult> GetCommentByIdAsync(int commentId)
@@ -437,14 +439,7 @@ namespace WebApi.Repository
                         Edited = c.Edited,
                         LikedByUser = c.CommentLikes.Any(cl => cl.UserId == userId),
                         UserId = c.UserId,
-                        User = new ShortUserDto
-                        {
-                            Id = c.User.Id,
-                            UserName = c.User.UserName!,
-                            SmProfilePicture = c.User.SmProfilePicture!,
-                            MdProfilePicture = c.User.MdProfilePicture!,
-                            LgProfilePicture = c.User.LgProfilePicture!,
-                        }
+                        User = c.User.Adapt<ShortUserDto>()
                     }).FirstOrDefaultAsync();
 
                 if (commentDto == null)
@@ -456,6 +451,7 @@ namespace WebApi.Repository
             }
             catch (Exception)
             {
+                _logger.LogError("Error while fetching comment from database.");
                 return Result<CommentDto>.Failure("Error while fetching comment from database.");
             }
         }

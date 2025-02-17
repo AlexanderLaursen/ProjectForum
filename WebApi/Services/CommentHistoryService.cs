@@ -1,6 +1,6 @@
-﻿using Common.Dto.CommentHistory;
+﻿using Common.Dto.Comment;
+using Common.Dto.CommentHistory;
 using Common.Models;
-using WebApi.Models;
 using WebApi.Repository.Interfaces;
 using WebApi.Services.Interfaces;
 

@@ -38,7 +38,7 @@ namespace MVC.Controllers
 
             if (string.IsNullOrEmpty(bearerToken))
             {
-                return RedirectToAction("Index", "Login");
+                return RedirectToAction("Index", "LoginAsync");
             }
 
             ApiResponseOld<Comment> response = await _commentService.CreateCommentAsync(viewModel, bearerToken);
@@ -82,7 +82,7 @@ namespace MVC.Controllers
             string? bearerToken = HttpContext.Session.GetJson<string>("Bearer");
             if (string.IsNullOrEmpty(bearerToken))
             {
-                return RedirectToAction("Index", "Login");
+                return RedirectToAction("Index", "LoginAsync");
             }
 
             ApiResponseOld<Comment> response = await _commentService.UpdateCommentByIdAsync(commentId, updateCommentDto, bearerToken);
@@ -105,7 +105,7 @@ namespace MVC.Controllers
             string? bearerToken = HttpContext.Session.GetJson<string>("Bearer");
             if (string.IsNullOrEmpty(bearerToken))
             {
-                return RedirectToAction("Index", "Login");
+                return RedirectToAction("Index", "LoginAsync");
             }
 
             ApiResponseOld<bool> response = await _commentService.DeleteCommentAsync(commentId, bearerToken);

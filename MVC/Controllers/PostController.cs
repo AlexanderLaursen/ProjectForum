@@ -19,7 +19,7 @@ namespace MVC.Controllers
             _categoryService = categoryService;
         }
 
-        [HttpGet("/categories/{categoryId}/posts")]
+        [HttpGet("/Category/{categoryId}/posts")]
         public async Task<IActionResult> GetPostsByCategoryId(PostsViewModel oldViewModel, int categoryId, int page, int pageSize, SortDirection sortDirection = 0, SortBy sortBy = 0)
         {
             if (categoryId <= 0)
@@ -28,16 +28,16 @@ namespace MVC.Controllers
             }
             PageInfo pageInfo = new PageInfo(page, pageSize);
             ApiResponseOld<Post> response = await _postService.GetPostsByCategoryIdAsync(categoryId, pageInfo, sortDirection, sortBy);
-            Result<Category> categoryResult = await _categoryService.GetCategoryByIdAsync(categoryId);
+            Result<Category> categoryResponse = await _categoryService.GetCategoryByIdAsync(categoryId);
 
-            if (!response.IsSuccess)
+            if (!response.IsSuccess || !categoryResponse.IsSuccess)
             {
                 return NotFound();
             }
 
             PostsViewModel viewModel = new PostsViewModel
             {
-                Category = categoryResult.Value,
+                Category = categoryResponse.Value!,
                 Posts = response.Content,
                 PageInfo = response.PageInfo,
                 SortBy = sortBy,
@@ -98,7 +98,7 @@ namespace MVC.Controllers
 
             if (string.IsNullOrEmpty(bearerToken))
             {
-                return RedirectToAction("Index", "Login");
+                return RedirectToAction("Index", "LoginAsync");
             }
 
             ApiResponseOld<Post> response = await _postService.CreatePostAsync(viewModel, bearerToken);
@@ -142,7 +142,7 @@ namespace MVC.Controllers
             string? bearerToken = HttpContext.Session.GetJson<string>("Bearer");
             if (string.IsNullOrEmpty(bearerToken))
             {
-                return RedirectToAction("Index", "Login");
+                return RedirectToAction("Index", "LoginAsync");
             }
 
             ApiResponseOld<Post> response = await _postService.UpdatePostAsync(viewModel, bearerToken);
@@ -165,7 +165,7 @@ namespace MVC.Controllers
             string? bearerToken = HttpContext.Session.GetJson<string>("Bearer");
             if (string.IsNullOrEmpty(bearerToken))
             {
-                return RedirectToAction("Index", "Login");
+                return RedirectToAction("Index", "LoginAsync");
             }
 
             ApiResponseOld<bool> response = await _postService.DeletePostAsync(postId, bearerToken);

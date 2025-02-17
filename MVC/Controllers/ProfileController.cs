@@ -27,7 +27,7 @@ namespace MVC.Controllers
 
             if (string.IsNullOrWhiteSpace(username))
             {
-                return RedirectToAction("Login", "Account");
+                return RedirectToAction("LoginAsync", "Account");
             }
 
             return RedirectToAction("Index", new { username });
@@ -76,7 +76,7 @@ namespace MVC.Controllers
 
             if (string.IsNullOrWhiteSpace(username) || string.IsNullOrEmpty(bearerToken))
             {
-                return RedirectToAction("Login", "Account");
+                return RedirectToAction("LoginAsync", "Account");
             }
 
 

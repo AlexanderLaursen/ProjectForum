@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using WebApi.Models;
 using WebApi.Repository.Interfaces;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace WebApi.Controllers
 {
@@ -41,6 +42,8 @@ namespace WebApi.Controllers
 
             return Ok(data);
         }
+
+        [HttpGet("/api/v2/username/id")]
 
         [HttpGet("{username}")]
         public async Task<IActionResult> GetUserAsync(string username)
@@ -98,29 +101,5 @@ namespace WebApi.Controllers
 
             return Ok();
         }
-
-        //[HttpPost("/register/extend")]
-        //public async Task<IActionResult> RegisterExtended(RegisterDto registerDto)
-        //{
-        //    if (registerDto == null)
-        //    {
-        //        return BadRequest();
-        //    }
-
-        //    OperationResult userOperation = await _userRepository.GetUserByUsernameAsync(registerDto.Email);
-
-        //    if (!userOperation.IsSuccess)
-        //    {
-        //        return BadRequest();
-        //    }
-
-        //    if (userOperation.InternalData is not AppUser user)
-        //    {
-        //        return BadRequest();
-        //    }
-
-
-
-        //}
     }
 }

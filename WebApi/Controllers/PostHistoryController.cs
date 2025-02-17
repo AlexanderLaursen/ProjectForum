@@ -1,22 +1,22 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using WebApi.Models;
-using WebApi.Repository.Interfaces;
 using Common.Models;
+using Common.Dto.PostHistory;
+using WebApi.Services.Interfaces;
 
 namespace WebApi.Controllers
 {
     [ApiController]
-    [Route("api/v1/[controller]")]
-    public class PostHistoryController : Controller
+    [Route("api/v2/[controller]")]
+    public class PostHistoryController : ControllerBase
     {
-        private readonly IPostHistoryRepository _postHistoryRepository;
+        private readonly IPostHistoryService _postHistoryService;
 
-        public PostHistoryController(IPostHistoryRepository postHistoryRepository)
+        public PostHistoryController(IPostHistoryService postHistoryService)
         {
-            _postHistoryRepository = postHistoryRepository;
+            _postHistoryService = postHistoryService;
         }
 
-        [HttpGet("{postId}")]
+        [HttpGet("/api/v2/post-history/{postId}")]
         public async Task<IActionResult> GetPostHistory(int postId, int page = 0, int pageSize = 0)
         {
             if (postId <= 0)
@@ -25,14 +25,14 @@ namespace WebApi.Controllers
             }
 
             PageInfo pageInfo = new PageInfo(page, pageSize);
+            Result<PostHistoriesDto> result = await _postHistoryService.GetPostHistoryAsync(postId, pageInfo);
 
-            OperationResult result = await _postHistoryRepository.GetPostHistoryByIdAsync(postId, pageInfo);
-            if (!result.Success)
+            if (!result.IsSuccess)
             {
-                return NotFound(result.ErrorMessage);
+                return HandleErrors(result);
             }
 
-            return Ok(result.Data);
+            return Ok(result.Value);
         }
     }
 }

@@ -8,17 +8,22 @@ using WebApi.Models;
 using WebApi.Repository.Interfaces;
 using WebApi.Models.Ope;
 using Common.Models;
+using WebApi.Services.Interfaces;
 
 namespace WebApi.Controllers
 {
     [ApiController]
     [Route("api/v1/[controller]")]
-    public class PostController : Controller
+    public class PostController : ControllerBase
     {
         private readonly IPostRepository _repository;
-        public PostController(IPostRepository repository)
+        private readonly IPostService _postService;
+        private readonly ILogger<PostController> _logger;
+        public PostController(IPostRepository repository, IPostService postService, ILogger<PostController> logger)
         {
             _repository = repository;
+            _postService = postService;
+            _logger = logger;
         }
 
         [Authorize]
@@ -46,13 +51,24 @@ namespace WebApi.Controllers
             return NotFound(result.ErrorMessage);
         }
 
-        [Authorize]
-        [HttpGet("test2")]
-        public async Task<IActionResult> Test()
+        [HttpGet("/api/v2/posts/{postId}")]
+        public async Task<IActionResult> GetPost(int postId, int page, int pageSize)
         {
-            return Ok("Test");
-        }
+            if (postId <= 0)
+            {
+                return BadRequest();
+            }
 
+            Result<PostDto> result = await _postService.GetPostAsync(postId);
+
+            if (result.IsSuccess)
+            {
+                return Ok(result.Value);
+            }
+
+            _logger.LogError(result.ErrorMessage);
+            return HandleErrors(result);
+        }
 
         [HttpGet("{postId}")]
         public async Task<IActionResult> GetPostById(int postId, int page = 0, int pageSize = 0)

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Common.Models;
+using Microsoft.AspNetCore.Mvc;
 using MVC.Helpers;
 using MVC.Models;
 using MVC.Services;
@@ -7,11 +8,11 @@ namespace MVC.Controllers
 {
     public class LoginController : Controller
     {
-        private readonly AuthService _loginService;
+        private readonly AuthService _authService;
 
         public LoginController(AuthService loginService)
         {
-            _loginService = loginService;
+            _authService = loginService;
         }
 
         public IActionResult Index()
@@ -27,16 +28,16 @@ namespace MVC.Controllers
                 return View();
             }
 
-            LoginResponse response = await _loginService.LoginAsync(loginData);
+            Result<BearerToken> result = await _authService.LoginAsync(loginData);
 
-            if (!response.IsSuccess)
+            if (!result.IsSuccess || result.Value?.AccessToken == null)
             {
                 return View();
             }
 
-            HttpContext.Session.SetJson("Bearer", response.Token.AccessToken);
+            HttpContext.Session.SetJson("Bearer", result.Value.AccessToken);
 
-            ApiResponseOld<string> userIdResponse = await _loginService.GetUserIdByUsernameAsync(loginData.Email);
+            ApiResponseOld<string> userIdResponse = await _authService.GetUserIdByUsernameAsync(loginData.Email);
 
             if (userIdResponse.IsSuccess)
             {
@@ -54,7 +55,5 @@ namespace MVC.Controllers
             HttpContext.Session.Remove("Bearer");
             return RedirectToAction("Index", "Home");
         }
-
-
     }
 }
